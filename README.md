@@ -12,11 +12,16 @@
 
 **الفهرس:** [index.html](index.html) · [machineKollision/index.html](machineKollision/index.html)
 
-## النشر
+## النشر (Branch — بدون GitHub Actions)
 
-1. **Pages:** Settings → Pages → Source: **GitHub Actions**
-2. Push إلى `main` يُشغِّل `deploy-pages.yml`
-3. URL: عدّل `githubPagesUrl` في [`site-urls.json`](site-urls.json)
+في repo `body-vs-pdf` على GitHub:
+
+1. **Settings → Pages**
+2. **Source:** Deploy from a **branch**
+3. **Branch:** `main` · **Folder:** `/ (root)`
+4. بعد push، الموقع على الرابط في [`site-urls.json`](site-urls.json)
+
+لا حاجة لـ workflow — GitHub ينشر الملفات مباشرة من الفرع.
 
 ## تحديث المحتوى من مشروع التطبيق
 
