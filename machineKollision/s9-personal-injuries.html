@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S9 — Personskador Ja — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineKollision</a> /
+  S9 — Personskador Ja
+</p>
+
+<h1>نواقص Body مقابل PDF — S9 Personskador Ja</h1>
+<p>سينario Debug S9: <code>personal_injuries_exist=true</code> + <strong>2×</strong> <code>personal_injuries[]</code> — نفس baseline S1.</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineKollision</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S9 — Personskador Ja (<code>kolliosn-s9</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a36bb93e5dfea2b95bd93f7</code></dd>
+    <dt>PDF</dt><dd><code>report_6a36bb93e5dfea2b95bd93f7.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>2026-06-20 · 19:10</dd>
+    <dt>مرجع الحقول</dt><dd><a href="https://github.com/YOUR_USERNAME/ih-insuranceapp/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-KOLLISION-FIELD-REFERENCE.html">MACHINE-KOLLISION-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-swedish-driver.html">S1 Swedish Driver</a> · <a href="s8-witnesses.html">S8 Vittnen Ja</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا signature base64 كامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل <code>personal_injuries_exist=true</code> ومصفوفتين كاملتين (Karin Johansson + Petter Lund) مع injury_description.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    «Personskador: Ja» يظهر في Step 3 — لكن <strong>لا جدول للمصابين</strong> (بخلاف S8 حيث ظهر Vittnen). الحقل العلوي قد يعرض Nej — تناقض.
+  </div>
+</div>
+
+<h2>مقارنة مع S1 و S8</h2>
+<table>
+  <tr><th>البند</th><th>S1</th><th>S8 (Vittnen)</th><th>S9</th></tr>
+  <tr><td>Flag Ja/Nej</td><td>Nej</td><td>witness Ja</td><td>Personskador Ja (أسفل) — OK جزئي</td></tr>
+  <tr><td>تفاصيل المصفوفة</td><td>—</td><td>Vittnen block أعلى PDF — OK جزئي</td><td><span class="status-missing">Missing</span> — لا personal_injuries[]</td></tr>
+  <tr><td>تخطيط PDF</td><td>2 صفحات</td><td>23 صفحة</td><td><span class="status-ok">2 صفحات</span></td></tr>
+</table>
+
+<h2>Personskador — OK جزئي</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>personal_injuries_exist</code> (Step 3)</td>
+    <td>true</td>
+    <td>Personskador: <strong>X Ja</strong> Nej (صفحة 1 أسفل)</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<h2>Personskador — Missing / Wrong</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>personal_injuries_exist</code> (علوي)</td>
+    <td>true</td>
+    <td>Personskador — Ja <strong>X</strong> Nej (أعلى PDF)</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>تناقض مع Step 3 — يعرض Nej</td>
+  </tr>
+  <tr>
+    <td><code>personal_injuries[0][name]</code></td>
+    <td>Karin Johansson</td>
+    <td>غائب</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td><code>personal_injuries[0][email]</code></td>
+    <td>karin.johansson@test.se</td>
+    <td>غائب</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td><code>personal_injuries[0][phone]</code></td>
+    <td>0703334455</td>
+    <td>غائب</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td><code>personal_injuries[0][personal_id_number]</code></td>
+    <td>198906061234</td>
+    <td>غائب</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td><code>personal_injuries[0][address]</code></td>
+    <td>Byggarbetsplatsen, Stockholm</td>
+    <td>غائب</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td><code>personal_injuries[0][injury_description]</code></td>
+    <td>Mindre skärsår på handen efter kollisionen.</td>
+    <td>غائب</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td><code>personal_injuries[1][name]</code></td>
+    <td>Petter Lund</td>
+    <td>غائب</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>صفّ ثانٍ</td>
+  </tr>
+  <tr>
+    <td><code>personal_injuries[1][email]</code></td>
+    <td>petter.lund@test.se</td>
+    <td>غائب</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td><code>personal_injuries[1][phone]</code></td>
+    <td>0705556677</td>
+    <td>غائب</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td><code>personal_injuries[1][personal_id_number]</code></td>
+    <td>8503034567</td>
+    <td>غائب</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td><code>personal_injuries[1][address]</code></td>
+    <td>Motpartens fordon</td>
+    <td>غائب</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>—</td>
+  </tr>
+  <tr>
+    <td><code>personal_injuries[1][injury_description]</code></td>
+    <td>Whiplash i nacken.</td>
+    <td>غائب</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>—</td>
+  </tr>
+</table>
+
+<h2>حقول Step 1–3 — OK (مثل S1)</h2>
+<p>driver، motpart، enums، händelseförlopp، skador، körbar Ja، vittnen/polis Nej — متطابقة (عدا الفجوات المشتركة).</p>
+
+<h2>نواقص Backend PDF (مشتركة مع S1)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>machine_identity[…]</code></td><td>gravmaskin / Volvo CE / …</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>organization_number</code></td><td>6990593003</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>counterparties[0][phone]</code></td><td>0709876543</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>event_narrative</code> (علوي)</td><td>نص كامل</td><td>Händelseförloppet: N/A</td><td><span class="status-wrong">Wrong</span></td></tr>
+</table>
+
+<h2>أخطاء قالب PDF</h2>
+<table>
+  <tr><th>القسم</th><th>المشكلة</th><th>الحالة</th></tr>
+  <tr><td><span class="sv">Eget fordon (Fordon A)</span></td><td>فارغ</td><td><span class="status-artifact">Artifact</span></td></tr>
+  <tr><td><span class="sv">Skadeanmälan - Motorfordon</span></td><td>عنوان generic</td><td><span class="status-artifact">Artifact</span></td></tr>
+  <tr><td>Personskador (ازدواج)</td><td>حقل علوي + Step 3 — قيم متناقضة</td><td><span class="status-wrong">Wrong</span></td></tr>
+</table>
+
+<h2>ملخص Payload S9 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "machineKollision",
+  "personal_injuries_exist": "true",
+  "personal_injuries[0]": {
+    "name": "Karin Johansson",
+    "email": "karin.johansson@test.se",
+    "phone": "0703334455",
+    "personal_id_number": "198906061234",
+    "address": "Byggarbetsplatsen, Stockholm",
+    "injury_description": "Mindre skärsår på handen efter kollisionen."
+  },
+  "personal_injuries[1]": {
+    "name": "Petter Lund",
+    "email": "petter.lund@test.se",
+    "phone": "0705556677",
+    "personal_id_number": "8503034567",
+    "address": "Motpartens fordon",
+    "injury_description": "Whiplash i nacken."
+  },
+  "witness_exist": "false",
+  "police": "false",
+  "date": "20-06-2026",
+  "time": "19:10",
+  "signature": "(truncated)"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF bugs (S9)</h2>
+<pre class="scenario">Report type: machineKollision (kolliosn Debug S9 — Personskador Ja)
+Report ID: 6a36bb93e5dfea2b95bd93f7
+Environment: insuranceapp3.azurewebsites.net
+Date: 2026-06-20 · time 19:10
+
+App sends personal injuries correctly:
+  personal_injuries_exist = true
+  personal_injuries[0]: Karin Johansson (+ email, phone, personnummer, address, injury_description)
+  personal_injuries[1]: Petter Lund (+ email, phone, personnummer, address, injury_description)
+
+PDF OK (partial):
+  - Step 3 Personskador: Ja selected
+
+PDF Missing (S9-specific):
+  - No personal_injuries[] detail block at all (unlike witnesses in S8 which rendered)
+  - All fields for [0] and [1] absent from PDF
+
+PDF Wrong:
+  - Top Personskador shows Nej while payload has true (conflicts with Step 3 Ja)
+
+Same as S1 (still missing):
+  - machine_identity block, organization_number, counterparties[0][phone]
+  - Empty Fordon A; top Händelseförloppet = N/A; Motorfordon title
+
+Layout: 2 pages (no fragmentation — unlike S8)
+
+Attachments:
+  - report_6a36bb93e5dfea2b95bd93f7.pdf
+  - s9-personal-injuries.html (this document)</pre>
+
+<p>
+  <a href="s8-witnesses.html">← السابق: S8 Vittnen Ja</a>
+  ·
+  <a href="s10-injuries-and-witnesses.html">التالي: S10 Personskador + Vittnen →</a>
+</p>
+
+<div class="footer">
+  S9 Personskador Ja · Report 6a36bb93e5dfea2b95bd93f7 · 2026-06-20
+</div>
+
+</body>
+</html>

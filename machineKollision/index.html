@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>machineKollision — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  machineKollision
+</p>
+
+<h1>machineKollision — Body vs PDF</h1>
+<p>مقارنات payload/PDF لسينariوهات Debug kolliosn (Kollision annat fordon).</p>
+
+<table>
+  <tr>
+    <th>السينario</th>
+    <th>Report ID</th>
+    <th>PDF</th>
+    <th>تقرير الفجوات</th>
+  </tr>
+  <tr>
+    <td><strong>S1</strong> — Swedish Driver</td>
+    <td><code>6a367298e5dfea2b95bd8d4b</code></td>
+    <td><code>report_6a367298e5dfea2b95bd8d4b.pdf</code></td>
+    <td><a href="s1-swedish-driver.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S2</strong> — Foreign Driver</td>
+    <td><code>6a367709e5dfea2b95bd8e04</code></td>
+    <td><code>report_6a367709e5dfea2b95bd8e04.pdf</code></td>
+    <td><a href="s2-foreign-driver.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S3</strong> — Counterparty Exists</td>
+    <td><code>6a36a771e5dfea2b95bd90a2</code></td>
+    <td><code>report_6a36a771e5dfea2b95bd90a2.pdf</code></td>
+    <td><a href="s3-counterparty-exists.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S4</strong> — Hur Skedde = Annat</td>
+    <td><code>6a36acb6e5dfea2b95bd9111</code></td>
+    <td><code>report_6a36acb6e5dfea2b95bd9111.pdf</code></td>
+    <td><a href="s4-accident-how-other.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S5</strong> — Collision With = Annat</td>
+    <td><code>6a36b622e5dfea2b95bd91d1</code></td>
+    <td><code>report_6a36b622e5dfea2b95bd91d1.pdf</code></td>
+    <td><a href="s5-collision-with-other.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S6</strong> — Dålig Sikt</td>
+    <td><code>6a36b66de5dfea2b95bd920c</code></td>
+    <td><code>report_6a36b66de5dfea2b95bd920c.pdf</code></td>
+    <td><a href="s6-bad-visibility.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S7</strong> — Images + Signature</td>
+    <td><code>6a36b839e5dfea2b95bd929d</code></td>
+    <td><code>report_6a36b839e5dfea2b95bd929d.pdf</code></td>
+    <td><a href="s7-full-attachments.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S8</strong> — Vittnen Ja</td>
+    <td><code>6a36ba29e5dfea2b95bd9368</code></td>
+    <td><code>report_6a36ba29e5dfea2b95bd9368.pdf</code></td>
+    <td><a href="s8-witnesses.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S9</strong> — Personskador Ja</td>
+    <td><code>6a36bb93e5dfea2b95bd93f7</code></td>
+    <td><code>report_6a36bb93e5dfea2b95bd93f7.pdf</code></td>
+    <td><a href="s9-personal-injuries.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S10</strong> — Personskador + Vittnen</td>
+    <td><code>6a36bc68e5dfea2b95bd942a</code></td>
+    <td><code>report_6a36bc68e5dfea2b95bd942a.pdf</code></td>
+    <td><a href="s10-injuries-and-witnesses.html">فتح التقرير →</a></td>
+  </tr>
+</table>
+
+<h2>ملخص مشترك (Backend PDF)</h2>
+<ul>
+  <li>machine identity (type, brand, model, year, hours, insured, insurance) — <strong>Missing</strong> في S1 و S2</li>
+  <li><code>organization_number</code> — Missing</li>
+  <li><code>counterparties[0][phone]</code> — Missing</li>
+  <li>قسم <span class="sv">Eget fordon (Fordon A)</span> فارغ — Artifact</li>
+  <li><span class="sv">Händelseförloppet: N/A</span> أعلى PDF — Wrong mapping</li>
+</ul>
+
+<h2>فريد لـ S2</h2>
+<ul>
+  <li><code>swedish_driver_license = No</code> لكن PDF يعرض Ja — Wrong</li>
+  <li>قسم Vittnen/Polisen مُجزّأ على 10 صفحات — Layout bug</li>
+  <li><code>license_issuing_country</code> يظهر (Norge) — OK (تحسّن عن S1)</li>
+</ul>
+
+<h2>فريد لـ S3</h2>
+<ul>
+  <li>Motpart 2 (maskin / serienr / förare) يظهر في PDF — <strong>OK</strong> (تحسّن عن S1)</li>
+  <li><code>counterparties[0][phone]</code> و <code>counterparties[1][phone]</code> — Missing</li>
+</ul>
+
+<h2>فريد لـ S4</h2>
+<ul>
+  <li><code>accident_how=annat</code> + <code>accident_how_other</code> — <strong>OK</strong> في PDF («Annat: …»)</li>
+  <li>motpart واحد فقط (مثل S1) — telefon motpart Missing</li>
+</ul>
+
+<h2>فريد لـ S5</h2>
+<ul>
+  <li><code>collision_with=annat</code> + <code>collision_with_other</code> — <strong>OK</strong> في PDF («Annat: Container…»)</li>
+  <li>PDF <strong>22 صفحة</strong> — layout bug أشد من S2–S4 (10 صفحات)</li>
+</ul>
+
+<h2>فريد لـ S6</h2>
+<ul>
+  <li><code>visibility_light_conditions=dalig</code> → «Dålig» — <strong>OK</strong></li>
+  <li>PDF <strong>صفحتان</strong> فقط (مثل S1 — بدون layout bug)</li>
+</ul>
+
+<h2>فريد لـ S7</h2>
+<ul>
+  <li>Body: <strong>2× images</strong> + körkort + signature — مرسل OK</li>
+  <li>PDF: bilagor/foto غائبة؛ underskrift بدون صورة — <strong>Missing</strong></li>
+</ul>
+
+<h2>فريد لـ S8</h2>
+<ul>
+  <li>Vittnen: namn/telefon/e-post — <strong>OK</strong> (قسم مبكر في PDF)</li>
+  <li><code>witnesses[0][personal_id_number]</code> — Missing (Personnummer: -)</li>
+  <li>PDF <strong>23 صفحة</strong> — layout bug + ترتيب Vittnen قبل Kompletterande uppgifter</li>
+</ul>
+
+<h2>فريد لـ S9</h2>
+<ul>
+  <li>Personskador Ja في Step 3 — OK جزئي</li>
+  <li>مصفوفة <code>personal_injuries[0..1]</code> — <strong>Missing</strong> بالكامل (بخلاف Vittnen في S8)</li>
+  <li>Personskador علوي يعرض Nej — <strong>Wrong</strong> (تناقض)</li>
+  <li>PDF <strong>صفحتان</strong> فقط</li>
+</ul>
+
+<h2>فريد لـ S10</h2>
+<ul>
+  <li>دمج S8 + S9: Vittnen جزئي OK + personal_injuries[] <strong>Missing</strong></li>
+  <li>Personskador علوي Nej — Wrong (كS9)</li>
+  <li>PDF <strong>23 صفحة</strong> (layout كS8)</li>
+</ul>
+
+<div class="footer">
+  machineKollision Body vs PDF index · ih-insuranceapp · 2026-06-20
+</div>
+
+</body>
+</html>

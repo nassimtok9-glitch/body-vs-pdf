@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S1 — Swedish Driver — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineKollision</a> /
+  S1 — Swedish Driver
+</p>
+
+<h1>نواقص Body مقابل PDF — S1 Swedish Driver</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Kollision annat fordon (kolliosn).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineKollision</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S1 — Swedish Driver (Happy path)</dd>
+    <dt>Report ID</dt><dd><code>6a367298e5dfea2b95bd8d4b</code></dd>
+    <dt>PDF</dt><dd><code>report_6a367298e5dfea2b95bd8d4b.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>Endpoint</dt><dd><code>POST …/insurance-helper/api/reports</code></dd>
+    <dt>التاريخ</dt><dd>2026-06-20 · time 13:59</dd>
+    <dt>مرجع الحقول</dt><dd><a href="https://github.com/YOUR_USERNAME/ih-insuranceapp/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-KOLLISION-FIELD-REFERENCE.html">MACHINE-KOLLISION-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="https://github.com/YOUR_USERNAME/ih-insuranceapp/blob/main/docs/test-references/orgistrerat%20frodon%20test/MACHINE-KOLLISION-test-cases.html">MACHINE-KOLLISION-test-cases.html</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> هذه الوثيقة <strong>لا تحتوي</strong> على <code>Authorization</code> أو <code>x-api-key</code> أو محتوى <code>signature</code> الكامل.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    الـ payload يرسل الحقول المطلوبة لـ machineKollision بشكل صحيح (Step 1–3، motpart، enums، Ja/Nej، ملفات images + driving_license + signature).
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    قالب PDF لا يعرض <strong>machine identity</strong> كاملاً، يظهر قسم <strong>Fordon A</strong> فارغاً، <strong>Händelseförloppet: N/A</strong> في الأعلى، و<strong>telefon motpart</strong> مفقود.
+  </div>
+</div>
+
+<h2>منطق الحكم</h2>
+<table>
+  <tr><th>الحالة</th><th>المعنى</th><th>المسؤول المرجّح</th></tr>
+  <tr><td><span class="status-ok">OK</span></td><td>القيمة في Body وتظهر في PDF بشكل صحيح</td><td>—</td></tr>
+  <tr><td><span class="status-missing">Missing</span></td><td>القيمة <strong>مُرسلة</strong> في Body و<strong>غائبة</strong> من PDF</td><td>Backend PDF template</td></tr>
+  <tr><td><span class="status-wrong">Wrong</span></td><td>القيمة في PDF خاطئة أو N/A رغم وجودها في Body</td><td>Backend PDF mapping</td></tr>
+  <tr><td><span class="status-artifact">Artifact</span></td><td>قسم في PDF لا ينتمي لهذا النوع (مثل Fordon A بدون cars[])</td><td>Backend PDF template</td></tr>
+</table>
+
+<h2>حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API / Body</th><th>القيمة المرسلة</th><th>ما يظهر في PDF</th><th>الحالة</th></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>20-06-2026 / 13:59</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>address</code>, <code>post_number_post_address</code></td><td>Byggarbetsplats Norra Djurgårdsstaden… / 11521</td><td>Skadeplats + postnr</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>serial_number</code></td><td>MK-99887</td><td>Serienummer</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>ownership_type</code></td><td>agd</td><td>Ägande/leasing: Ägd</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>Säkerhetsrutiner följda: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>driver_trained</code></td><td>true</td><td>Föraren utbildad: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>driver_full_name</code>, <code>personal_id_number</code></td><td>Erik Svensson / 19850515-1234</td><td>Förarens namn / personnummer</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>phone</code>, <code>email</code></td><td>0701234567 / erik.svensson@test.se</td><td>Telefon / E-Post</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>swedish_driver_license</code></td><td>Yes</td><td>Svenskt körkort: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>has_counterparties</code></td><td>true</td><td>Motparter: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>responsibility_admitted</code></td><td>false</td><td>Ansvar erkänt: Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>counterparties[0][counterparty_type]</code></td><td>fordon</td><td>Motpart — typ: Fordon</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>counterparties[0][register_number]</code></td><td>XYZ789</td><td>Motpart — reg.nr: XYZ789</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>counterparties[0][driver_name]</code></td><td>Anna Johansson</td><td>Motpart — förare: Anna Johansson</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>accident_how</code></td><td>backning</td><td>Backning</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>collision_with</code></td><td>annat_fordon</td><td>Annat fordon</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_state</code></td><td>i_arbete</td><td>I arbete</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>estimated_speed</code></td><td>8</td><td>8</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>visibility_light_conditions</code></td><td>god</td><td>God</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>surface_description</code></td><td>Grus och packad jord…</td><td>Underlag</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>event_narrative</code></td><td>نص كامل</td><td>Händelseförlopp (أسفل)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>own_machine_damage_description</code></td><td>Bakre vänstra stödben…</td><td>Skador på egen maskin</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_drivable</code></td><td>true</td><td>Maskinen körbar: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>personal_injuries_exist</code></td><td>false</td><td>Personskador: Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>third_party_property_damage_exist</code></td><td>false</td><td>Skada på annans egendom: Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witness_exist</code></td><td>false</td><td>Vittnen: Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>police</code></td><td>false</td><td>Polisen informerad: Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>files</code></td><td>images + driving_license</td><td>تحقق بصري</td><td><span class="status-ok">OK (مرسل)</span></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>القيمة المرسلة</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr><td><code>machine_identity[machine_type]</code></td><td>gravmaskin</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>Maskintyp</td></tr>
+  <tr><td><code>machine_identity[machine_brand]</code></td><td>Volvo CE</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>Märke</td></tr>
+  <tr><td><code>machine_identity[machine_model]</code></td><td>EC220E</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>Modell</td></tr>
+  <tr><td><code>machine_identity[machine_year]</code></td><td>2019</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>Årsmodell</td></tr>
+  <tr><td><code>machine_identity[operating_hours]</code></td><td>4200</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>Drifttimmar</td></tr>
+  <tr><td><code>machine_identity[machine_insured]</code></td><td>true</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>Försäkrad</td></tr>
+  <tr><td><code>machine_identity[insurance_company_name_text]</code></td><td>Trygg-Hansa Försäkring</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>Försäkringsbolag</td></tr>
+  <tr><td><code>organization_number</code></td><td>6990593003</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>Org.nr</td></tr>
+  <tr><td><code>counterparties[0][phone]</code></td><td>0709876543</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>Telefon motpart</td></tr>
+  <tr><td><code>event_narrative</code> (علوي)</td><td>نص كامل</td><td>Händelseförloppet: N/A</td><td><span class="status-wrong">Wrong</span></td><td>mapping خاطئ</td></tr>
+</table>
+
+<h2>أخطاء قالب PDF</h2>
+<table>
+  <tr><th>القسم</th><th>المشكلة</th><th>الحالة</th></tr>
+  <tr><td><span class="sv">Eget fordon (Fordon A)</span></td><td>فارغ رغم عدم إرسال cars[]</td><td><span class="status-artifact">Artifact</span></td></tr>
+  <tr><td><span class="sv">Skadeanmälan - Motorfordon</span></td><td>عنوان generic غير مناسب لـ machine</td><td><span class="status-artifact">Artifact</span></td></tr>
+</table>
+
+<h2>بلاغ جاهز للنسخ</h2>
+<pre class="scenario">Report type: machineKollision (kolliosn Debug S1)
+Report ID: 6a367298e5dfea2b95bd8d4b
+Environment: insuranceapp3.azurewebsites.net
+
+Missing in PDF (sent in payload):
+  machine_identity (type, brand, model, year, hours, insured, insurance company)
+  organization_number = 6990593003
+  counterparties[0][phone] = 0709876543
+
+Template issues:
+  Empty Fordon A block; top Händelseförloppet = N/A; Motorfordon title
+
+Attachment: report_6a367298e5dfea2b95bd8d4b.pdf</pre>
+
+<p>
+  <a href="s2-foreign-driver.html">التالي: S2 Foreign Driver →</a>
+  ·
+  <a href="s3-counterparty-exists.html">S3 Counterparty Exists →</a>
+</p>
+
+<div class="footer">
+  S1 Swedish Driver · Report 6a367298e5dfea2b95bd8d4b · 2026-06-20
+</div>
+
+</body>
+</html>

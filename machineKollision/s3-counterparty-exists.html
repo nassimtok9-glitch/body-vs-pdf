@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S3 — Counterparty Exists — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineKollision</a> /
+  S3 — Counterparty Exists
+</p>
+
+<h1>نواقص Body مقابل PDF — S3 Counterparty Exists</h1>
+<p>سينario Debug S3: <strong>två motparter</strong> — fordon (XYZ789) + maskin (MASKIN-445566) — نفس baseline S1 (Swedish driver) مع <code>counterparties[0]</code> و <code>counterparties[1]</code>.</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineKollision</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S3 — Counterparty Exists (<code>kolliosn-s3</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a36a771e5dfea2b95bd90a2</code></dd>
+    <dt>PDF</dt><dd><code>report_6a36a771e5dfea2b95bd90a2.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>2026-06-20 · 17:44</dd>
+    <dt>مرجع الحقول</dt><dd><a href="https://github.com/YOUR_USERNAME/ih-insuranceapp/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-KOLLISION-FIELD-REFERENCE.html">MACHINE-KOLLISION-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-swedish-driver.html">S1 Swedish Driver</a> · <a href="s2-foreign-driver.html">S2 Foreign Driver</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا signature base64 كامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل motpart fordon + maskin مع telefon لكل منهما؛ Swedish driver path (<code>swedish_driver_license=Yes</code>, <code>personal_id_number</code>).
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    Motpart 1 و Motpart 2 يظهران (تحسّن عن S1) — لكن telefon لكل motpart غائب، ونفس نواقص machine identity + أخطاء قالب S1/S2.
+  </div>
+</div>
+
+<h2>مقارنة مع S1</h2>
+<table>
+  <tr><th>البند</th><th>S1</th><th>S3</th></tr>
+  <tr><td>عدد motparter في PDF</td><td>1</td><td><span class="status-ok">2</span> — Motpart 1 + Motpart 2</td></tr>
+  <tr><td>motpart typ/reg.nr/förare [0]</td><td><span class="status-ok">OK</span></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>motpart typ/serienr/förare [1]</td><td>— (غير مُرسل)</td><td><span class="status-ok">OK</span> — maskin / MASKIN-445566 / Sara Nilsson</td></tr>
+  <tr><td>motpart telefon</td><td>Missing <code>[0]</code></td><td>Missing <code>[0]</code> + <code>[1]</code></td></tr>
+  <tr><td>machine identity في PDF</td><td>Missing</td><td>Missing (نفس المشكلة)</td></tr>
+  <tr><td>Fordon A فارغ</td><td>Artifact</td><td>Artifact</td></tr>
+  <tr><td>Händelseförloppet N/A (أعلى)</td><td>Wrong</td><td>Wrong</td></tr>
+  <tr><td>تخطيط PDF</td><td>2 صفحات</td><td><span class="status-layout">Layout</span> — 10 صفحات، Vittnen/Polisen مُجزّأ (كما S2)</td></tr>
+</table>
+
+<h2>حقول Motparter — OK في PDF (جديد/مؤكّد في S3)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>counterparties[0][counterparty_type]</code></td><td>fordon</td><td>Motpart 1 — typ: Fordon</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>counterparties[0][register_number]</code></td><td>XYZ789</td><td>Motpart 1 — reg.nr: XYZ789</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>counterparties[0][driver_name]</code></td><td>Anna Johansson</td><td>Motpart 1 — förare: Anna Johansson</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>counterparties[1][counterparty_type]</code></td><td>maskin</td><td>Motpart 2 — typ: Maskin</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>counterparties[1][serial_number]</code></td><td>MASKIN-445566</td><td>Motpart 2 — serienr: MASKIN-445566</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>counterparties[1][driver_name]</code></td><td>Sara Nilsson</td><td>Motpart 2 — förare: Sara Nilsson</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص S3 — Backend PDF</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr><td><code>machine_identity[machine_type]</code></td><td>gravmaskin</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>كما S1/S2</td></tr>
+  <tr><td><code>machine_identity[machine_brand]</code></td><td>Volvo CE</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>كما S1/S2</td></tr>
+  <tr><td><code>machine_identity[machine_model]</code></td><td>EC220E</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>كما S1/S2</td></tr>
+  <tr><td><code>machine_identity[machine_year]</code></td><td>2019</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>كما S1/S2</td></tr>
+  <tr><td><code>machine_identity[operating_hours]</code></td><td>4200</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>كما S1/S2</td></tr>
+  <tr><td><code>machine_identity[machine_insured]</code></td><td>true</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>كما S1/S2</td></tr>
+  <tr><td><code>machine_identity[insurance_company_name_text]</code></td><td>Trygg-Hansa Försäkring</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>كما S1/S2</td></tr>
+  <tr><td><code>organization_number</code></td><td>6990593003</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>كما S1/S2</td></tr>
+  <tr><td><code>counterparties[0][phone]</code></td><td>0709876543</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>Telefon motpart 1</td></tr>
+  <tr><td><code>counterparties[1][phone]</code></td><td>0702223344</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>Telefon motpart 2 — <strong>جديد في S3</strong></td></tr>
+  <tr><td><code>event_narrative</code> (علوي)</td><td>نص كامل</td><td>Händelseförloppet: N/A</td><td><span class="status-wrong">Wrong</span></td><td>mapping خاطئ</td></tr>
+</table>
+
+<h2>حقول Step 1–3 — OK (مثل S1)</h2>
+<p>driver (Swedish path)، enums، händelseförlopp (أسفل)، skador، körbar Ja، personskador/egendom/vittnen/polis Nej — متطابقة مع Body (باستثناء layout Vittnen/Polisen).</p>
+
+<h2>أخطاء قالب PDF</h2>
+<table>
+  <tr><th>القسم</th><th>المشكلة</th><th>الحالة</th></tr>
+  <tr><td><span class="sv">Eget fordon (Fordon A)</span></td><td>فارغ — لا cars[]</td><td><span class="status-artifact">Artifact</span></td></tr>
+  <tr><td><span class="sv">Skadeanmälan - Motorfordon</span></td><td>عنوان generic غير مناسب لـ machine</td><td><span class="status-artifact">Artifact</span></td></tr>
+  <tr><td>Vittnen / Polisen (صفحات 2–9)</td><td>Ja, X, Nej على صفحات منفصلة</td><td><span class="status-layout">Layout bug</span></td></tr>
+</table>
+
+<h2>ملخص Payload S3 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "machineKollision",
+  "report_category": "machine",
+  "swedish_driver_license": "Yes",
+  "personal_id_number": "19850515-1234",
+  "driver_full_name": "Erik Svensson",
+  "phone": "0701234567",
+  "email": "erik.svensson@test.se",
+  "serial_number": "MK-99887",
+  "organization_number": "6990593003",
+  "machine_identity": { "machine_type": "gravmaskin", "machine_brand": "Volvo CE", ... },
+  "counterparties[0]": {
+    "counterparty_type": "fordon",
+    "register_number": "XYZ789",
+    "driver_name": "Anna Johansson",
+    "phone": "0709876543"
+  },
+  "counterparties[1]": {
+    "counterparty_type": "maskin",
+    "serial_number": "MASKIN-445566",
+    "driver_name": "Sara Nilsson",
+    "phone": "0702223344"
+  },
+  "date": "20-06-2026",
+  "time": "17:44",
+  "witness_exist": "false",
+  "police": "false",
+  "files": ["images", "driving_license"],
+  "signature": "(truncated)"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF bugs (S3)</h2>
+<pre class="scenario">Report type: machineKollision (kolliosn Debug S3 — Counterparty Exists)
+Report ID: 6a36a771e5dfea2b95bd90a2
+Environment: insuranceapp3.azurewebsites.net
+Date: 2026-06-20 · time 17:44
+
+App sends two counterparties correctly:
+  counterparties[0]: fordon / XYZ789 / Anna Johansson / phone 0709876543
+  counterparties[1]: maskin / MASKIN-445566 / Sara Nilsson / phone 0702223344
+
+PDF OK (S3-specific):
+  - Motpart 1 and Motpart 2 render (type, reg.nr/serienr, driver name)
+
+Missing in PDF (sent in payload):
+  - Full machine_identity block, organization_number = 6990593003
+  - counterparties[0][phone] = 0709876543
+  - counterparties[1][phone] = 0702223344
+
+Template issues (same as S1/S2):
+  - Empty Fordon A block; top Händelseförloppet = N/A; Motorfordon title
+  - Vittnen/Polisen sections fragmented across 10 pages (layout bug)
+
+Attachments:
+  - report_6a36a771e5dfea2b95bd90a2.pdf
+  - s3-counterparty-exists.html (this document)</pre>
+
+<p>
+  <a href="s2-foreign-driver.html">← السابق: S2 Foreign Driver</a>
+  ·
+  <a href="s4-accident-how-other.html">التالي: S4 Hur Skedde = Annat →</a>
+</p>
+
+<div class="footer">
+  S3 Counterparty Exists · Report 6a36a771e5dfea2b95bd90a2 · 2026-06-20
+</div>
+
+</body>
+</html>

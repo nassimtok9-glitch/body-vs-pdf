@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S5 — Collision With = Annat — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineKollision</a> /
+  S5 — Collision With = Annat
+</p>
+
+<h1>نواقص Body مقابل PDF — S5 Collision With = Annat</h1>
+<p>سينario Debug S5: <code>collision_with = annat</code> مع <code>collision_with_other</code> — نفس baseline S1 (Swedish driver، motpart واحد، <code>accident_how=backning</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineKollision</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S5 — Collision With = Annat (<code>kolliosn-s5</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a36b622e5dfea2b95bd91d1</code></dd>
+    <dt>PDF</dt><dd><code>report_6a36b622e5dfea2b95bd91d1.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>2026-06-20 · 18:47</dd>
+    <dt>مرجع الحقول</dt><dd><a href="https://github.com/YOUR_USERNAME/ih-insuranceapp/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-KOLLISION-FIELD-REFERENCE.html">MACHINE-KOLLISION-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-swedish-driver.html">S1 Swedish Driver</a> · <a href="s4-accident-how-other.html">S4 Hur Skedde = Annat</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا signature base64 كامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل <code>collision_with=annat</code> و <code>collision_with_other</code> مع باقي حقول S1.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <code>collision_with_other</code> يظهر تحت «Kollision med» — OK. لكن PDF <strong>22 صفحة</strong> مع تفتيت أوسع لـ Ja/Nej (أسوأ من S2–S4).
+  </div>
+</div>
+
+<h2>مقارنة مع S1</h2>
+<table>
+  <tr><th>البند</th><th>S1</th><th>S5</th></tr>
+  <tr><td><code>collision_with</code></td><td>annat_fordon → Annat fordon</td><td>annat + other → <span class="status-ok">OK</span> — Annat: …</td></tr>
+  <tr><td><code>collision_with_other</code></td><td>— (غير مُرسل)</td><td><span class="status-ok">OK</span> — يظهر في PDF</td></tr>
+  <tr><td><code>accident_how</code></td><td>backning</td><td>backning — نفس S1</td></tr>
+  <tr><td>motpart telefon</td><td>Missing <code>[0]</code></td><td>Missing <code>[0]</code></td></tr>
+  <tr><td>machine identity في PDF</td><td>Missing</td><td>Missing</td></tr>
+  <tr><td>Fordon A / N/A علوي</td><td>Artifact / Wrong</td><td>Artifact / Wrong</td></tr>
+  <tr><td>تخطيط PDF</td><td>2 صفحات</td><td><span class="status-layout">Layout</span> — <strong>22 صفحة</strong> (Ja/X/Nej مُجزّأ من Maskinen körbar فصاعداً)</td></tr>
+</table>
+
+<h2>مقارنة مع S4</h2>
+<table>
+  <tr><th>البند</th><th>S4</th><th>S5</th></tr>
+  <tr><td>فرع «Annat»</td><td><code>accident_how_other</code> — OK</td><td><code>collision_with_other</code> — OK</td></tr>
+  <tr><td>عدد صفحات PDF</td><td>10</td><td><strong>22</strong> — تفتيت أوسع</td></tr>
+</table>
+
+<h2>حقول S5 — OK في PDF (جديد/مؤكّد)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>collision_with</code></td>
+    <td>annat</td>
+    <td>Kollision med: Annat</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>collision_with_other</code></td>
+    <td>Container och tillfälligt byggstängsel.</td>
+    <td>Annat: Container och tillfälligt byggstängsel.</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<h2>حقول Step 1–3 — OK (مثل S1)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>accident_how</code></td><td>backning</td><td>Backning</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>driver_full_name</code>, <code>personal_id_number</code></td><td>Erik Svensson / 19850515-1234</td><td>Förarens namn / personnummer</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>counterparties[0]</code></td><td>fordon / XYZ789 / Anna Johansson</td><td>Motpart — typ/reg.nr/förare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>event_narrative</code> (أسفل)</td><td>نص كامل</td><td>Händelseförlopp</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص Backend PDF (مشتركة مع S1)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr><td><code>machine_identity[…]</code></td><td>gravmaskin / Volvo CE / EC220E / …</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>كامل الكتلة</td></tr>
+  <tr><td><code>organization_number</code></td><td>6990593003</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>Org.nr</td></tr>
+  <tr><td><code>counterparties[0][phone]</code></td><td>0709876543</td><td>غائب</td><td><span class="status-missing">Missing</span></td><td>Telefon motpart</td></tr>
+  <tr><td><code>event_narrative</code> (علوي)</td><td>نص كامل</td><td>Händelseförloppet: N/A</td><td><span class="status-wrong">Wrong</span></td><td>mapping خاطئ</td></tr>
+</table>
+
+<h2>أخطاء قالب PDF</h2>
+<table>
+  <tr><th>القسم</th><th>المشكلة</th><th>الحالة</th></tr>
+  <tr><td><span class="sv">Eget fordon (Fordon A)</span></td><td>فارغ — لا cars[]</td><td><span class="status-artifact">Artifact</span></td></tr>
+  <tr><td><span class="sv">Skadeanmälan - Motorfordon</span></td><td>عنوان generic</td><td><span class="status-artifact">Artifact</span></td></tr>
+  <tr><td>Maskinen körbar / Personskador / Egendom / Vittnen / Polisen</td><td>Ja, X, Nej على صفحات 2–20 منفصلة (22 صفحة إجمالاً)</td><td><span class="status-layout">Layout bug</span></td></tr>
+</table>
+
+<h2>ملخص Payload S5 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "machineKollision",
+  "report_category": "machine",
+  "swedish_driver_license": "Yes",
+  "personal_id_number": "19850515-1234",
+  "driver_full_name": "Erik Svensson",
+  "serial_number": "MK-99887",
+  "organization_number": "6990593003",
+  "machine_identity": { "machine_type": "gravmaskin", "machine_brand": "Volvo CE", ... },
+  "accident_how": "backning",
+  "collision_with": "annat",
+  "collision_with_other": "Container och tillfälligt byggstängsel.",
+  "counterparties[0]": {
+    "counterparty_type": "fordon",
+    "register_number": "XYZ789",
+    "driver_name": "Anna Johansson",
+    "phone": "0709876543"
+  },
+  "date": "20-06-2026",
+  "time": "18:47",
+  "witness_exist": "false",
+  "police": "false",
+  "files": ["images", "driving_license"],
+  "signature": "(truncated)"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF bugs (S5)</h2>
+<pre class="scenario">Report type: machineKollision (kolliosn Debug S5 — Collision With = Annat)
+Report ID: 6a36b622e5dfea2b95bd91d1
+Environment: insuranceapp3.azurewebsites.net
+Date: 2026-06-20 · time 18:47
+
+App sends collision-with-other branch correctly:
+  collision_with = annat
+  collision_with_other = Container och tillfälligt byggstängsel.
+
+PDF OK (S5-specific):
+  - Kollision med: Annat: Container och tillfälligt byggstängsel.
+
+Missing in PDF (sent in payload):
+  - Full machine_identity block, organization_number = 6990593003
+  - counterparties[0][phone] = 0709876543
+
+Template issues:
+  - Empty Fordon A block; top Händelseförloppet = N/A; Motorfordon title
+  - PDF is 22 pages; Ja/X/Nej checkboxes fragmented from Maskinen körbar through Polisen (worse than S2–S4 at 10 pages)
+
+Attachments:
+  - report_6a36b622e5dfea2b95bd91d1.pdf
+  - s5-collision-with-other.html (this document)</pre>
+
+<p>
+  <a href="s4-accident-how-other.html">← السابق: S4 Hur Skedde = Annat</a>
+  ·
+  <a href="s6-bad-visibility.html">التالي: S6 Dålig Sikt →</a>
+</p>
+
+<div class="footer">
+  S5 Collision With = Annat · Report 6a36b622e5dfea2b95bd91d1 · 2026-06-20
+</div>
+
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S10 — Personskador + Vittnen — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineKollision</a> /
+  S10 — Personskador + Vittnen
+</p>
+
+<h1>نواقص Body مقابل PDF — S10 Personskador + Vittnen</h1>
+<p>سينario Debug S10: <code>personal_injuries_exist=true</code> + <code>witness_exist=true</code> — دمج S9 (2× مصابين) + S8 (شاهد Anna Svensson).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineKollision</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S10 — Personskador + Vittnen (<code>kolliosn-s10</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a36bc68e5dfea2b95bd942a</code></dd>
+    <dt>PDF</dt><dd><code>report_6a36bc68e5dfea2b95bd942a.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>2026-06-20 · 19:14</dd>
+    <dt>مرجع الحقول</dt><dd><a href="https://github.com/YOUR_USERNAME/ih-insuranceapp/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-KOLLISION-FIELD-REFERENCE.html">MACHINE-KOLLISION-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s8-witnesses.html">S8 Vittnen Ja</a> · <a href="s9-personal-injuries.html">S9 Personskador Ja</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا signature base64 كامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل personskador (2×) + vittnen (1×) مع جميع الحقول — صحيح.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    Vittnen تظهر جزئياً (كS8) — لكن <strong>personal_injuries[] غائبة بالكامل</strong> (كS9). PDF 23 صفحة مع layout bug.
+  </div>
+</div>
+
+<h2>مقارنة S8 + S9 + S10</h2>
+<table>
+  <tr><th>البند</th><th>S8</th><th>S9</th><th>S10</th></tr>
+  <tr><td>Vittnen block (أعلى PDF)</td><td><span class="status-ok">OK</span> جزئي</td><td>—</td><td><span class="status-ok">OK</span> جزئي (Anna Svensson)</td></tr>
+  <tr><td><code>witnesses[0][personal_id_number]</code></td><td>Missing</td><td>—</td><td>Missing</td></tr>
+  <tr><td>Personskador Ja (Step 3)</td><td>Nej</td><td><span class="status-ok">Ja</span></td><td><span class="status-ok">Ja</span></td></tr>
+  <tr><td><code>personal_injuries[]</code></td><td>—</td><td><span class="status-missing">Missing</span></td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td>Personskador علوي</td><td>Nej OK</td><td><span class="status-wrong">Wrong</span></td><td><span class="status-wrong">Wrong</span></td></tr>
+  <tr><td>صفحات PDF</td><td>23</td><td>2</td><td>23</td></tr>
+</table>
+
+<h2>Vittnen — OK / Missing (كS8)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF (قسم Vittnen أعلى)</th><th>الحالة</th></tr>
+  <tr><td><code>witness_exist</code></td><td>true</td><td>Ja (صفحات 14–17 — layout)</td><td><span class="status-ok">OK</span> (قيمة)</td></tr>
+  <tr><td><code>witnesses[0][name]</code></td><td>Anna Svensson</td><td>Anna Svensson</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witnesses[0][phone]</code></td><td>0706667788</td><td>0706667788</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witnesses[0][email]</code></td><td>anna.svensson@test.se</td><td>anna.svensson@test.se</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witnesses[0][personal_id_number]</code></td><td>197707071234</td><td>Personnummer: <strong>-</strong></td><td><span class="status-missing">Missing</span></td></tr>
+</table>
+
+<h2>Personskador — OK جزئي / Missing (كS9)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>personal_injuries_exist</code> (Step 3)</td><td>true</td><td>Personskador: X <strong>Ja</strong> Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>personal_injuries_exist</code> (علوي)</td><td>true</td><td>Ja <strong>X</strong> Nej</td><td><span class="status-wrong">Wrong</span></td></tr>
+  <tr><td><code>personal_injuries[0]</code></td><td>Karin Johansson + 5 حقول</td><td>غائب بالكامل</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>personal_injuries[1]</code></td><td>Petter Lund + 5 حقول</td><td>غائب بالكامل</td><td><span class="status-missing">Missing</span></td></tr>
+</table>
+
+<h2>Layout / قالب</h2>
+<table>
+  <tr><th>القسم</th><th>المشكلة</th><th>الحالة</th></tr>
+  <tr><td>Vittnen قبل Kompletterande</td><td>ترتيب غير منطقي (كS8)</td><td><span class="status-wrong">Wrong</span></td></tr>
+  <tr><td>Ja/X/Nej (صفحات 2–21)</td><td>Maskinen körbar … Polisen/Vittnen مُجزّأ</td><td><span class="status-layout">Layout bug</span></td></tr>
+  <tr><td><span class="sv">Eget fordon (Fordon A)</span></td><td>فارغ</td><td><span class="status-artifact">Artifact</span></td></tr>
+</table>
+
+<h2>نواقص مشتركة مع S1</h2>
+<p>machine identity، org.nr، motpart telefon، Händelseförloppet N/A علوي، Motorfordon title — كجميع السينariوهات.</p>
+
+<h2>ملخص Payload S10 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "personal_injuries_exist": "true",
+  "personal_injuries[0]": { "Karin Johansson", ... },
+  "personal_injuries[1]": { "Petter Lund", ... },
+  "witness_exist": "true",
+  "witnesses[0]": {
+    "name": "Anna Svensson",
+    "email": "anna.svensson@test.se",
+    "phone": "0706667788",
+    "personal_id_number": "197707071234"
+  },
+  "date": "20-06-2026",
+  "time": "19:14",
+  "signature": "(truncated)"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF bugs (S10)</h2>
+<pre class="scenario">Report type: machineKollision (kolliosn Debug S10 — Personskador + Vittnen)
+Report ID: 6a36bc68e5dfea2b95bd942a
+Environment: insuranceapp3.azurewebsites.net
+Date: 2026-06-20 · time 19:14
+
+App sends both branches correctly:
+  personal_injuries_exist = true + personal_injuries[0..1] (Karin, Petter)
+  witness_exist = true + witnesses[0] (Anna Svensson)
+
+PDF OK (partial — same as S8):
+  - Early Vittnen: name, phone, email for Anna Svensson
+  - Step 3 Personskador: Ja
+
+PDF Missing:
+  - witnesses[0][personal_id_number] = 197707071234
+  - Entire personal_injuries[0] and [1] blocks (same as S9)
+
+PDF Wrong:
+  - Top Personskador shows Nej while payload has true
+  - Vittnen section ordering; 23-page Ja/X/Nej fragmentation
+
+Same as S1: machine_identity, org.nr, motpart phone, Fordon A, top N/A
+
+Attachments:
+  - report_6a36bc68e5dfea2b95bd942a.pdf
+  - s10-injuries-and-witnesses.html (this document)</pre>
+
+<p>
+  <a href="s9-personal-injuries.html">← السابق: S9 Personskador Ja</a>
+</p>
+
+<div class="footer">
+  S10 Personskador + Vittnen · Report 6a36bc68e5dfea2b95bd942a · 2026-06-20 · kolliosn S1–S10 complete
+</div>
+
+</body>
+</html>

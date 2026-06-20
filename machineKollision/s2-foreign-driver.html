@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S2 — Foreign Driver — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineKollision</a> /
+  S2 — Foreign Driver
+</p>
+
+<h1>نواقص Body مقابل PDF — S2 Foreign Driver</h1>
+<p>سينario Debug S2: förare <strong>utan svenskt körkort</strong> — <code>birth_date</code> + <code>license_issuing_country</code> بدلاً من <code>personal_id_number</code>.</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineKollision</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S2 — Foreign Driver</dd>
+    <dt>Report ID</dt><dd><code>6a367709e5dfea2b95bd8e04</code></dd>
+    <dt>PDF</dt><dd><code>report_6a367709e5dfea2b95bd8e04.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>2026-06-20 · 14:18</dd>
+    <dt>مرجع الحقول</dt><dd><a href="https://github.com/YOUR_USERNAME/ih-insuranceapp/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-KOLLISION-FIELD-REFERENCE.html">MACHINE-KOLLISION-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-swedish-driver.html">S1 Swedish Driver</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا signature base64 كامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل فرع foreign driver صحيحاً: <code>swedish_driver_license=No</code>, <code>birth_date</code>, <code>license_issuing_country=Norge</code>, بدون <code>personal_id_number</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    نفس نواقص S1 (machine identity) + <strong>خطأ Ja/Nej للkörkort</strong> + <strong>PDF 10 صفحات</strong> مع تفتيت Vittnen/Polisen.
+  </div>
+</div>
+
+<h2>مقارنة مع S1</h2>
+<table>
+  <tr><th>البند</th><th>S1</th><th>S2</th></tr>
+  <tr><td>machine identity في PDF</td><td>Missing</td><td>Missing (نفس المشكلة)</td></tr>
+  <tr><td>Fordon A فارغ</td><td>Artifact</td><td>Artifact</td></tr>
+  <tr><td>Händelseförloppet N/A (أعلى)</td><td>Wrong</td><td>Wrong</td></tr>
+  <tr><td>motpart phone</td><td>Missing</td><td>Missing</td></tr>
+  <tr><td><code>license_issuing_country</code></td><td>— (غير relevant)</td><td><span class="status-ok">OK</span> — Norge يظهر</td></tr>
+  <tr><td><code>swedish_driver_license</code></td><td>OK (Ja)</td><td><span class="status-wrong">Wrong</span> — PDF يعرض Ja بدل Nej</td></tr>
+  <tr><td>تخطيط PDF</td><td>2 صفحات</td><td><span class="status-layout">Layout</span> — 10 صفحات، Vittnen/Polisen مُجزّأ</td></tr>
+</table>
+
+<h2>حقول Foreign Driver — OK في PDF</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>لا <code>personal_id_number</code></td><td>— (غير مُرسل)</td><td>Person-/organisationsnummer: <code>-</code></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>birth_date</code></td><td>20-03-1988</td><td>Födelsedatum: 20-03-1988</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>license_issuing_country</code></td><td>Norge</td><td>Utfärdande land (körkort): Norge</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>driver_full_name</code></td><td>Erik Svensson</td><td>Förarens namn: Erik Svensson</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>phone</code> / <code>email</code></td><td>0701234567 / erik.svensson@test.se</td><td>Telefon / E-Post</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>أخطاء S2 — جديدة عن S1</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>swedish_driver_license</code></td>
+    <td><strong>No</strong></td>
+    <td>Svenskt körkort? + Gällande svenskt körkort: <strong>Ja X Nej</strong></td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>يجب Nej — foreign driver path</td>
+  </tr>
+  <tr>
+    <td><code>witness_exist</code> / <code>police</code></td>
+    <td>false / false</td>
+    <td>قسم Vittnen + Polisen informerad مُجزّأ على صفحات 1–10 (Ja / X / Nej منفصلة)</td>
+    <td><span class="status-layout">Layout bug</span></td>
+    <td>PDF pagination/rendering — S1 كان 2 صفحات فقط</td>
+  </tr>
+</table>
+
+<h2>نواقص مشتركة مع S1 (Backend PDF)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>machine_identity[machine_type]</code></td><td>gravmaskin</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>machine_identity[machine_brand]</code></td><td>Volvo CE</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>machine_identity[machine_model]</code></td><td>EC220E</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>machine_identity[machine_year]</code></td><td>2019</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>machine_identity[operating_hours]</code></td><td>4200</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>machine_identity[machine_insured]</code></td><td>true</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>machine_identity[insurance_company_name_text]</code></td><td>Trygg-Hansa Försäkring</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>organization_number</code></td><td>6990593003</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>counterparties[0][phone]</code></td><td>0709876543</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>event_narrative</code> (علوي)</td><td>نص كامل</td><td>Händelseförloppet: N/A</td><td><span class="status-wrong">Wrong</span></td></tr>
+</table>
+
+<h2>حقول Step 2–3 — OK (مثل S1)</h2>
+<p>motpart (typ/reg.nr/förare)، accident enums، underlag، händelseförlopp (أسفل)، skador، körbar Ja، personskador/egendom/vittnen/polis Nej — متطابقة مع Body (باستثناء layout Vittnen/Polisen).</p>
+
+<h2>أخطاء قالب PDF</h2>
+<table>
+  <tr><th>القسم</th><th>المشكلة</th><th>الحالة</th></tr>
+  <tr><td><span class="sv">Eget fordon (Fordon A)</span></td><td>فارغ — لا cars[]</td><td><span class="status-artifact">Artifact</span></td></tr>
+  <tr><td><span class="sv">Skadeanmälan - Motorfordon</span></td><td>عنوان generic</td><td><span class="status-artifact">Artifact</span></td></tr>
+  <tr><td>Vittnen / Polisen (صفحات 2–9)</td><td>Ja, X, Nej على صفحات منفصلة</td><td><span class="status-layout">Layout bug</span></td></tr>
+</table>
+
+<h2>ملخص Payload S2 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "machineKollision",
+  "report_category": "machine",
+  "swedish_driver_license": "No",
+  "birth_date": "20-03-1988",
+  "license_issuing_country": "Norge",
+  "driver_full_name": "Erik Svensson",
+  "phone": "0701234567",
+  "email": "erik.svensson@test.se",
+  "serial_number": "MK-99887",
+  "organization_number": "6990593003",
+  "machine_identity": { "machine_type": "gravmaskin", "machine_brand": "Volvo CE", ... },
+  "counterparties[0]": { "register_number": "XYZ789", "driver_name": "Anna Johansson", "phone": "0709876543" },
+  "date": "20-06-2026",
+  "time": "14:18",
+  "witness_exist": "false",
+  "police": "false",
+  "files": ["images", "driving_license"],
+  "signature": "(truncated)"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF bugs (S2)</h2>
+<pre class="scenario">Report type: machineKollision (kolliosn Debug S2 — Foreign Driver)
+Report ID: 6a367709e5dfea2b95bd8e04
+Environment: insuranceapp3.azurewebsites.net
+Date: 2026-06-20 · time 14:18
+
+App sends foreign-driver branch correctly:
+  swedish_driver_license = No
+  birth_date = 20-03-1988
+  license_issuing_country = Norge
+  (no personal_id_number)
+
+PDF WRONG (S2-specific):
+  - "Svenskt körkort?" and "Gällande svenskt körkort" show Ja — expected Nej
+  - PDF is 10 pages; Vittnen/Polisen sections fragmented (Ja/X/Nej on separate pages)
+
+PDF OK (S2-specific):
+  - Födelsedatum and Utfärdande land (körkort): Norge render correctly
+
+Same as S1 (still missing):
+  - Full machine_identity block, organization_number, counterparties[0][phone]
+  - Empty Fordon A block; top Händelseförloppet = N/A
+
+Attachments:
+  - report_6a367709e5dfea2b95bd8e04.pdf
+  - s2-foreign-driver.html (this document)</pre>
+
+<p>
+  <a href="s1-swedish-driver.html">← السابق: S1 Swedish Driver</a>
+  ·
+  <a href="s3-counterparty-exists.html">التالي: S3 Counterparty Exists →</a>
+</p>
+
+<div class="footer">
+  S2 Foreign Driver · Report 6a367709e5dfea2b95bd8e04 · 2026-06-20
+</div>
+
+</body>
+</html>
