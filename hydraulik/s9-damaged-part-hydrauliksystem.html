@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S9 — Skadad Del Hydrauliksystem — hydraulik Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">hydraulik</a> /
+  S9 — Skadad Del Hydrauliksystem
+</p>
+
+<h1>نواقص Body مقابل PDF — hydraulik S9 Skadad Del — Hydrauliksystem</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Hydraulik- och maskinskador (<code>hydraulik-s9</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = hydraulik</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S9 — Skadad Del — Hydrauliksystem (<code>hydraulik-s9</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a39b75d0e71b79d3e195ae8</code></dd>
+    <dt>PDF</dt><dd><code>report_6a39b75d0e71b79d3e195ae8.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>23-06-2026 · 01:29</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>الفرق عن S1</dt><dd><code>damaged_part=hydrauliksystem</code> · <code>serial_number=MHY-S9-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-HYDRAULIK-FIELD-REFERENCE.html">MACHINE-HYDRAULIK-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-HYDRAULIK-test-cases.html">MACHINE-HYDRAULIK-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">hydraulik S1</a> (<code>damaged_part=hydraulslang</code>) · <a href="s8-failure-event-annat.html">S8</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    baseline S1 مع <code>damaged_part=hydrauliksystem</code>، <code>failure_event=lackage</code>، <code>serial_number=MHY-S9-001</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <strong>الفرق الرئيسي S9:</strong> Skadad del: <strong>Hydrauliksystem</strong> — <span class="status-ok">OK</span>. Vad hände: Läckage — OK. باقي النواقص مثل S1–S8: underskrift بدون صورة، Datum 22-06-2026 ≠ Skadedatum 23-06-2026، layout Ja X Nej.
+  </div>
+</div>
+
+<h2>التركيز — S9 vs S1 (damaged_part)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S9 Body</th><th>S9 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>damaged_part</code></td>
+    <td>hydraulslang</td>
+    <td>hydrauliksystem</td>
+    <td>Skadad del: Hydrauliksystem</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>failure_event</code></td>
+    <td>lackage</td>
+    <td>lackage</td>
+    <td>Vad hände med maskinen: Läckage</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MHY-S1-001</td>
+    <td>MHY-S9-001</td>
+    <td>Serienummer: MHY-S9-001</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<h2>تغطية damaged_part (hydraulik v1 — جزئي)</h2>
+<table>
+  <tr><th>API</th><th>سينario</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>hydraulslang</code></td><td>S1, S8</td><td>Hydraulslang</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>hydrauliksystem</code></td><td>S9</td><td>Hydrauliksystem</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>motor</code> … <code>okant</code></td><td>—</td><td>—</td><td><em>بانتظار سينariوهات إضافية</em></td></tr>
+</table>
+
+<h2>حقول متطابقة (OK) — باقي S1 baseline</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>23-06-2026 / 01:29</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>reporter_role</code></td><td>forare</td><td>Rapportörens roll: Förare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_sudden_unexpected</code></td><td>ja</td><td>Plötsligt och oförutsett: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_activity_at_failure</code></td><td>i_arbete</td><td>Maskinens aktivitet: I arbete</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>service_per_interval</code></td><td>nej</td><td>Service enligt intervall: Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>warning_signs_before_failure</code></td><td>false</td><td>Varningstecken innan felet: Ja X Nej</td><td><span class="status-layout">Layout</span> — القيمة Nej صحيحة</td></tr>
+  <tr><td><code>operating_hours_at_failure</code></td><td>3150</td><td>Drifttimmar vid fel: 3150</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>similar_problems_before</code></td><td>false</td><td>Liknande problem tidigare: Ja X Nej</td><td><span class="status-layout">Layout</span> — القيمة Nej صحيحة</td></tr>
+  <tr><td><code>correct_fluid_level</code></td><td>true</td><td>Rätt vätskenivå: X Ja Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_drivable</code></td><td>true</td><td>Maskinen körbar: X Ja Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>workshop_examined</code></td><td>false</td><td>Undersökt av verkstad: Ja X Nej</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend) — نفس S1–S8</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL في fields</td>
+    <td>صفحة 2 — تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S8</td>
+  </tr>
+  <tr>
+    <td>Datum (صفحة التوقيع)</td>
+    <td>23-06-2026</td>
+    <td>22-06-2026</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>نفس S1–S8</td>
+  </tr>
+  <tr>
+    <td>Ja / X / Nej booleans</td>
+    <td>—</td>
+    <td>Varningstecken, Liknande problem, …</td>
+    <td><span class="status-layout">Layout</span></td>
+    <td>القيم صحيحة؛ تنسيق X مربك</td>
+  </tr>
+</table>
+
+<h2>ملخص Payload S9 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "hydraulik",
+  "serial_number": "MHY-S9-001",
+  "reporter_role": "forare",
+  "failure_event": "lackage",
+  "damaged_part": "hydrauliksystem",
+  "damage_sudden_unexpected": "ja",
+  "machine_activity_at_failure": "i_arbete",
+  "service_per_interval": "nej",
+  "warning_signs_before_failure": false,
+  "similar_problems_before": false,
+  "correct_fluid_level": true,
+  "machine_drivable": true,
+  "workshop_examined": false,
+  "date": "23-06-2026",
+  "time": "01:29",
+  "files": []
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (hydraulik S9)</h2>
+<pre class="scenario">Report type: hydraulik (Debug S9 — Skadad Del Hydrauliksystem)
+Report ID: 6a39b75d0e71b79d3e195ae8
+Environment: insuranceapp3.azurewebsites.net
+Date: 23-06-2026 · time 01:29
+
+S9-specific OK:
+  - damaged_part=hydrauliksystem → Skadad del: Hydrauliksystem ✓
+  - failure_event=lackage → Vad hände med maskinen: Läckage ✓
+  - serial_number MHY-S9-001 ✓
+
+Same issues as S1–S8:
+  1. signature image missing
+  2. Signature date 22-06-2026 vs Skadedatum 23-06-2026
+  3. Ja X Nej layout on boolean fields (values correct)
+
+Attachment: report_6a39b75d0e71b79d3e195ae8.pdf</pre>
+
+<div class="footer">
+  hydraulik S9 Skadad Del Hydrauliksystem · Report 6a39b75d0e71b79d3e195ae8 · 2026-06-23
+</div>
+
+</body>
+</html>

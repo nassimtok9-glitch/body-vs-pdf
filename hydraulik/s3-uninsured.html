@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S3 — Försäkrad Nej — hydraulik Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">hydraulik</a> /
+  S3 — Försäkrad Nej
+</p>
+
+<h1>نواقص Body مقابل PDF — hydraulik S3 Försäkrad Nej</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Hydraulik- och maskinskador (<code>hydraulik-s3</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = hydraulik</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S3 — Försäkrad Nej (<code>hydraulik-s3</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a39b5951da562c1dc92e46b</code></dd>
+    <dt>PDF</dt><dd><code>report_6a39b5951da562c1dc92e46b.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>23-06-2026 · 01:22</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>1</strong> (S1/S2 كانتا 2)</dd>
+    <dt>عدد الحقول</dt><dd><strong>31</strong> (بدون <code>insurance_company_name_text</code>)</dd>
+    <dt>الفرق عن S1</dt><dd><code>machine_insured=false</code> — لا försäkringsbolag · <code>serial_number=MHY-S3-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-HYDRAULIK-FIELD-REFERENCE.html">MACHINE-HYDRAULIK-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">hydraulik S1</a> · <a href="../machineGlass/s7-uninsured.html">machineGlass S7</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>machine_insured=false</code> — لا <code>insurance_company_name_text</code>. <code>organization_number=6990593003</code> ما زال مُرسلًا.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    غياب Försäkringsbolag — <span class="status-ok">OK</span>. Org.nr — <span class="status-ok">OK</span>.<br />
+    Försäkrad: <code>Ja X Nej</code> (مقابل S1 <code>X Ja Nej</code>) — يميّز Nej عن S1 لكن <span class="status-layout">Layout</span> مربك. underskrift بدون صورة · Datum 22-06-2026.
+  </div>
+</div>
+
+<h2>التركيز — S3 vs S1 (försäkring)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S3 Body</th><th>S3 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>machine_identity[machine_insured]</code></td>
+    <td>true</td>
+    <td>false</td>
+    <td>Försäkrad: Ja X Nej</td>
+    <td><span class="status-layout">Layout</span> — يختلف عن S1 (<code>X Ja Nej</code>)؛ ي imply Nej</td>
+  </tr>
+  <tr>
+    <td><code>insurance_company_name_text</code></td>
+    <td>If Skadeförsäkring</td>
+    <td>—</td>
+    <td>لا سطر Försäkringsbolag</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>organization_number</code></td>
+    <td>6990593003</td>
+    <td>6990593003</td>
+    <td>Org.nr: 6990593003</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MHY-S1-001</td>
+    <td>MHY-S3-001</td>
+    <td>Serienummer: MHY-S3-001</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<h2>حقول متطابقة (OK) — باقي S1 baseline</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>hydraulik</td><td>Hydraulik- och maskinskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>23-06-2026 / 01:22</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_type]</code></td><td>gravmaskin</td><td>Maskintyp: Gravmaskin</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>failure_event</code> … <code>workshop_examined</code></td><td>lackage … false</td><td>Kompletterande failure fields</td><td><span class="status-ok">OK</span> — انظر <a href="s1-happy-path.html">S1</a></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend)</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL في fields</td>
+    <td>تسميات فقط (نفس الصفحة)</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>PDF صفحة واحدة — لا صورة توقيع</td>
+  </tr>
+  <tr>
+    <td>Datum (underskrift)</td>
+    <td>23-06-2026</td>
+    <td>22-06-2026</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>نفس S1/S2</td>
+  </tr>
+  <tr>
+    <td>Försäkrad Ja/Nej</td>
+    <td>false</td>
+    <td>Ja X Nej</td>
+    <td><span class="status-layout">Layout</span></td>
+    <td>يميّز عن S1 لكن غير واضح للقارئ</td>
+  </tr>
+</table>
+
+<h2>ملخص Payload S3 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "hydraulik",
+  "serial_number": "MHY-S3-001",
+  "organization_number": "6990593003",
+  "machine_identity": {
+    "machine_type": "gravmaskin",
+    "machine_insured": false
+  },
+  "NOT sent when uninsured": ["insurance_company_name_text"],
+  "reporter_role": "forare",
+  "failure_event": "lackage",
+  "machine_drivable": true,
+  "workshop_examined": false,
+  "date": "23-06-2026",
+  "time": "01:22",
+  "files": []
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (hydraulik S3)</h2>
+<pre class="scenario">Report type: hydraulik (Debug S3 — Försäkrad Nej)
+Report ID: 6a39b5951da562c1dc92e46b
+Environment: insuranceapp3.azurewebsites.net
+Date: 23-06-2026 · time 01:22
+
+S3-specific OK:
+  - machine_insured=false — no insurance_company_name_text in Body ✓
+  - PDF omits Försäkringsbolag line ✓
+  - organization_number still shown (6990593003) ✓
+  - serial_number MHY-S3-001 ✓
+
+S3-specific note:
+  - Försäkrad row: "Ja X Nej" vs S1 "X Ja Nej" — distinguishes Nej but layout confusing
+
+Same issues as S1/S2:
+  1. signature image missing
+  2. Signature date 22-06-2026 vs Skadedatum 23-06-2026
+  3. Layout "X" on Ja/Nej rows
+
+Attachment: report_6a39b5951da562c1dc92e46b.pdf (1 page)</pre>
+
+<div class="footer">
+  hydraulik S3 Försäkrad Nej · Report 6a39b5951da562c1dc92e46b · 2026-06-23
+</div>
+
+</body>
+</html>

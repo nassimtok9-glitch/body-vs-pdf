@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>hydraulik — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  hydraulik
+</p>
+
+<h1>hydraulik — Body vs PDF</h1>
+<p>مقارنات payload/PDF لسينariوهات Debug Hydraulik- och maskinskador (<code>hydraulik-s1</code> … <code>hydraulik-s18</code>).</p>
+
+<table>
+  <tr>
+    <th>السينario</th>
+    <th>Report ID</th>
+    <th>PDF</th>
+    <th>تقرير الفجوات</th>
+  </tr>
+  <tr>
+    <td><strong>S1</strong> — Happy Path — Reporter Förare</td>
+    <td><code>6a39b51d1da562c1dc92e3ab</code></td>
+    <td><code>report_6a39b51d1da562c1dc92e3ab.pdf</code></td>
+    <td><a href="s1-happy-path.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S2</strong> — Maskintyp Annat</td>
+    <td><code>6a39b5621da562c1dc92e40b</code></td>
+    <td><code>report_6a39b5621da562c1dc92e40b.pdf</code></td>
+    <td><a href="s2-machine-type-annan.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S3</strong> — Försäkrad Nej</td>
+    <td><code>6a39b5951da562c1dc92e46b</code></td>
+    <td><code>report_6a39b5951da562c1dc92e46b.pdf</code></td>
+    <td><a href="s3-uninsured.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S4</strong> — Reporter Ägare</td>
+    <td><code>6a39b5cc1da562c1dc92e4cb</code></td>
+    <td><code>report_6a39b5cc1da562c1dc92e4cb.pdf</code></td>
+    <td><a href="s4-reporter-agare.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S5</strong> — Reporter Arbetsledare</td>
+    <td><code>6a39b61d1da562c1dc92e510</code></td>
+    <td><code>report_6a39b61d1da562c1dc92e510.pdf</code></td>
+    <td><a href="s5-reporter-arbetsledare.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S6</strong> — Reporter Företagskontakt</td>
+    <td><code>6a39b6561da562c1dc92e55e</code></td>
+    <td><code>report_6a39b6561da562c1dc92e55e.pdf</code></td>
+    <td><a href="s6-reporter-foretag-kontakt.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S7</strong> — Reporter Annan</td>
+    <td><code>6a39b6a11da562c1dc92e5bd</code></td>
+    <td><code>report_6a39b6a11da562c1dc92e5bd.pdf</code></td>
+    <td><a href="s7-reporter-annan.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S8</strong> — Failure Event Annat</td>
+    <td><code>6a39b7330e71b79d3e195aa6</code></td>
+    <td><code>report_6a39b7330e71b79d3e195aa6.pdf</code></td>
+    <td><a href="s8-failure-event-annat.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S9</strong> — Skadad Del — Hydrauliksystem</td>
+    <td><code>6a39b75d0e71b79d3e195ae8</code></td>
+    <td><code>report_6a39b75d0e71b79d3e195ae8.pdf</code></td>
+    <td><a href="s9-damaged-part-hydrauliksystem.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S10</strong> — Plötslig Nej</td>
+    <td><code>6a39b79a0e71b79d3e195b5e</code></td>
+    <td><code>report_6a39b79a0e71b79d3e195b5e.pdf</code></td>
+    <td><a href="s10-plotslig-nej.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S11</strong> — Aktivitet Tung belastning</td>
+    <td><code>6a39b7ca0e71b79d3e195bb4</code></td>
+    <td><code>report_6a39b7ca0e71b79d3e195bb4.pdf</code></td>
+    <td><a href="s11-aktivitet-tung-belastning.html">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td>S12 — S18</td>
+    <td colspan="3"><em>بانتظار submit + PDF من staging</em></td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>فجوات PDF المتكررة (S1–S11):</strong> توقيع بدون صورة · Datum 22-06-2026 ≠ Skadedatum 23-06-2026 · layout Ja X Nej · «Förarens namn» ثابت (S4–S7). <strong>S8–S11:</strong> فروع failure/damaged/sudden/activity OK في PDF.
+</div>
+
+<div class="footer">
+  hydraulik Body vs PDF · 11/18 · 2026-06-23
+</div>
+
+</body>
+</html>
