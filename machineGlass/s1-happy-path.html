@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S1 — Happy Path — machineGlass Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineGlass</a> /
+  S1 — Happy Path
+</p>
+
+<h1>نواقص Body مقابل PDF — machineGlass S1 Happy Path</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Glas- och plåtskador (<code>glas-s1</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineGlass</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S1 — Happy Path — Reporter Förare (<code>glas-s1</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3953abd61e0fc1a293ccd5</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3953abd61e0fc1a293ccd5.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 18:20</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-GLASS-FIELD-REFERENCE.html">MACHINE-GLASS-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-GLASS-test-cases.html">MACHINE-GLASS-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="../machineBrand/s1-happy-path.html">machineBrand S1</a> · <a href="../valtning/s1-swedish-driver.html">valtning S1</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    37 حقلًا — مسار S1 كامل: machine identity، <code>reporter_role=forare</code>، safety ja، حقول glass الخطوة 2 (<code>damage_cause</code>, <code>damaged_location</code>, <code>damage_type</code>, <code>visibility_conditions</code>, <code>machine_work_state</code>, <code>surface_type</code>)، <code>damage_description</code>، step3 كلها Nej، <code>machine_drivable=true</code>. بدون <code>driving_license</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    قالب <strong>Glas- och plåtskador</strong> يعرض حقول glass في Kompletterande <strong>بشكل صحيح</strong>. لكن <strong>Händelseförloppet</strong> العلوي = N/A رغم إرسال <code>damage_description</code> (يظهر فقط في Skadebeskrivning). أقسام علوية <strong>körkort / polis / personskador</strong> بتخطيط «Ja X Nej» مربك. التوقيع بدون صورة.
+  </div>
+</div>
+
+<h2>مقارنة مع machineBrand S1</h2>
+<table>
+  <tr><th>البند</th><th>machineBrand S1</th><th>machineGlass S1</th></tr>
+  <tr><td>عنوان PDF</td><td>Brandskador</td><td><span class="status-ok">Glas- och plåtskador</span></td></tr>
+  <tr><td>حقول الخطوة 2</td><td>damage_cause, damaged_parts, appearance…</td><td><span class="status-ok">damage_cause, damaged_location, damage_type, visibility, work_state, surface</span></td></tr>
+  <tr><td>نص الحدث</td><td><code>event_narrative</code> في Händelseförloppet</td><td><code>damage_description</code> في Skadebeskrivning فقط؛ علوي N/A</td></tr>
+  <tr><td><code>police</code> في Body</td><td>ممنوع (لا يُرسل)</td><td><span class="status-ok">يُرسل</span> (<code>false</code>) — قسم Polisen informerad أسفل OK</td></tr>
+  <tr><td>motpart / vittnen</td><td>لا في brand</td><td><span class="status-ok">has_counterparty=false</span> → Motpart finns Nej</td></tr>
+  <tr><td>عدد صفحات</td><td>2</td><td>2</td></tr>
+</table>
+
+<h2>منطق الحكم</h2>
+<table>
+  <tr><th>الحالة</th><th>المعنى</th><th>المسؤول المرجّح</th></tr>
+  <tr><td><span class="status-ok">OK</span></td><td>القيمة في Body وتظهر في PDF بشكل صحيح</td><td>—</td></tr>
+  <tr><td><span class="status-missing">Missing</span></td><td>مُرسل في Body وغائب من PDF</td><td>Backend PDF template</td></tr>
+  <tr><td><span class="status-wrong">Wrong</span></td><td>قيمة خاطئة أو تناقض مع Body</td><td>Backend PDF mapping</td></tr>
+  <tr><td><span class="status-artifact">Artifact</span></td><td>قسم لا ينتمي لمسار machineGlass v1</td><td>Backend PDF template</td></tr>
+  <tr><td><span class="status-layout">Layout</span></td><td>Ja / X / Nej أو تكرار مربك</td><td>Backend PDF layout</td></tr>
+</table>
+
+<h2>حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>machineGlass</td><td>Skadeanmälningstyp: Glas- och plåtskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>22-06-2026 / 18:20</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>address</code> / <code>post_number_post_address</code></td><td>Virkesvägen 10… / 12030</td><td>Skadeplats + Postnr 12030</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_type]</code></td><td>hjullastare</td><td>Maskintyp: Hjullastare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>serial_number</code></td><td>MGL-S1-001</td><td>Serienummer: MGL-S1-001</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_brand/model/year]</code></td><td>Volvo CE / L90H / 2020</td><td>Märke / Modell / Årsmodell</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[operating_hours]</code></td><td>3150</td><td>Drifttimmar: 3150</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_insured]</code></td><td>true</td><td>Försäkrad: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>organization_number</code></td><td>6990593003</td><td>Org.nr: 6990593003</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[insurance_company_name_text]</code></td><td>If Skadeförsäkring</td><td>Försäkringsbolag</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>ownership_type</code></td><td>agd</td><td>Ägande/leasing: Ägd</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>reporter_role</code></td><td>forare</td><td>Rapportörens roll: Förare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>driver_full_name</code> / <code>personal_id_number</code></td><td>QA Glass S1 / 198505151234</td><td>Förarens namn / personnummer</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>phone</code> / <code>email</code></td><td>0704567890 / qa.glass.s1@example.com</td><td>Telefon / E-Post</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>Säkerhetsrutiner följda: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_cause</code></td><td>stenskott</td><td>Skadeorsak: Stenskott</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damaged_location</code></td><td>vindruta</td><td>Skadad plats: Vindruta</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_type</code></td><td>bada</td><td>Typ av skada: Båda</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>visibility_conditions</code></td><td>god_sikt</td><td>Siktförhållanden: God sikt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_work_state</code></td><td>i_arbete</td><td>Maskinens tillstånd: I arbete</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>surface_type</code></td><td>grus</td><td>Underlag: Grus</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_description</code></td><td>Spricka i vindrutan…</td><td>Skadebeskrivning (Kompletterande)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>has_counterparty</code></td><td>false</td><td>Motpart finns: Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witness_exist</code></td><td>false</td><td>Vittnen finns: Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>personal_injuries_exist</code></td><td>false</td><td>Personskador (أسفل): Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>third_party_property_damage_exist</code></td><td>false</td><td>Skada på annans egendom: Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>police</code></td><td>false</td><td>Polisen informerad: Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_drivable</code></td><td>true</td><td>Maskinen körbar: Ja</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend)</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>damage_description</code> → Händelseförloppet (علوي)</td>
+    <td>نص كامل مُرسل</td>
+    <td><strong>N/A</strong></td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>machineGlass لا يستخدم <code>event_narrative</code> — يجب عرض <code>damage_description</code> في القسم العلوي أو إخفاء Händelseförloppet</td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL في fields</td>
+    <td>صفحة 2 — تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>بدون صورة توقيع؛ <code>files: []</code></td>
+  </tr>
+  <tr>
+    <td><code>images</code></td>
+    <td>غير مرفق في S1</td>
+    <td>لا bilagor</td>
+    <td><span class="status-ok">N/A</span></td>
+    <td>S1 baseline لا يرسل صورًا (متوقع)</td>
+  </tr>
+  <tr>
+    <td><code>location[latitude/longitude]</code></td>
+    <td>59.3293 / 18.0686</td>
+    <td>غير معروض صراحة</td>
+    <td><span class="status-ok">N/A</span></td>
+    <td>العنوان النصي يكفي في PDF</td>
+  </tr>
+</table>
+
+<h2>أقسام Artifact / Layout (قالب PDF)</h2>
+<table>
+  <tr><th>القسم في PDF</th><th>Body</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td>Känner polisen till händelsen? (أعلى)</td>
+    <td><code>police=false</code></td>
+    <td><span class="status-layout">Layout</span></td>
+    <td>«Ja X Nej» — القيمة الصحيحة في «Polisen informerad» أسفل (Nej)</td>
+  </tr>
+  <tr>
+    <td>Personskador (أعلى الصفحة)</td>
+    <td>false</td>
+    <td><span class="status-layout">Layout</span></td>
+    <td>«Ja X Nej» — مكرر؛ القيمة الصحيحة في الأسفل</td>
+  </tr>
+  <tr>
+    <td>Svenskt körkort? / Födelsedatum</td>
+    <td>لا <code>swedish_driver_license</code></td>
+    <td><span class="status-artifact">Artifact</span></td>
+    <td>مسار <code>reporter_role</code> — ليس körkort block</td>
+  </tr>
+  <tr>
+    <td>Gällande svenskt körkort: Ja X Nej</td>
+    <td>—</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>يعرض خيارات رخصة رغم عدم الإرسال</td>
+  </tr>
+  <tr>
+    <td>Försäkrad: X Ja Nej</td>
+    <td>true</td>
+    <td><span class="status-layout">Layout</span></td>
+    <td>علامة X بجانب Ja مربكة (نفس brand)</td>
+  </tr>
+  <tr>
+    <td>Maskinen körbar: X Ja Nej</td>
+    <td>true</td>
+    <td><span class="status-layout">Layout</span></td>
+    <td>علامة X قبل Ja</td>
+  </tr>
+</table>
+
+<h2>ملخص Payload S1 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "machineGlass",
+  "report_category": "machine",
+  "serial_number": "MGL-S1-001",
+  "organization_number": "6990593003",
+  "machine_identity": {
+    "machine_type": "hjullastare",
+    "machine_brand": "Volvo CE",
+    "machine_model": "L90H",
+    "machine_year": "2020",
+    "operating_hours": "3150",
+    "machine_insured": true,
+    "insurance_company_name_text": "If Skadeförsäkring"
+  },
+  "ownership_type": "agd",
+  "reporter_role": "forare",
+  "driver_full_name": "QA Glass S1",
+  "personal_id_number": "198505151234",
+  "safety_procedures_followed": "ja",
+  "damage_cause": "stenskott",
+  "damaged_location": "vindruta",
+  "damage_type": "bada",
+  "visibility_conditions": "god_sikt",
+  "machine_work_state": "i_arbete",
+  "surface_type": "grus",
+  "damage_description": "Spricka i vindrutan efter stenskott…",
+  "has_counterparty": false,
+  "witness_exist": false,
+  "personal_injuries_exist": false,
+  "third_party_property_damage_exist": false,
+  "police": false,
+  "machine_drivable": true,
+  "date": "22-06-2026",
+  "time": "18:20",
+  "location": { "lat": 59.3293, "lng": 18.0686, "address": "Byggarbetsplats Hammarby Sjöstad…" },
+  "NOT sent": ["swedish_driver_license", "driving_license", "event_narrative", "witnesses[]", "counterparties[]", "needs_towing"]
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF bugs (machineGlass S1)</h2>
+<pre class="scenario">Report type: machineGlass (Glas- och plåtskador Debug S1 — Happy Path)
+Report ID: 6a3953abd61e0fc1a293ccd5
+Environment: insuranceapp3.azurewebsites.net
+Date: 22-06-2026 · time 18:20
+
+App sends machineGlass S1 correctly:
+  - Full machine identity + org.nr + insurance
+  - reporter_role=forare (no swedish_driver_license — by design v1)
+  - safety_procedures_followed=ja
+  - Glass step2: damage_cause, damaged_location, damage_type, visibility, work_state, surface
+  - damage_description (NOT event_narrative)
+  - step3: has_counterparty/witness/injuries/third_party/police=false, drivable=true
+  - signature in fields; no images in S1 baseline
+
+PDF OK (Glas template):
+  - Title: Skadeanmälan - Maskin · Glas- och plåtskador
+  - Full Egen maskin block
+  - Kompletterande: reporter role, ownership, safety, ALL glass-specific fields
+  - Skadebeskrivning shows damage_description
+  - Step3 Ja/Nej blocks (motpart, vittnen, personskador, egendom, polis, körbar)
+  - 2 pages only
+
+Issues in PDF:
+  1. Händelseförloppet (top) = N/A — should show damage_description OR hide section
+  2. Artifact: Svenskt körkort / Födelsedatum (not used on machineGlass v1)
+  3. Layout: duplicate "Ja X Nej" summary rows at top (polis, personskador, körkort)
+  4. Layout: "X" marker on Försäkrad and Körbar booleans
+  5. signature image missing on page 2 (labels only)
+
+Attachment: report_6a3953abd61e0fc1a293ccd5.pdf</pre>
+
+<div class="footer">
+  machineGlass S1 Happy Path · Report 6a3953abd61e0fc1a293ccd5 · 2026-06-22
+</div>
+
+</body>
+</html>

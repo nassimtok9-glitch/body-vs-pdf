@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S17 — Ej Körbar — machineGlass Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineGlass</a> /
+  S17 — Ej Körbar
+</p>
+
+<h1>نواقص Body مقابل PDF — machineGlass S17 Ej Körbar</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Glas- och plåtskador (<code>glas-s17</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineGlass</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S17 — Ej Körbar (<code>glas-s17</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a395985d61e0fc1a293d15c</code></dd>
+    <dt>PDF</dt><dd><code>report_6a395985d61e0fc1a293d15c.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 18:49</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>الفرق عن S1</dt><dd><code>machine_drivable=false</code> · <code>serial_number=MGL-S17-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-GLASS-FIELD-REFERENCE.html">MACHINE-GLASS-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">S1 (körbar true)</a> · <a href="../machineBrand/s17-not-drivable.html">machineBrand S17</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>machine_drivable=false</code> — لا <code>needs_towing</code> (ممنوع في machineGlass v1).
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    Maskinen körbar: <code>Ja X Nej</code> — يميّز عن S1 (<code>X Ja Nej</code>) لكن <span class="status-layout">Layout</span> غامض (نمط S7/S16/machineBrand S17).
+  </div>
+</div>
+
+<h2>التركيز — S17 vs S1 (machine_drivable)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S17 Body</th><th>S17 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>machine_drivable</code></td>
+    <td>true</td>
+    <td>false</td>
+    <td>Maskinen körbar: Ja X Nej</td>
+    <td><span class="status-layout">Layout</span></td>
+  </tr>
+  <tr>
+    <td><code>needs_towing</code></td>
+    <td>—</td>
+    <td>غير مُرسل</td>
+    <td>لا حقل bärgning</td>
+    <td><span class="status-ok">OK</span> (v1 forbidden)</td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MGL-S1-001</td>
+    <td>MGL-S17-001</td>
+    <td>Serienummer: MGL-S17-001</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>مقارنة checkbox:</strong><br />
+  S1 (true): <code>Maskinen körbar: X Ja Nej</code><br />
+  S17 (false): <code>Maskinen körbar: Ja X Nej</code><br />
+  موضع X يتغيّر — يُفضّل نص صريح «Nej» كباقي حقول Kompletterande enum (مثل safety Nej).
+</div>
+
+<h2>حقول glass + step3 (مطابقة S1)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>machine identity + reporter + safety + خطوة 2</td><td>baseline S1</td><td>Kompletterande</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>step3 booleans (motpart/vittnen/…)</td><td>false</td><td>Ja X Nej (Nej مُشار)</td><td><span class="status-layout">Layout</span> (مشترك)</td></tr>
+  <tr><td><code>damage_description</code></td><td>Spricka i vindrutan…</td><td>Skadebeskrivning</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص S17 + مشتركة</h2>
+<table>
+  <tr><th>البند</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>machine_drivable</code> (عرض صريح)</td>
+    <td>false</td>
+    <td>Ja X Nej</td>
+    <td><span class="status-layout">Layout</span></td>
+  </tr>
+  <tr>
+    <td><code>damage_description</code> → Händelseförloppet</td>
+    <td>مُرسل</td>
+    <td>N/A</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>مُرسل</td>
+    <td>تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td>Polisen / Svenskt körkort</td>
+    <td>غير مُرسل</td>
+    <td>أعلى PDF</td>
+    <td><span class="status-artifact">Artifact</span></td>
+  </tr>
+</table>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineGlass S17)</h2>
+<pre class="scenario">Report type: machineGlass (Glas- och plåtskador Debug S17 — Ej Körbar)
+Report ID: 6a395985d61e0fc1a293d15c
+Environment: insuranceapp3.azurewebsites.net
+Date: 22-06-2026 · time 18:49
+
+App sends S17 correctly:
+  - machine_drivable=false
+  - NO needs_towing (forbidden in machineGlass v1)
+  - serial_number=MGL-S17-001
+
+PDF Layout issue (S17-specific nuance):
+  - Maskinen körbar: "Ja X Nej" for false
+    vs S1 true "X Ja Nej"
+  - Recommend explicit "Nej" label in Kompletterande
+  - Same pattern as machineBrand S17 and machineGlass S7 (Försäkrad)
+
+No needs_towing field expected — OK
+
+Same issues as S1–S16:
+  - Händelseförloppet = N/A
+  - Artifact: Svenskt körkort block
+  - signature image missing on page 2
+
+Attachment: report_6a395985d61e0fc1a293d15c.pdf</pre>
+
+<div class="footer">
+  machineGlass S17 Ej Körbar · Report 6a395985d61e0fc1a293d15c · 2026-06-22
+</div>
+
+</body>
+</html>

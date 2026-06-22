@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S9 — Safety Okänt — machineGlass Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineGlass</a> /
+  S9 — Safety Okänt
+</p>
+
+<h1>نواقص Body مقابل PDF — machineGlass S9 Safety Okänt</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Glas- och plåtskador (<code>glas-s9</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineGlass</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S9 — Safety Okänt (<code>glas-s9</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3957d4d61e0fc1a293cf3d</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3957d4d61e0fc1a293cf3d.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 18:42</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>عدد الحقول</dt><dd><strong>39</strong> (+ comment عند okant)</dd>
+    <dt>الفرق عن S1</dt><dd><code>safety_procedures_followed=okant</code> + <code>safety_procedures_comment</code> · <code>serial_number=MGL-S9-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-GLASS-FIELD-REFERENCE.html">MACHINE-GLASS-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s8-safety-nej.html">S8 (nej)</a> · <a href="../machineBrand/s9-safety-okant.html">machineBrand S9</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>safety_procedures_followed=okant</code> + <code>safety_procedures_comment</code> = «Föraren kunde inte bekräfta vilka rutiner som följdes.»
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <strong>كل حقول safety — OK:</strong> Okänt + «Kommentar säkerhetsrutiner» مع النص الكامل.<br />
+    لا فجوات خاصة بـ S9 — نفس نواقص S1–S8 المشتركة.
+  </div>
+</div>
+
+<h2>التركيز — S9 vs S8 vs S1 (safety branches)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1</th><th>S8</th><th>S9 Body</th><th>S9 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>safety_procedures_followed</code></td>
+    <td>ja</td>
+    <td>nej</td>
+    <td>okant</td>
+    <td>Säkerhetsrutiner följda: Okänt</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>safety_procedures_not_followed_description</code></td>
+    <td>—</td>
+    <td>Skyddsskärm…</td>
+    <td>—</td>
+    <td>—</td>
+    <td><span class="status-ok">N/A</span></td>
+  </tr>
+  <tr>
+    <td><code>safety_procedures_comment</code></td>
+    <td>—</td>
+    <td>—</td>
+    <td>Föraren kunde inte…</td>
+    <td>Kommentar säkerhetsrutiner: نفس النص</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MGL-S1-001</td>
+    <td>MGL-S8-001</td>
+    <td>MGL-S9-001</td>
+    <td>Serienummer: MGL-S9-001</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<h2>حقول glass + step3 (مطابقة S1)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>machine identity + org.nr + insurance</td><td>نفس S1</td><td>Egen maskin</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>ownership_type</code> / reporter</td><td>agd / forare</td><td>Ägd / Förare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>حقول الخطوة 2 + step3</td><td>baseline S1</td><td>Kompletterande</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_description</code></td><td>Spricka i vindrutan…</td><td>Skadebeskrivning</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص مشتركة (ليست خاصة بـ S9)</h2>
+<table>
+  <tr><th>البند</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>damage_description</code> → Händelseförloppet</td>
+    <td>مُرسل</td>
+    <td>N/A</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>مُرسل</td>
+    <td>تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td>Polisen / Svenskt körkort</td>
+    <td>غير مُرسل</td>
+    <td>أعلى PDF</td>
+    <td><span class="status-artifact">Artifact</span></td>
+  </tr>
+  <tr>
+    <td>Ja X Nej (ملخص علوي)</td>
+    <td>—</td>
+    <td>personskador / polis / körkort</td>
+    <td><span class="status-layout">Layout</span></td>
+  </tr>
+</table>
+
+<h2>ملخص safety branches (S1 / S8 / S9)</h2>
+<table>
+  <tr><th>السينario</th><th>القيمة</th><th>حقل إضافي</th><th>PDF</th></tr>
+  <tr><td>S1</td><td>ja</td><td>—</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>S8</td><td>nej</td><td><code>safety_procedures_not_followed_description</code></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>S9</td><td>okant</td><td><code>safety_procedures_comment</code></td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<div class="note">
+  <strong>استنتاج:</strong> الفروع الثلاثة لـ safety (ja / nej / okant) تعمل كلها في قالب machineGlass PDF — S1، S8، S9.
+</div>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineGlass S9)</h2>
+<pre class="scenario">Report type: machineGlass (Glas- och plåtskador Debug S9 — Safety Okänt)
+Report ID: 6a3957d4d61e0fc1a293cf3d
+Environment: insuranceapp3.azurewebsites.net
+Date: 22-06-2026 · time 18:42
+
+App sends S9 correctly:
+  - safety_procedures_followed=okant
+  - safety_procedures_comment=
+    "Föraren kunde inte bekräfta vilka rutiner som följdes."
+  - serial_number=MGL-S9-001
+
+PDF OK for S9 (no S9-specific gaps):
+  - Säkerhetsrutiner följda: Okänt
+  - Kommentar säkerhetsrutiner: full comment text shown
+  - All glass fields in Kompletterande
+
+All three safety branches (ja/nej/okant) work in machineGlass PDF — S1, S8, S9.
+
+Same issues as S1–S8:
+  - Händelseförloppet = N/A
+  - Artifact: Svenskt körkort block
+  - Layout: "Ja X Nej" on top summary
+  - signature image missing on page 2
+
+Attachment: report_6a3957d4d61e0fc1a293cf3d.pdf</pre>
+
+<div class="footer">
+  machineGlass S9 Safety Okänt · Report 6a3957d4d61e0fc1a293cf3d · 2026-06-22
+</div>
+
+</body>
+</html>

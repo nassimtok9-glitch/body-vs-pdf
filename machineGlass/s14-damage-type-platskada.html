@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S14 — Typ Plåtskada — machineGlass Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineGlass</a> /
+  S14 — Typ Plåtskada
+</p>
+
+<h1>نواقص Body مقابل PDF — machineGlass S14 Typ = Plåtskada</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Glas- och plåtskador (<code>glas-s14</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineGlass</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S14 — Typ = Plåtskada (<code>glas-s14</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3958ded61e0fc1a293d08f</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3958ded61e0fc1a293d08f.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 18:46</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>الفرق عن S1</dt><dd><code>damage_type=platskada</code> (مقابل S1 <code>bada</code>) · <code>serial_number=MGL-S14-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-GLASS-FIELD-REFERENCE.html">MACHINE-GLASS-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">S1 (bada)</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>damage_type=platskada</code> — باقي حقول الخطوة 2 كما S1 (stenskott, vindruta, god_sikt, i_arbete, grus).
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    Typ av skada: <strong>Plåtskada</strong> — <span class="status-ok">OK</span>.<br />
+    لا فجوات خاصة بـ S14 — نفس نواقص S1–S13 المشتركة.
+  </div>
+</div>
+
+<h2>التركيز — S14 vs S1 (damage_type)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S14 Body</th><th>S14 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>damage_type</code></td>
+    <td>bada</td>
+    <td>platskada</td>
+    <td>Typ av skada: Plåtskada</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>damage_cause</code></td>
+    <td>stenskott</td>
+    <td>stenskott</td>
+    <td>Skadeorsak: Stenskott</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>damaged_location</code></td>
+    <td>vindruta</td>
+    <td>vindruta</td>
+    <td>Skadad plats: Vindruta</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MGL-S1-001</td>
+    <td>MGL-S14-001</td>
+    <td>Serienummer: MGL-S14-001</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<h2>حقول glass + step3 (مطابقة S1)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>visibility_conditions</code></td><td>god_sikt</td><td>Siktförhållanden: God sikt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_work_state</code></td><td>i_arbete</td><td>Maskinens tillstånd: I arbete</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>surface_type</code></td><td>grus</td><td>Underlag: Grus</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_description</code></td><td>Spricka i vindrutan…</td><td>Skadebeskrivning</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>step3 booleans</td><td>كلها false</td><td>Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_drivable</code></td><td>true</td><td>Maskinen körbar: Ja</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>ملخص damage_type (S1 vs S14)</h2>
+<table>
+  <tr><th>السينario</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>S1</td><td>bada</td><td>Båda</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>S14</td><td>platskada</td><td>Plåtskada</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص مشتركة (ليست خاصة بـ S14)</h2>
+<table>
+  <tr><th>البند</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>damage_description</code> → Händelseförloppet</td>
+    <td>مُرسل</td>
+    <td>N/A</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td><code>signature</code> image</td>
+    <td>مُرسل</td>
+    <td>تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td>Polisen / Svenskt körkort</td>
+    <td>غير مُرسل</td>
+    <td>أعلى PDF</td>
+    <td><span class="status-artifact">Artifact</span></td>
+  </tr>
+  <tr>
+    <td>Ja X Nej (ملخص علوي)</td>
+    <td>—</td>
+    <td>personskador / polis / körkort</td>
+    <td><span class="status-layout">Layout</span></td>
+  </tr>
+</table>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineGlass S14)</h2>
+<pre class="scenario">Report type: machineGlass (Glas- och plåtskador Debug S14 — Typ Plåtskada)
+Report ID: 6a3958ded61e0fc1a293d08f
+Environment: insuranceapp3.azurewebsites.net
+Date: 22-06-2026 · time 18:46
+
+App sends S14 correctly:
+  - damage_type=platskada
+  - serial_number=MGL-S14-001
+  - Other step2 fields same as S1 baseline
+
+PDF OK for S14 (no S14-specific gaps):
+  - Typ av skada: Plåtskada
+  - All glass fields in Kompletterande
+
+Same issues as S1–S13:
+  - Händelseförloppet = N/A
+  - Artifact: Svenskt körkort block
+  - Layout: "Ja X Nej" on top summary
+  - signature image missing on page 2
+
+Attachment: report_6a3958ded61e0fc1a293d08f.pdf</pre>
+
+<div class="footer">
+  machineGlass S14 Typ Plåtskada · Report 6a3958ded61e0fc1a293d08f · 2026-06-22
+</div>
+
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S18 — Full Stack — machineGlass Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineGlass</a> /
+  S18 — Full Stack
+</p>
+
+<h1>نواقص Body مقابل PDF — machineGlass S18 Full Stack</h1>
+<p>مقارنة شاملة — <code>fillGlasPlatskadorFullStack</code> / <code>glas-s18</code> — مسار كامل مع motpart، vittnen، personskador، third_party، polis، bilaga.</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineGlass</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S18 — Full Stack (<code>glas-s18</code> = <code>fillGlasPlatskadorFullStack</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3959b2d61e0fc1a293d1a0</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3959b2d61e0fc1a293d1a0.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 18:50</dd>
+    <dt>عدد الحقول / FILES</dt><dd><strong>~55</strong> حقول + <strong>1</strong> image + signature</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>3</strong></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-GLASS-FIELD-REFERENCE.html">MACHINE-GLASS-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="../machineBrand/s18-full-stack.html">machineBrand S18</a> · <a href="s3-ownership-leasad.html">S3 finance</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    مسار كامل: gravmaskin + leasad/finance، dalig_sikt + beskrivning، motpart fordon، vittnen (text)، personskada Karin، third_party (text)، polis + diarienummer، damage_description، images[1].
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    معظم الحقول <strong>OK</strong> في Kompletterande + بلوك Personskador (صفحة 1).<br />
+    <strong>Missing:</strong> <code>contract_number</code>، <code>images</code>، <code>signature</code>، Händelseförloppet.<br />
+    <strong>Mapping:</strong> بلوك Materiella skador العلوي يعرض <code>damage_description</code> بدل third_party — بينما Kompletterande صحيح.<br />
+    <strong>Layout/Artifact:</strong> Ja X Nej علوي، körkort، تكرار flags.
+  </div>
+</div>
+
+<h2>OK — حقول رئيسية</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body (مختصر)</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>machine_type</code> + identity</td><td>gravmaskin, EC220E, 2019, 4200</td><td>Gravmaskin, Volvo CE, EC220E…</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>serial_number</code></td><td>MGL-S18-001</td><td>Serienummer MGL-S18-001</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>ownership_type</code> + finance</td><td>leasad + bolag/kontakt</td><td>Leasad + Finansbolag/Kontakt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>driver_full_name</code> / email</td><td>Johan Andersson</td><td>Förarens namn + E-Post</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>حقول glass خطوة 2</td><td>stenskott, vindruta, båda, dalig_sikt…</td><td>Skadeorsak … Skadebeskrivning</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>visibility_affected_description</code></td><td>Regn och damm…</td><td>Dålig sikt: …</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>has_counterparty</code> + flat fields</td><td>fordon, ABC123, ansvar ja</td><td>Motpartstyp, reg.nr, Ansvar erkänt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witnesses_description</code></td><td>Två medarbetare…</td><td>Vittnesbeskrivning</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>personal_injuries[0]</code></td><td>Karin Johansson + …</td><td>Personskador block (صفحة 1)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>third_party_property_damage_description</code></td><td>Repade plåtpaneler…</td><td>Beskrivning (Kompletterande)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>police</code> + <code>diarienummer</code></td><td>true + POL-2026-54321</td><td>أعلى + Polisen informerad + Diarienummer</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>police_report_attached</code></td><td>true</td><td>Polisanmälan bifogad: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_description</code></td><td>15 cm spricka…</td><td>Skadebeskrivning</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>Missing — Backend PDF</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>machine_identity[contract_number]</code></td>
+    <td>FIN-2024-8899</td>
+    <td>— (نفس S3/S5)</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td><code>images</code></td>
+    <td>ih_debug_glas_platskador_skada1.png</td>
+    <td>«Foto och bilagor:» بدون صورة</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>base64 مُرسل</td>
+    <td>تسميات underskrift فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td><code>damage_description</code> → Händelseförloppet</td>
+    <td>مُرسل</td>
+    <td>N/A</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+</table>
+
+<h2>Mapping / Layout — S18 خاص</h2>
+<table>
+  <tr><th>البند</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td>بلوك Materiella skador (أعلى صفحة 1)</td>
+    <td><code>third_party_property_damage_description</code></td>
+    <td>Ägare: «-»؛ Skadans art = نص <code>damage_description</code></td>
+    <td><span class="status-missing">Mapping</span></td>
+  </tr>
+  <tr>
+    <td>نفس third_party في Kompletterande</td>
+    <td>Repade plåtpaneler…</td>
+    <td>Beskrivning: نفس النص</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td>ملخص علوي Personskador</td>
+    <td>true</td>
+    <td>«Ja X Nej» رغم تفاصيل Karin أسفل</td>
+    <td><span class="status-layout">Layout</span></td>
+  </tr>
+  <tr>
+    <td>step3 flags في Kompletterande</td>
+    <td>كلها true</td>
+    <td>«X Ja Nej» لكل حقل</td>
+    <td><span class="status-layout">Layout</span></td>
+  </tr>
+  <tr>
+    <td>Svenskt körkort / Födelsedatum</td>
+    <td>غير مُرسل</td>
+    <td>أعلى PDF</td>
+    <td><span class="status-artifact">Artifact</span></td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>ملاحظة machineGlass v1:</strong> لا <code>witnesses[]</code> ولا <code>counterparties[]</code> — فقط حقول flat + <code>witnesses_description</code>. PDF يعرض Personskador كجدول (مصفوفة) لكن Materiella skador العلوي يتوقع حقول مالك من قالب قديم.
+</div>
+
+<h2>ملخص S1–S18 — فجوات متكررة</h2>
+<table>
+  <tr><th>الفجوة</th><th>السينariوهات</th></tr>
+  <tr><td><code>contract_number</code> Missing</td><td>S3, S5, S18</td></tr>
+  <tr><td>Händelseförloppet N/A</td><td>S1–S18</td></tr>
+  <tr><td><code>signature</code> / <code>images</code> Missing</td><td>S1–S18 (S18 يؤكد bilagor)</td></tr>
+  <tr><td>Ja X Nej booleans</td><td>S1, S7, S17, S18…</td></tr>
+  <tr><td>«Förarens namn» عند agare/arbetsledare</td><td>S10, S11</td></tr>
+</table>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineGlass S18)</h2>
+<pre class="scenario">Report type: machineGlass (Glas- och plåtskador Debug S18 — Full Stack)
+Report ID: 6a3959b2d61e0fc1a293d1a0
+Environment: insuranceapp3.azurewebsites.net
+Date: 22-06-2026 · time 18:50
+
+App sends full stack correctly (~55 fields):
+  - gravmaskin EC220E, leasad + finance_* including contract_number FIN-2024-8899
+  - dalig_sikt + visibility_affected_description
+  - counterparty fordon ABC123, responsibility admitted
+  - witnesses_description (text, not array)
+  - personal_injuries[0]: Karin Johansson (full)
+  - third_party_property_damage_description (text)
+  - police=true, police_report_attached=true, diarienummer=POL-2026-54321
+  - damage_description + images[1] + signature
+
+PDF OK:
+  - Machine identity, finance (except contract_number)
+  - Glass step2 fields + Skadebeskrivning
+  - Counterparty block in Kompletterande
+  - Witness text, personal injury detail block page 1
+  - Third party Beskrivning in Kompletterande
+  - Police + diarienummer (top + Kompletterande)
+  - 3 pages
+
+PDF Missing (S18 + recurring):
+  - contract_number FIN-2024-8899 (finance template gap)
+  - images ih_debug_glas_platskador_skada1.png — "Foto och bilagor" empty
+  - signature image
+  - Händelseförloppet (damage_description only in Skadebeskrivning)
+
+PDF Mapping issue (S18-specific):
+  - Top "Materiella skador" block shows damage_description in Skadans art
+    instead of third_party_property_damage_description
+  - Owner fields show "-" (expected for text-only API) but wrong damage text
+
+PDF Layout/Artifact:
+  - Top "Personskador Ja X Nej" vs Karin details below
+  - Ja X Nej on all Kompletterande booleans
+  - Svenskt körkort artifact
+
+Attachment: report_6a3959b2d61e0fc1a293d1a0.pdf</pre>
+
+<div class="footer">
+  machineGlass S18 Full Stack · Report 6a3959b2d61e0fc1a293d1a0 · 2026-06-22 · S1–S18 complete
+</div>
+
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S8 — Safety Nej — machineGlass Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineGlass</a> /
+  S8 — Safety Nej
+</p>
+
+<h1>نواقص Body مقابل PDF — machineGlass S8 Safety Nej</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Glas- och plåtskador (<code>glas-s8</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineGlass</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S8 — Safety Nej (<code>glas-s8</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a395794d61e0fc1a293cef6</code></dd>
+    <dt>PDF</dt><dd><code>report_6a395794d61e0fc1a293cef6.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 18:41</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>عدد الحقول</dt><dd><strong>39</strong> (+ description عند nej)</dd>
+    <dt>الفرق عن S1</dt><dd><code>safety_procedures_followed=nej</code> + <code>safety_procedures_not_followed_description</code> · <code>serial_number=MGL-S8-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-GLASS-FIELD-REFERENCE.html">MACHINE-GLASS-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">S1 (safety ja)</a> · <a href="../machineBrand/s8-safety-nej.html">machineBrand S8</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>safety_procedures_followed=nej</code> + <code>safety_procedures_not_followed_description</code> = «Skyddsskärm var demonterad under pågående arbete.»
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <strong>كل حقول safety — OK</strong> في Kompletterande: Nej + «Varför följdes inte rutinerna» مع النص الكامل.<br />
+    <strong>لا فجوات خاصة بـ S8.</strong> نفس نواقص S1–S7: Händelseförloppet N/A، artifact körkort، layout، underskrift.
+  </div>
+</div>
+
+<h2>التركيز — S8 vs S1 (safety)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S8 Body</th><th>S8 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>safety_procedures_followed</code></td>
+    <td>ja</td>
+    <td>nej</td>
+    <td>Säkerhetsrutiner följda: Nej</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>safety_procedures_not_followed_description</code></td>
+    <td>—</td>
+    <td>Skyddsskärm var demonterad…</td>
+    <td>Varför följdes inte rutinerna: نفس النص</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MGL-S1-001</td>
+    <td>MGL-S8-001</td>
+    <td>Serienummer: MGL-S8-001</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>مقارنة مع valtning:</strong> في valtning كان <code>safety_procedures_followed</code> أحياناً <span class="status-missing">Missing</span> من PDF. قالب machineGlass (مثل machineBrand) يعرض safety + description بشكل صحيح.
+</div>
+
+<h2>حقول glass + step3 (مطابقة S1)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>machine identity + org.nr + insurance</td><td>نفس S1</td><td>Egen maskin</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>ownership_type</code></td><td>agd</td><td>Ägd</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>حقول الخطوة 2</td><td>stenskott … grus</td><td>Skadeorsak … Underlag</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_description</code></td><td>Spricka i vindrutan…</td><td>Skadebeskrivning</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>step3 branches</td><td>كلها false</td><td>Nej في Kompletterande</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_drivable</code></td><td>true</td><td>Maskinen körbar: Ja</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص مشتركة (ليست خاصة بـ S8)</h2>
+<table>
+  <tr><th>البند</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>damage_description</code> → Händelseförloppet</td>
+    <td>مُرسل</td>
+    <td>N/A</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>مُرسل</td>
+    <td>تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td>Polisen / Svenskt körkort</td>
+    <td>غير مُرسل</td>
+    <td>أعلى PDF</td>
+    <td><span class="status-artifact">Artifact</span></td>
+  </tr>
+  <tr>
+    <td>Ja X Nej (ملخص علوي)</td>
+    <td>—</td>
+    <td>personskador / polis / körkort</td>
+    <td><span class="status-layout">Layout</span></td>
+  </tr>
+</table>
+
+<h2>ملخص safety branches (S1 / S8 / S9 مخطط)</h2>
+<table>
+  <tr><th>السينario</th><th>قيمة safety</th><th>حقل إضافي</th><th>PDF</th></tr>
+  <tr><td>S1</td><td>ja</td><td>—</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>S8</td><td>nej</td><td><code>safety_procedures_not_followed_description</code></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>S9</td><td>okant</td><td><code>safety_procedures_comment</code></td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineGlass S8)</h2>
+<pre class="scenario">Report type: machineGlass (Glas- och plåtskador Debug S8 — Safety Nej)
+Report ID: 6a395794d61e0fc1a293cef6
+Environment: insuranceapp3.azurewebsites.net
+Date: 22-06-2026 · time 18:41
+
+App sends S8 correctly:
+  - safety_procedures_followed=nej
+  - safety_procedures_not_followed_description=
+    "Skyddsskärm var demonterad under pågående arbete."
+  - serial_number=MGL-S8-001
+
+PDF OK for S8 (no S8-specific gaps):
+  - Säkerhetsrutiner följda: Nej
+  - Varför följdes inte rutinerna: full description text shown
+  - All glass fields in Kompletterande
+
+Same issues as S1–S7:
+  - Händelseförloppet = N/A
+  - Artifact: Svenskt körkort block
+  - Layout: "Ja X Nej" on top summary
+  - signature image missing on page 2
+
+Attachment: report_6a395794d61e0fc1a293cef6.pdf</pre>
+
+<div class="footer">
+  machineGlass S8 Safety Nej · Report 6a395794d61e0fc1a293cef6 · 2026-06-22
+</div>
+
+</body>
+</html>

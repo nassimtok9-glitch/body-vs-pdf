@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S2 — Maskintyp Annat — machineGlass Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineGlass</a> /
+  S2 — Maskintyp Annat
+</p>
+
+<h1>نواقص Body مقابل PDF — machineGlass S2 Maskintyp Annat</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Glas- och plåtskador (<code>glas-s2</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineGlass</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S2 — Maskintyp Annat (<code>glas-s2</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a395641d61e0fc1a293cd39</code></dd>
+    <dt>PDF</dt><dd><code>report_6a395641d61e0fc1a293cd39.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 18:35</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>الفرق عن S1</dt><dd><code>machine_type=annan</code> + <code>machine_type_other</code> · <code>serial_number=MGL-S2-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-GLASS-FIELD-REFERENCE.html">MACHINE-GLASS-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-GLASS-test-cases.html">MACHINE-GLASS-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">machineGlass S1</a> · <a href="../machineBrand/s2-machine-type-annan.html">machineBrand S2</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    38 حقلًا — نفس baseline S1 مع <code>machine_type=annan</code> و<code>machine_type_other=Specialbyggd materialhanterare</code> و<code>serial_number=MGL-S2-001</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <strong>الفرق الرئيسي S2:</strong> Maskintyp يعرض <em>Specialbyggd materialhanterare</em> — <span class="status-ok">OK</span>. باقي النواقص مثل S1: Händelseförloppet N/A، artifact körkort، layout Ja X Nej، underskrift بدون صورة.
+  </div>
+</div>
+
+<h2>التركيز — S2 vs S1</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S2 Body</th><th>S2 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>machine_identity[machine_type]</code></td>
+    <td>hjullastare</td>
+    <td>annan</td>
+    <td>— (لا يظهر «Annan» منفصلًا)</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>machine_identity[machine_type_other]</code></td>
+    <td>—</td>
+    <td>Specialbyggd materialhanterare</td>
+    <td>Maskintyp: Specialbyggd materialhanterare</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MGL-S1-001</td>
+    <td>MGL-S2-001</td>
+    <td>Serienummer: MGL-S2-001</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td>حقول glass + step3</td>
+    <td colspan="2">نفس baseline S1</td>
+    <td>مطابق لـ S1</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>ملاحظة mapping:</strong> عندما <code>machine_type=annan</code>، PDF يستبدل تسمية enum بقيمة <code>machine_type_other</code> مباشرة في سطر Egen maskin — سلوك صحيح ومتوقع (نفس machineBrand S2).
+</div>
+
+<h2>حقول متطابقة (OK) — كامل S2</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>machineGlass</td><td>Skadeanmälningstyp: Glas- och plåtskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>22-06-2026 / 18:35</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>address</code> / <code>post_number_post_address</code></td><td>Virkesvägen 10… / 12030</td><td>Skadeplats + Postnr 12030</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_type_other]</code></td><td>Specialbyggd materialhanterare</td><td>Maskintyp: Specialbyggd materialhanterare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>serial_number</code></td><td>MGL-S2-001</td><td>Serienummer: MGL-S2-001</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_brand/model/year]</code></td><td>Volvo CE / L90H / 2020</td><td>Märke / Modell / Årsmodell</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[operating_hours]</code></td><td>3150</td><td>Drifttimmar: 3150</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_insured]</code></td><td>true</td><td>Försäkrad: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>organization_number</code></td><td>6990593003</td><td>Org.nr: 6990593003</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>ownership_type</code></td><td>agd</td><td>Ägande/leasing: Ägd</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>reporter_role</code></td><td>forare</td><td>Rapportörens roll: Förare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>Säkerhetsrutiner följda: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_cause</code></td><td>stenskott</td><td>Skadeorsak: Stenskott</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damaged_location</code></td><td>vindruta</td><td>Skadad plats: Vindruta</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_type</code></td><td>bada</td><td>Typ av skada: Båda</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>visibility_conditions</code></td><td>god_sikt</td><td>Siktförhållanden: God sikt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_work_state</code></td><td>i_arbete</td><td>Maskinens tillstånd: I arbete</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>surface_type</code></td><td>grus</td><td>Underlag: Grus</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_description</code></td><td>Spricka i vindrutan…</td><td>Skadebeskrivning</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>has_counterparty</code> / <code>witness_exist</code> / injuries / egendom / <code>police</code></td><td>كلها false</td><td>Nej في Kompletterande</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_drivable</code></td><td>true</td><td>Maskinen körbar: Ja</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend) — مشتركة مع S1</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>damage_description</code> → Händelseförloppet (علوي)</td>
+    <td>نص كامل</td>
+    <td><strong>N/A</strong></td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>يظهر في Skadebeskrivning فقط</td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>base64 في الحقول</td>
+    <td>صفحة 2 — تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td><code>files: []</code></td>
+  </tr>
+  <tr>
+    <td><code>images</code></td>
+    <td>غير مرفق</td>
+    <td>لا bilagor</td>
+    <td><span class="status-ok">N/A</span></td>
+    <td>نفس S1 baseline</td>
+  </tr>
+</table>
+
+<h2>أقسام Artifact / Layout (مشتركة مع S1)</h2>
+<table>
+  <tr><th>القسم في PDF</th><th>Body</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td>Känner polisen till händelsen? (أعلى)</td>
+    <td><code>police=false</code></td>
+    <td><span class="status-layout">Layout</span></td>
+    <td>«Ja X Nej» — الصحيح في Polisen informerad أسفل</td>
+  </tr>
+  <tr>
+    <td>Svenskt körkort? / Födelsedatum</td>
+    <td>لا <code>swedish_driver_license</code></td>
+    <td><span class="status-artifact">Artifact</span></td>
+    <td>مسار <code>reporter_role</code></td>
+  </tr>
+  <tr>
+    <td>Personskador / körkort (أعلى)</td>
+    <td>false / —</td>
+    <td><span class="status-layout">Layout</span></td>
+    <td>«Ja X Nej»</td>
+  </tr>
+</table>
+
+<h2>ملخص Payload S2 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "machineGlass",
+  "machine_identity": {
+    "machine_type": "annan",
+    "machine_type_other": "Specialbyggd materialhanterare",
+    "machine_brand": "Volvo CE",
+    "machine_model": "L90H",
+    "machine_year": "2020",
+    "operating_hours": "3150",
+    "machine_insured": true,
+    "insurance_company_name_text": "If Skadeförsäkring"
+  },
+  "serial_number": "MGL-S2-001",
+  "organization_number": "6990593003",
+  "ownership_type": "agd",
+  "reporter_role": "forare",
+  "safety_procedures_followed": "ja",
+  "damage_cause": "stenskott",
+  "damaged_location": "vindruta",
+  "damage_type": "bada",
+  "visibility_conditions": "god_sikt",
+  "machine_work_state": "i_arbete",
+  "surface_type": "grus",
+  "damage_description": "Spricka i vindrutan…",
+  "has_counterparty": false,
+  "police": false,
+  "machine_drivable": true,
+  "date": "22-06-2026",
+  "time": "18:35",
+  "signature": "(base64 — omitted)"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineGlass S2)</h2>
+<pre class="scenario">Report type: machineGlass (Glas- och plåtskador Debug S2 — Maskintyp Annat)
+Report ID: 6a395641d61e0fc1a293cd39
+Environment: insuranceapp3.azurewebsites.net
+Date: 22-06-2026 · time 18:35
+
+App sends S2 correctly:
+  - machine_type=annan
+  - machine_type_other=Specialbyggd materialhanterare
+  - serial_number=MGL-S2-001
+  - All other glass fields same as S1 baseline
+
+PDF OK for S2-specific field:
+  - Maskintyp shows "Specialbyggd materialhanterare" — correct
+  - Does NOT show raw enum "annan" — acceptable mapping
+
+Same issues as S1:
+  - Händelseförloppet (top) = N/A — should use damage_description
+  - Artifact: Svenskt körkort / Födelsedatum
+  - Layout: "Ja X Nej" on top summary rows
+  - signature image missing on page 2
+
+Attachment: report_6a395641d61e0fc1a293cd39.pdf</pre>
+
+<div class="footer">
+  machineGlass S2 Maskintyp Annat · Report 6a395641d61e0fc1a293cd39 · 2026-06-22
+</div>
+
+</body>
+</html>
