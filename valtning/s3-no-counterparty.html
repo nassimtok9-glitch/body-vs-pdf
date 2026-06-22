@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S3 — No Counterparty — valtning Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">valtning</a> /
+  S3 — No Counterparty
+</p>
+
+<h1>نواقص Body مقابل PDF — valtning S3 No Counterparty</h1>
+<p>سينario Debug S3: <code>has_counterparties=false</code> — بدون <code>counterparties[]</code>؛ Swedish driver baseline (مثل S1 بدون motpart).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = valtning</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S3 — No Counterparty (<code>valtning-s3</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a390e757d0e2fb8c8cd2bb6</code></dd>
+    <dt>PDF</dt><dd><code>report_6a390e757d0e2fb8c8cd2bb6.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>2026-06-22 · 13:29</dd>
+    <dt>مرجع الحقول</dt><dd><a href="https://github.com/nassimDev-ctrl/IH/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-VALTNING-FIELD-REFERENCE.html">MACHINE-VALTNING-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-swedish-driver.html">S1 Swedish Driver</a> · <a href="s2-foreign-driver.html">S2 Foreign Driver</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا signature base64 كامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل <code>has_counterparties=false</code> بدون أي <code>counterparties[n]</code>؛ Swedish driver (<code>personal_id_number</code>, <code>swedish_driver_license=Yes</code>).
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    Motparter <strong>Nej</strong> ولا يظهر بلوك motpart — صحيح لـ S3. نفس نواقص S1/S2: <code>safety_procedures_followed</code>، bilagor، signature. PDF <strong>23 صفحة</strong> (أقل من S1 لعدم وجود تفاصيل motpart).
+  </div>
+</div>
+
+<h2>مقارنة مع S1 و S2</h2>
+<table>
+  <tr><th>البند</th><th>S1</th><th>S2</th><th>S3</th></tr>
+  <tr><td><code>has_counterparties</code></td><td>true</td><td>true</td><td><strong>false</strong></td></tr>
+  <tr><td>Motparter في PDF</td><td>Ja (<code>X Ja Nej</code>)</td><td>Ja + motpart maskin</td><td><span class="status-ok">Nej</span> (<code>Ja X Nej</code>)</td></tr>
+  <tr><td>تفاصيل motpart</td><td>maskin / serienr / kontakt</td><td>نفس S1</td><td><span class="status-ok">غائب (متوقع)</span></td></tr>
+  <tr><td>Swedish vs foreign driver</td><td>Swedish</td><td>Foreign</td><td>Swedish</td></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>Missing</td><td>Missing</td><td>Missing</td></tr>
+  <tr><td>صفحات PDF</td><td>28</td><td>30</td><td>23</td></tr>
+</table>
+
+<h2>حقول S3 — OK في PDF</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>has_counterparties</code></td><td>false</td><td>Motparter: <code>Ja X Nej</code> (= Nej في قالب valtning)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>لا <code>counterparties[]</code></td><td>— (غير مُرسل)</td><td>لا Motpartstyp / serienr / kontaktperson بعد سطر Motparter</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>personal_id_number</code></td><td>19850515-1234</td><td>Person-/organisationsnummer: 19850515-1234</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>swedish_driver_license</code></td><td>Yes</td><td>Svenskt körkort / Gällande svenskt körkort: <code>X Ja Nej</code></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>machine identity + org.nr</td><td>كامل</td><td>Egen maskin — Hjullastare VT-24680…</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>event_narrative</code> (علوي)</td><td>نص كامل</td><td>Händelseförloppet: (نفس النص)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>vältning fields</td><td>tipping، surfaces، slope، last…</td><td>Hur gick vältningen / Orsak / Underlag / Lutande mark…</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damaged_parts[]</code> + beskrivning</td><td>hytt, bom_arm, kaross</td><td>Hytt, Bom / arm, Kaross + skadebeskrivning</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_drivable</code> / <code>needs_towing</code></td><td>false / true</td><td>Körbar Nej · Bärgning Ja (صفحات 5–10)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>third_party_property_damage_exist</code></td><td>false</td><td>Skada på annans egendom: Nej (صفحات 2–4)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>personal_injuries_exist</code> / <code>witness_exist</code> / <code>police</code></td><td>false</td><td>Nej (صفحات 11–22)</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<div class="note">
+  <strong>قراءة Ja/X/Nej في valtning:</strong> القيم <code>true</code> تظهر غالباً <code>X Ja Nej</code>؛ القيم <code>false</code> تظهر <code>Ja X Nej</code> — على الصفحة الأولى أو مُجزّأة على صفحات لاحقة.
+</div>
+
+<h2>نواقص مشتركة مع S1/S2 (Backend PDF)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>files[images]</code> / <code>driving_license</code></td><td>مرسل</td><td>لا bilagor</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>signature</code></td><td>PNG</td><td>صفحة 23 — تسميات فقط</td><td><span class="status-missing">Missing</span></td></tr>
+</table>
+
+<h2>أخطاء قالب PDF</h2>
+<table>
+  <tr><th>القسم</th><th>المشكلة</th><th>الحالة</th></tr>
+  <tr><td>Skada på annans egendom + Ja/Nej</td><td>صفحات 2–4 مُجزّأة</td><td><span class="status-layout">Layout bug</span></td></tr>
+  <tr><td>Körbar / Bärgning / Personskador / Vittnen / Polis</td><td>صفحات 5–22 — Ja / X / Nej منفصلة</td><td><span class="status-layout">Layout bug</span></td></tr>
+</table>
+
+<h2>ملخص Payload S3 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "valtning",
+  "has_counterparties": "false",
+  "swedish_driver_license": "Yes",
+  "personal_id_number": "19850515-1234",
+  "driver_full_name": "Johan Andersson",
+  "safety_procedures_followed": "ja",
+  "serial_number": "VT-24680",
+  "machine_identity": { "hjullastare", "Volvo CE", "L90H", ... },
+  "tipping_narrative": "...",
+  "tipping_causes": ["korning_i_lutning", "ojamnt_underlag", "for_tung_last"],
+  "surface_types": ["grus", "ojamnt_underlag", "lutande_mark"],
+  "machine_loaded": true,
+  "cargo_type": "Grus i skopa",
+  "estimated_cargo_weight": "1800",
+  "damaged_parts": ["hytt", "bom_arm", "kaross"],
+  "machine_drivable": false,
+  "needs_towing": true,
+  "date": "22-06-2026",
+  "time": "13:29",
+  "files": ["images", "driving_license"],
+  "signature": "(truncated)"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF bugs (valtning S3)</h2>
+<pre class="scenario">Report type: valtning (valtningTippning Debug S3 — No Counterparty)
+Report ID: 6a390e757d0e2fb8c8cd2bb6
+Environment: insuranceapp3.azurewebsites.net
+Date: 2026-06-22 · time 13:29
+
+App sends has_counterparties = false (no counterparties[] array).
+
+PDF OK (S3-specific):
+  - Motparter: Nej (Ja X Nej pattern) — correct for no counterparty
+  - No motpart detail block (no spurious motpart rows)
+  - Swedish driver fields OK (personnummer, körkort Ja)
+  - Same valtning template strengths as S1 (machine identity, tipping, damage, towing)
+
+Same as valtning S1/S2 (still missing):
+  - safety_procedures_followed = ja
+  - images + driving_license attachments
+  - signature image on underskrift page
+
+Layout: PDF is 23 pages (fewer than S1/S2 — no motpart section); Ja/X/Nej fragmented pages 2–22
+
+Attachment: report_6a390e757d0e2fb8c8cd2bb6.pdf</pre>
+
+<p>
+  <a href="s2-foreign-driver.html">← السابق: S2 Foreign Driver</a>
+  ·
+  <a href="s4-counterparty-fordon.html">التالي: S4 Counterparty Fordon →</a>
+</p>
+
+<div class="footer">
+  valtning S3 No Counterparty · Report 6a390e757d0e2fb8c8cd2bb6 · 2026-06-22
+</div>
+
+</body>
+</html>

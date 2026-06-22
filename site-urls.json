@@ -1,6 +1,10 @@
 {
   "githubPagesUrl": "https://nassimtok9-glitch.github.io/body-vs-pdf/",
   "fieldReferenceUrl": "https://github.com/nassimDev-ctrl/IH/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-KOLLISION-FIELD-REFERENCE.html",
+  "valtningFieldReferenceUrl": "https://github.com/nassimDev-ctrl/IH/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-VALTNING-FIELD-REFERENCE.html",
   "testCasesUrl": "https://github.com/nassimDev-ctrl/IH/blob/main/docs/test-references/orgistrerat%20frodon%20test/MACHINE-KOLLISION-test-cases.html",
+  "valtningTestCasesUrl": "https://github.com/nassimDev-ctrl/IH/blob/main/docs/test-references/orgistrerat%20frodon%20test/MACHINE-VALTNING-test-cases.html",
+  "brandFieldReferenceUrl": "https://github.com/nassimDev-ctrl/IH/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-BRAND-FIELD-REFERENCE.html",
+  "brandTestCasesUrl": "https://github.com/nassimDev-ctrl/IH/blob/main/docs/test-references/orgistrerat%20frodon%20test/MACHINE-BRAND-test-cases.html",
   "mainRepoUrl": "https://github.com/nassimDev-ctrl/IH"
 }

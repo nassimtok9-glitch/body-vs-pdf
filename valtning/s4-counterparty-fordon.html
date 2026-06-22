@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S4 — Counterparty Fordon — valtning Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">valtning</a> /
+  S4 — Counterparty Fordon
+</p>
+
+<h1>نواقص Body مقابل PDF — valtning S4 Counterparty Fordon</h1>
+<p>سينario Debug S4: motpart <strong>fordon</strong> مع <code>register_number</code> — <code>responsibility_admitted=true</code>، kontaktperson Per Holm.</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = valtning</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S4 — Counterparty Fordon (<code>valtning-s4</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a390ec97d0e2fb8c8cd2bf8</code></dd>
+    <dt>PDF</dt><dd><code>report_6a390ec97d0e2fb8c8cd2bf8.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>2026-06-22 · 13:30</dd>
+    <dt>مرجع الحقول</dt><dd><a href="https://github.com/nassimDev-ctrl/IH/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-VALTNING-FIELD-REFERENCE.html">MACHINE-VALTNING-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-swedish-driver.html">S1 (motpart maskin)</a> · <a href="s3-no-counterparty.html">S3 (no motpart)</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا signature base64 كامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل motpart <code>fordon</code> مع <code>register_number=ABC123</code>، <code>responsibility_admitted=true</code>، <code>contact_person=Per Holm</code> (بدون serienummer).
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    فرع motpart fordon يظهر كاملاً في PDF — تحسّن واضح عن kolliosn. نفس نواقص S1–S3: <code>safety_procedures_followed</code>، bilagor، signature. PDF <strong>28 صفحة</strong>.
+  </div>
+</div>
+
+<h2>مقارنة motpart — S1 (maskin) vs S4 (fordon)</h2>
+<table>
+  <tr><th>البند</th><th>S1 maskin</th><th>S4 fordon</th></tr>
+  <tr><td><code>counterparty_type</code></td><td>maskin</td><td>fordon</td></tr>
+  <tr><td>المعرّف</td><td><code>serial_number</code> MASKIN-445566</td><td><code>register_number</code> ABC123</td></tr>
+  <tr><td>PDF fält</td><td>Motpart serienr</td><td>Motpart reg.nr: ABC123</td></tr>
+  <tr><td><code>responsibility_admitted</code></td><td>false → Nej</td><td>true → <span class="status-ok">Ja</span></td></tr>
+  <tr><td><code>contact_person</code></td><td>Sara Nilsson</td><td>Per Holm</td></tr>
+  <tr><td>صفحات PDF</td><td>28</td><td>28</td></tr>
+</table>
+
+<h2>حقول Motpart Fordon — OK في PDF</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>has_counterparties</code></td><td>true</td><td>Motparter: <code>X Ja Nej</code></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>counterparties[0][counterparty_type]</code></td><td>fordon</td><td>Motpartstyp: Fordon</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>counterparties[0][register_number]</code></td><td>ABC123</td><td>Motpart reg.nr: ABC123</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>لا <code>serial_number</code> للـ motpart</td><td>— (غير مُرسل)</td><td>لا Motpart serienr</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>counterparties[0][responsibility_admitted]</code></td><td>true</td><td>Ansvar erkänt: <code>X Ja Nej</code></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>counterparties[0][contact_person]</code></td><td>Per Holm</td><td>Kontaktperson: Per Holm</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>حقول vältning + baseline — OK (مثل S1)</h2>
+<p>machine identity، Swedish driver، tipping، surfaces، last، skador، körbar Nej، bärgning Ja، Händelseförlopp العلوي — متطابقة مع Body.</p>
+
+<h2>نواقص مشتركة مع S1–S3 (Backend PDF)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>files[images]</code> / <code>driving_license</code></td><td>مرسل</td><td>لا bilagor</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>signature</code></td><td>PNG</td><td>صفحة 28 — تسميات فقط</td><td><span class="status-missing">Missing</span></td></tr>
+</table>
+
+<h2>أخطاء قالب PDF</h2>
+<table>
+  <tr><th>القسم</th><th>المشكلة</th><th>الحالة</th></tr>
+  <tr><td>Skadade delar + skadebeskrivning</td><td>صفحات 1–3 مُجزّأة</td><td><span class="status-layout">Layout bug</span></td></tr>
+  <tr><td>Ja/Nej (egendom, körbar, bärgning, personskador, vittnen, polis)</td><td>صفحات 4–27 مُجزّأة</td><td><span class="status-layout">Layout bug</span></td></tr>
+</table>
+
+<h2>ملخص Payload S4 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "valtning",
+  "has_counterparties": "true",
+  "counterparties[0][counterparty_type]": "fordon",
+  "counterparties[0][register_number]": "ABC123",
+  "counterparties[0][responsibility_admitted]": "true",
+  "counterparties[0][contact_person]": "Per Holm",
+  "swedish_driver_license": "Yes",
+  "personal_id_number": "19850515-1234",
+  "safety_procedures_followed": "ja",
+  "serial_number": "VT-24680",
+  "machine_identity": { "hjullastare", "Volvo CE", "L90H", ... },
+  "tipping_causes": ["korning_i_lutning", "ojamnt_underlag", "for_tung_last"],
+  "machine_drivable": false,
+  "needs_towing": true,
+  "date": "22-06-2026",
+  "time": "13:30",
+  "files": ["images", "driving_license"],
+  "signature": "(truncated)"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF bugs (valtning S4)</h2>
+<pre class="scenario">Report type: valtning (valtningTippning Debug S4 — Counterparty Fordon)
+Report ID: 6a390ec97d0e2fb8c8cd2bf8
+Environment: insuranceapp3.azurewebsites.net
+Date: 2026-06-22 · time 13:30
+
+App sends fordon counterparty branch:
+  counterparties[0][counterparty_type] = fordon
+  counterparties[0][register_number] = ABC123
+  counterparties[0][responsibility_admitted] = true
+  counterparties[0][contact_person] = Per Holm
+  (no motpart serial_number — correct for fordon)
+
+PDF OK (S4-specific):
+  - Motparter: Ja
+  - Motpartstyp: Fordon, reg.nr ABC123, Ansvar erkänt Ja, Kontaktperson Per Holm
+  - No spurious motpart serial_number field
+
+Same as valtning S1–S3 (still missing):
+  - safety_procedures_followed = ja
+  - images + driving_license attachments
+  - signature image on underskrift page
+
+Layout: PDF is 28 pages; Skadade delar and Ja/X/Nej fragmented pages 1–27
+
+Attachment: report_6a390ec97d0e2fb8c8cd2bf8.pdf</pre>
+
+<p>
+  <a href="s3-no-counterparty.html">← السابق: S3 No Counterparty</a>
+  ·
+  <a href="s5-cause-annat.html">التالي: S5 Orsak = Annat →</a>
+</p>
+
+<div class="footer">
+  valtning S4 Counterparty Fordon · Report 6a390ec97d0e2fb8c8cd2bf8 · 2026-06-22
+</div>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S13 — Personskador + Vittnen — valtning Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">valtning</a> /
+  S13 — Personskador + Vittnen
+</p>
+
+<h1>نواقص Body مقابل PDF — valtning S13 Personskador + Vittnen</h1>
+<p>سينario Debug S13: دمج S12 (2× مصابين) + شاهد Anna Svensson — <code>personal_injuries_exist=true</code> + <code>witness_exist=true</code>.</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = valtning</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S13 — Personskador + Vittnen (<code>valtning-s13</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3912267d0e2fb8c8cd2f3e</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3912267d0e2fb8c8cd2f3e.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>2026-06-22 · 13:44</dd>
+    <dt>مرجع الحقول</dt><dd><a href="https://github.com/nassimDev-ctrl/IH/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-VALTNING-FIELD-REFERENCE.html">MACHINE-VALTNING-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s11-witnesses.html">S11</a> · <a href="s12-personal-injuries.html">S12</a> · <a href="../machineKollision/s10-injuries-and-witnesses.html">kolliosn S10</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا signature base64 كامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل personskador (2×) + vittnen (Anna Svensson) — صحيح.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    كلا الجدولين يظهران (مصابين + شاهد) مع personnummer — تحسّن كبير عن kolliosn S10. PDF <strong>صفحتان فقط</strong> مع Ja/Nej مضمّنة (ليس 38–39 كS11/S12). علوي Personskador ما زال <code>Ja X Nej</code> — Wrong.
+  </div>
+</div>
+
+<h2>مقارنة S11 + S12 + S13 و kolliosn S10</h2>
+<table>
+  <tr><th>البند</th><th>S11</th><th>S12</th><th>S13</th><th>kolliosn S10</th></tr>
+  <tr><td><code>personal_injuries[]</code></td><td>—</td><td><span class="status-ok">OK</span></td><td><span class="status-ok">OK</span></td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>witnesses[0]</code> + personnummer</td><td><span class="status-ok">OK</span></td><td>—</td><td><span class="status-ok">OK</span></td><td>personnummer Missing</td></tr>
+  <tr><td>Personskador علوي</td><td>Nej OK</td><td><span class="status-wrong">Wrong</span></td><td><span class="status-wrong">Wrong</span></td><td><span class="status-wrong">Wrong</span></td></tr>
+  <tr><td>Ja/Nej layout</td><td>38 صفحة مُجزّأ</td><td>39 صفحة</td><td><span class="status-ok">2 صفحات</span> — inline</td><td>23 صفحة</td></tr>
+</table>
+
+<h2>Personskador — OK في PDF (صفحة 1)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>personal_injuries[0]</code></td><td>Karin Johansson + 5 حقول</td><td>جدول Personskador — كامل</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>personal_injuries[1]</code></td><td>Petter Lund + 5 حقول</td><td>نفس الجدول</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>personal_injuries_exist</code> (أسفل — صفحة 2)</td><td>true</td><td>Personskador: <code>X Ja Nej</code></td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>Vittnen — OK في PDF (صفحة 1)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>witnesses[0][name]</code></td><td>Anna Svensson</td><td>Anna Svensson</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witnesses[0][personal_id_number]</code></td><td>197707071234</td><td>197707071234</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witnesses[0][phone]</code></td><td>0706667788</td><td>0706667788</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witnesses[0][email]</code></td><td>anna.svensson@test.se</td><td>anna.svensson@test.se</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witness_exist</code> (صفحة 2)</td><td>true</td><td>Vittnen: <code>X Ja Nej</code></td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>أخطاء PDF (S13-specific)</h2>
+<table>
+  <tr><th>القسم</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>personal_injuries_exist</code> (علوي — ملخص)</td>
+    <td>true</td>
+    <td>Personskador: <code>Ja X Nej</code></td>
+    <td><span class="status-wrong">Wrong</span></td>
+  </tr>
+  <tr>
+    <td>ترتيب الأقسام</td>
+    <td>Step 3</td>
+    <td>Personskador + Vittnen قبل Kompletterande (صفحة 1–2)</td>
+    <td><span class="status-wrong">Wrong</span> (ترتيب)</td>
+  </tr>
+</table>
+
+<h2>نواقص مشتركة مع S1–S12 (Backend PDF)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>files[images]</code> / <code>driving_license</code></td><td>مرسل</td><td>لا bilagor</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>signature</code></td><td>PNG</td><td>صفحة 2 — تسميات فقط</td><td><span class="status-missing">Missing</span></td></tr>
+</table>
+
+<h2>ملاحظة Layout — تحسّن عن S11/S12</h2>
+<p>عند دمج personskador + vittnen، PDF يعود إلى <strong>صفحتين</strong> مع Ja/Nej مضمّنة في صفحة 2 (مثل kolliosn S1) — وليس التفتيت 38–39 صفحة الذي ظهر في S11/S12 منفردين.</p>
+
+<h2>ملخص Payload S13 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "valtning",
+  "personal_injuries_exist": "true",
+  "personal_injuries[0]": { "Karin Johansson", ... },
+  "personal_injuries[1]": { "Petter Lund", ... },
+  "witness_exist": "true",
+  "witnesses[0]": { "Anna Svensson", "197707071234", "anna.svensson@test.se", "0706667788" },
+  "police": "false",
+  "safety_procedures_followed": "ja",
+  "date": "22-06-2026",
+  "time": "13:44",
+  "files": ["images", "driving_license"],
+  "signature": "(truncated)"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF bugs (valtning S13)</h2>
+<pre class="scenario">Report type: valtning (valtningTippning Debug S13 — Personskador + Vittnen)
+Report ID: 6a3912267d0e2fb8c8cd2f3e
+Environment: insuranceapp3.azurewebsites.net
+Date: 2026-06-22 · time 13:44
+
+App sends combined injuries + witness:
+  personal_injuries_exist = true (Karin Johansson + Petter Lund)
+  witness_exist = true (Anna Svensson, 197707071234)
+
+PDF OK (S13-specific — major improvement over kolliosn S10):
+  - Full Personskador table (both injured persons)
+  - Full Vittnen block with personnummer
+  - Bottom flags: Personskador Ja, Vittnen Ja (inline on page 2)
+  - PDF only 2 pages (not 38–39 like separate S11/S12)
+
+PDF Wrong:
+  - Top summary Personskador: Ja X Nej (= Nej) while injuries table and bottom show Ja
+
+Same as valtning S1–S12 (still missing):
+  - safety_procedures_followed = ja
+  - images + driving_license attachments
+  - signature image on underskrift page
+
+Attachment: report_6a3912267d0e2fb8c8cd2f3e.pdf</pre>
+
+<p>
+  <a href="s12-personal-injuries.html">← السابق: S12 Personskador Ja</a>
+  ·
+  <a href="s14-police.html">التالي: S14 Polisen Ja →</a>
+</p>
+
+<div class="footer">
+  valtning S13 Personskador + Vittnen · Report 6a3912267d0e2fb8c8cd2f3e · 2026-06-22
+</div>
+
+</body>
+</html>

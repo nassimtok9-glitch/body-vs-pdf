@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S7 — Maskin Ej Lastad — valtning Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">valtning</a> /
+  S7 — Maskin Ej Lastad
+</p>
+
+<h1>نواقص Body مقابل PDF — valtning S7 Maskin Ej Lastad</h1>
+<p>سينario Debug S7: <code>machine_loaded=false</code> — بدون <code>cargo_type</code> ولا <code>estimated_cargo_weight</code>.</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = valtning</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S7 — Maskin Ej Lastad (<code>valtning-s7</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3910927d0e2fb8c8cd2d06</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3910927d0e2fb8c8cd2d06.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>2026-06-22 · 13:38</dd>
+    <dt>مرجع الحقول</dt><dd><a href="https://github.com/nassimDev-ctrl/IH/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-VALTNING-FIELD-REFERENCE.html">MACHINE-VALTNING-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-swedish-driver.html">S1 (lastad Ja)</a> · <a href="s6-surface-annat.html">S6</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا signature base64 كامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل <code>machine_loaded=false</code> بدون حقول last (<code>cargo_type</code>، <code>estimated_cargo_weight</code> غير مُرسلة).
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    Maskinen lastad <strong>Nej</strong> ولا يظهر Typ av last / Uppskattad lastvikt — <strong>OK</strong>. نفس نواقص S1–S6: <code>safety_procedures_followed</code>، bilagor، signature. PDF <strong>28 صفحة</strong>.
+  </div>
+</div>
+
+<h2>مقارنة Last — S1 vs S7</h2>
+<table>
+  <tr><th>البند</th><th>S1</th><th>S7</th></tr>
+  <tr><td><code>machine_loaded</code></td><td>true</td><td><strong>false</strong></td></tr>
+  <tr><td><code>cargo_type</code></td><td>Grus i skopa</td><td>— (غير مُرسل)</td></tr>
+  <tr><td><code>estimated_cargo_weight</code></td><td>1800</td><td>— (غير مُرسل)</td></tr>
+  <tr><td>PDF Maskinen lastad</td><td><code>X Ja Nej</code> (= Ja)</td><td><span class="status-ok"><code>Ja X Nej</code> (= Nej)</span></td></tr>
+  <tr><td>PDF Typ av last / lastvikt</td><td>Grus i skopa / 1800</td><td><span class="status-ok">غائبان (متوقع)</span></td></tr>
+</table>
+
+<h2>حقول S7 — OK في PDF</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>machine_loaded</code></td><td>false</td><td>Maskinen lastad: <code>Ja X Nej</code></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>لا <code>cargo_type</code></td><td>—</td><td>لا Typ av last بعد سطر lastad</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>لا <code>estimated_cargo_weight</code></td><td>—</td><td>لا Uppskattad lastvikt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>motpart maskin + vältning baseline</td><td>MASKIN-445566 / 3 orsaker / surfaces</td><td>مثل S1</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_drivable</code> / <code>needs_towing</code></td><td>false / true</td><td>Körbar Nej · Bärgning Ja</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<div class="note">
+  <strong>ملاحظة:</strong> <code>tipping_narrative</code> ما زال يذكر «fylld skopa» في النص السردي (من happy path) — هذا محتوى narrative وليس تناقضاً مع <code>machine_loaded=false</code> في حقل الـ API.
+</div>
+
+<h2>نواقص مشتركة مع S1–S6 (Backend PDF)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>files[images]</code> / <code>driving_license</code></td><td>مرسل</td><td>لا bilagor</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>signature</code></td><td>PNG</td><td>صفحة 28 — تسميات فقط</td><td><span class="status-missing">Missing</span></td></tr>
+</table>
+
+<h2>أخطاء قالب PDF</h2>
+<table>
+  <tr><th>القسم</th><th>المشكلة</th><th>الحالة</th></tr>
+  <tr><td>Skadade delar + skadebeskrivning</td><td>صفحات 1–3 مُجزّأة</td><td><span class="status-layout">Layout bug</span></td></tr>
+  <tr><td>Ja/Nej (egendom … polis)</td><td>صفحات 4–27 مُجزّأة</td><td><span class="status-layout">Layout bug</span></td></tr>
+</table>
+
+<h2>ملخص Payload S7 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "valtning",
+  "machine_loaded": "false",
+  "tipping_causes": ["korning_i_lutning", "ojamnt_underlag", "for_tung_last"],
+  "surface_types": ["grus", "ojamnt_underlag", "lutande_mark"],
+  "counterparties[0]": { "maskin", "MASKIN-445566", "Sara Nilsson" },
+  "safety_procedures_followed": "ja",
+  "date": "22-06-2026",
+  "time": "13:38",
+  "files": ["images", "driving_license"],
+  "signature": "(truncated)"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF bugs (valtning S7)</h2>
+<pre class="scenario">Report type: valtning (valtningTippning Debug S7 — Maskin Ej Lastad)
+Report ID: 6a3910927d0e2fb8c8cd2d06
+Environment: insuranceapp3.azurewebsites.net
+Date: 2026-06-22 · time 13:38
+
+App sends not-loaded branch:
+  machine_loaded = false
+  (no cargo_type, no estimated_cargo_weight)
+
+PDF OK (S7-specific):
+  - Maskinen lastad: Nej
+  - Typ av last and Uppskattad lastvikt omitted (correct when not loaded)
+
+Same as valtning S1–S6 (still missing):
+  - safety_procedures_followed = ja
+  - images + driving_license attachments
+  - signature image on underskrift page
+
+Layout: PDF is 28 pages; Ja/X/Nej fragmented pages 4–27
+
+Attachment: report_6a3910927d0e2fb8c8cd2d06.pdf</pre>
+
+<p>
+  <a href="s6-surface-annat.html">← السابق: S6 Underlag = Annat</a>
+  ·
+  <a href="s8-damaged-part-annat.html">التالي: S8 Skadad Del = Annat →</a>
+</p>
+
+<div class="footer">
+  valtning S7 Maskin Ej Lastad · Report 6a3910927d0e2fb8c8cd2d06 · 2026-06-22
+</div>
+
+</body>
+</html>

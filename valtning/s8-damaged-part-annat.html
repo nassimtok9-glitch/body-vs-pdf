@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S8 — Skadad Del = Annat — valtning Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">valtning</a> /
+  S8 — Skadad Del = Annat
+</p>
+
+<h1>نواقص Body مقابل PDF — valtning S8 Skadad Del = Annat</h1>
+<p>سينario Debug S8: <code>damaged_parts</code> = hytt + annat مع <code>damaged_parts_other</code> — بدلاً من hytt / bom_arm / kaross في S1.</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = valtning</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S8 — Skadad Del = Annat (<code>valtning-s8</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3910c77d0e2fb8c8cd2d66</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3910c77d0e2fb8c8cd2d66.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>2026-06-22 · 13:38</dd>
+    <dt>مرجع الحقول</dt><dd><a href="https://github.com/nassimDev-ctrl/IH/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-VALTNING-FIELD-REFERENCE.html">MACHINE-VALTNING-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-swedish-driver.html">S1 (3 delar)</a> · <a href="s5-cause-annat.html">S5 (orsak annat)</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا signature base64 كامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل <code>damaged_parts[0]=hytt</code>، <code>damaged_parts[1]=annat</code> و<code>damaged_parts_other=Hydraulcylinder och stödben</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <code>damaged_parts_other</code> يظهر مع Annat — <strong>OK</strong> (نفس نمط S5/S6). نفس نواقص S1–S7: <code>safety_procedures_followed</code>، bilagor، signature. PDF <strong>28 صفحة</strong>.
+  </div>
+</div>
+
+<h2>مقارنة Skadade delar — S1 vs S8</h2>
+<table>
+  <tr><th>البند</th><th>S1</th><th>S8</th></tr>
+  <tr><td><code>damaged_parts[]</code></td><td>hytt, bom_arm, kaross</td><td>hytt, <code>annat</code></td></tr>
+  <tr><td><code>damaged_parts_other</code></td><td>—</td><td>Hydraulcylinder och stödben</td></tr>
+  <tr><td>PDF Skadade delar</td><td>Hytt, Bom / arm, Kaross</td><td><span class="status-ok">Hytt, Annat (Hydraulcylinder och stödben)</span></td></tr>
+</table>
+
+<h2>حقول S8 — OK في PDF</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>damaged_parts[0]</code></td><td>hytt</td><td>Hytt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damaged_parts[1]</code></td><td>annat</td><td>Annat (…)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damaged_parts_other</code></td><td>Hydraulcylinder och stödben</td><td>داخل الأقواس بعد Annat</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>own_machine_damage_description</code></td><td>Hyttens högra sida…</td><td>Skadebeskrivning (صفحة 3)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>vältning + motpart baseline</td><td>مثل S1</td><td>مثل S1</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص مشتركة مع S1–S7 (Backend PDF)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>files[images]</code> / <code>driving_license</code></td><td>مرسل</td><td>لا bilagor</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>signature</code></td><td>PNG</td><td>صفحة 28 — تسميات فقط</td><td><span class="status-missing">Missing</span></td></tr>
+</table>
+
+<h2>أخطاء قالب PDF</h2>
+<table>
+  <tr><th>القسم</th><th>المشكلة</th><th>الحالة</th></tr>
+  <tr><td>Skadade delar + skadebeskrivning</td><td>صفحات 1–3 مُجزّأة</td><td><span class="status-layout">Layout bug</span></td></tr>
+  <tr><td>Ja/Nej (egendom … polis)</td><td>صفحات 4–27 مُجزّأة</td><td><span class="status-layout">Layout bug</span></td></tr>
+</table>
+
+<h2>ملخص Payload S8 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "valtning",
+  "damaged_parts[0]": "hytt",
+  "damaged_parts[1]": "annat",
+  "damaged_parts_other": "Hydraulcylinder och stödben",
+  "own_machine_damage_description": "Hyttens högra sida, backspegel...",
+  "machine_loaded": true,
+  "cargo_type": "Grus i skopa",
+  "counterparties[0]": { "maskin", "MASKIN-445566", "Sara Nilsson" },
+  "safety_procedures_followed": "ja",
+  "date": "22-06-2026",
+  "time": "13:38",
+  "files": ["images", "driving_license"],
+  "signature": "(truncated)"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF bugs (valtning S8)</h2>
+<pre class="scenario">Report type: valtning (valtningTippning Debug S8 — Skadad Del = Annat)
+Report ID: 6a3910c77d0e2fb8c8cd2d66
+Environment: insuranceapp3.azurewebsites.net
+Date: 2026-06-22 · time 13:38
+
+App sends annat damaged-part branch:
+  damaged_parts[0] = hytt
+  damaged_parts[1] = annat
+  damaged_parts_other = Hydraulcylinder och stödben
+
+PDF OK (S8-specific):
+  - Skadade delar: Hytt, Annat (Hydraulcylinder och stödben)
+  - damaged_parts_other rendered inline with Annat label (same pattern as S5/S6)
+
+Same as valtning S1–S7 (still missing):
+  - safety_procedures_followed = ja
+  - images + driving_license attachments
+  - signature image on underskrift page
+
+Layout: PDF is 28 pages; Skadade delar split pages 1–3; Ja/X/Nej fragmented pages 4–27
+
+Attachment: report_6a3910c77d0e2fb8c8cd2d66.pdf</pre>
+
+<p>
+  <a href="s7-not-loaded.html">← السابق: S7 Maskin Ej Lastad</a>
+  ·
+  <a href="s9-no-third-party-property.html">التالي: S9 Ingen Egendomsskada →</a>
+</p>
+
+<div class="footer">
+  valtning S8 Skadad Del = Annat · Report 6a3910c77d0e2fb8c8cd2d66 · 2026-06-22
+</div>
+
+</body>
+</html>

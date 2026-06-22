@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S2 — Foreign Driver — valtning Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">valtning</a> /
+  S2 — Foreign Driver
+</p>
+
+<h1>نواقص Body مقابل PDF — valtning S2 Foreign Driver</h1>
+<p>سينario Debug S2: förare <strong>utan svenskt körkort</strong> — <code>birth_date</code> + <code>license_issuing_country</code> بدلاً من <code>personal_id_number</code>.</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = valtning</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S2 — Foreign Driver (<code>valtning-s2</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a390d547d0e2fb8c8cd2b66</code></dd>
+    <dt>PDF</dt><dd><code>report_6a390d547d0e2fb8c8cd2b66.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>2026-06-22 · 13:24</dd>
+    <dt>مرجع الحقول</dt><dd><a href="https://github.com/nassimDev-ctrl/IH/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-VALTNING-FIELD-REFERENCE.html">MACHINE-VALTNING-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-swedish-driver.html">S1 Swedish Driver</a> · <a href="../machineKollision/s2-foreign-driver.html">kolliosn S2</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا signature base64 كامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل فرع foreign driver صحيحاً: <code>swedish_driver_license=No</code>, <code>birth_date</code>, <code>license_issuing_country=Norge</code>, بدون <code>personal_id_number</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    حقول foreign driver تظهر (födelsedatum، Norge) — تحسّن عن kolliosn S2. نفس نواقص S1: <code>safety_procedures_followed</code>، bilagor، layout 30 صفحة.
+  </div>
+</div>
+
+<h2>مقارنة مع S1 و kolliosn S2</h2>
+<table>
+  <tr><th>البند</th><th>valtning S1</th><th>valtning S2</th><th>kolliosn S2</th></tr>
+  <tr><td><code>birth_date</code> / <code>license_issuing_country</code></td><td>—</td><td><span class="status-ok">OK</span></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>swedish_driver_license</code> في PDF</td><td>Ja OK</td><td><span class="status-ok">Nej</span> (Ja X Nej)</td><td><span class="status-wrong">Wrong</span> — Ja</td></tr>
+  <tr><td>machine identity</td><td>OK</td><td>OK</td><td>Missing</td></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>Missing</td><td>Missing</td><td>—</td></tr>
+  <tr><td>صفحات PDF</td><td>28</td><td>30</td><td>10</td></tr>
+</table>
+
+<h2>حقول Foreign Driver — OK في PDF</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>لا <code>personal_id_number</code></td><td>— (غير مُرسل)</td><td>Person-/organisationsnummer: <code>-</code></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>birth_date</code></td><td>20-03-1988</td><td>Födelsedatum: 20-03-1988</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>license_issuing_country</code></td><td>Norge</td><td>Utfärdande land (körkort): Norge</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>swedish_driver_license</code></td><td><strong>No</strong></td><td>Svenskt körkort / Gällande svenskt körkort: <strong>Nej</strong> (Ja X Nej)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>driver_full_name</code></td><td>Johan Andersson</td><td>Förarens namn</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>حقول vältning — OK (مثل S1)</h2>
+<p>machine identity، motpart maskin، tipping، surfaces، last، skador، körbar Nej، bärgning Ja — متطابقة مع Body (عدا الفجوات المشتركة أدناه).</p>
+
+<h2>نواقص مشتركة مع S1 (Backend PDF)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>files[images]</code> / <code>driving_license</code></td><td>مرسل</td><td>لا bilagor</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>signature</code></td><td>PNG</td><td>صفحة 30 — بدون صورة</td><td><span class="status-missing">Missing</span></td></tr>
+</table>
+
+<h2>أخطاء قالب PDF</h2>
+<table>
+  <tr><th>القسم</th><th>المشكلة</th><th>الحالة</th></tr>
+  <tr><td>Händelseförlopp (أسفل)</td><td>مُجزّأ على صفحات 1–2</td><td><span class="status-layout">Layout bug</span></td></tr>
+  <tr><td>Skadade delar + Ja/Nej</td><td>صفحات 3–28 مُجزّأة</td><td><span class="status-layout">Layout bug</span></td></tr>
+</table>
+
+<h2>ملخص Payload S2 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "valtning",
+  "swedish_driver_license": "No",
+  "birth_date": "20-03-1988",
+  "license_issuing_country": "Norge",
+  "driver_full_name": "Johan Andersson",
+  "safety_procedures_followed": "ja",
+  "serial_number": "VT-24680",
+  "machine_identity": { "hjullastare", "Volvo CE", "L90H", ... },
+  "counterparties[0]": { "maskin", "MASKIN-445566", "Sara Nilsson" },
+  "date": "22-06-2026",
+  "time": "13:24",
+  "files": ["images", "driving_license"],
+  "signature": "(truncated)"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF bugs (valtning S2)</h2>
+<pre class="scenario">Report type: valtning (valtningTippning Debug S2 — Foreign Driver)
+Report ID: 6a390d547d0e2fb8c8cd2b66
+Environment: insuranceapp3.azurewebsites.net
+Date: 2026-06-22 · time 13:24
+
+App sends foreign-driver branch correctly:
+  swedish_driver_license = No
+  birth_date = 20-03-1988
+  license_issuing_country = Norge
+  (no personal_id_number)
+
+PDF OK (S2-specific — better than kolliosn S2):
+  - Födelsedatum and Utfärdande land (körkort): Norge
+  - Svenskt körkort: Nej (not wrongly Ja like machineKollision S2)
+
+Same as valtning S1 (still missing):
+  - safety_procedures_followed = ja
+  - images + driving_license + signature image
+
+Layout: PDF is 30 pages (Ja/X/Nej fragmented; Händelseförlopp split pages 1–2)
+
+Attachment: report_6a390d547d0e2fb8c8cd2b66.pdf</pre>
+
+<p>
+  <a href="s1-swedish-driver.html">← السابق: S1 Swedish Driver</a>
+  ·
+  <a href="s3-no-counterparty.html">التالي: S3 No Counterparty →</a>
+</p>
+
+<div class="footer">
+  valtning S2 Foreign Driver · Report 6a390d547d0e2fb8c8cd2b66 · 2026-06-22
+</div>
+
+</body>
+</html>

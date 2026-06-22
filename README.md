@@ -6,9 +6,9 @@
 
 ## المحتوى الحالي
 
-| نوع التقرير | السينariوهات |
-|-------------|--------------|
-| `machineKollision` (kolliosn) | S1–S10 |
+| نوع التقرير                   | السينariوهات |
+| ----------------------------- | ------------ |
+| `machineKollision` (kolliosn) | S1–S10       |
 
 **الفهرس:** [index.html](index.html) · [machineKollision/index.html](machineKollision/index.html)
 
@@ -51,3 +51,5 @@ git push -u origin main
 - لا tokens ولا API keys في HTML
 - روابط Field Reference و Test Cases تشير إلى repo التطبيق (راجع `site-urls.json`)
 - `.nojekyll` يمنع Jekyll من تجاهل مجلدات تبدأ بـ `_`
+
+.\scripts\sync-body-vs-pdf-site.ps1; cd body-vs-pdf-site; git add .; git commit -m "Sync docs"; git push; cd ..

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S6 — Underlag = Annat — valtning Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">valtning</a> /
+  S6 — Underlag = Annat
+</p>
+
+<h1>نواقص Body مقابل PDF — valtning S6 Underlag = Annat</h1>
+<p>سينario Debug S6: <code>surface_types[0]=annat</code> مع <code>surface_other</code> — بدلاً من grus / ojamnt_underlag / lutande_mark في S1.</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = valtning</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S6 — Underlag = Annat (<code>valtning-s6</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a390fd77d0e2fb8c8cd2ca2</code></dd>
+    <dt>PDF</dt><dd><code>report_6a390fd77d0e2fb8c8cd2ca2.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>2026-06-22 · 13:34</dd>
+    <dt>مرجع الحقول</dt><dd><a href="https://github.com/nassimDev-ctrl/IH/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-VALTNING-FIELD-REFERENCE.html">MACHINE-VALTNING-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-swedish-driver.html">S1 (3 underlag)</a> · <a href="s5-cause-annat.html">S5 (orsak annat)</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا signature base64 كامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل <code>surface_types[0]=annat</code> و<code>surface_other</code> فقط؛ orsaker تبقى الافتراضية (ثلاثة أسباب كما S1).
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <code>surface_other</code> يظهر مع Annat في PDF — <strong>OK</strong> (نفس نمط S5). نفس نواقص S1–S5: <code>safety_procedures_followed</code>، bilagor، signature. PDF <strong>28 صفحة</strong>.
+  </div>
+</div>
+
+<h2>مقارنة Underlag — S1 vs S6</h2>
+<table>
+  <tr><th>البند</th><th>S1</th><th>S6</th></tr>
+  <tr><td><code>surface_types[]</code></td><td>grus, ojamnt_underlag, lutande_mark</td><td><code>annat</code> فقط</td></tr>
+  <tr><td><code>surface_other</code></td><td>—</td><td>Blandat grus och packad lera med vattenpölar.</td></tr>
+  <tr><td>PDF Underlag</td><td>Grus, Ojämnt underlag, Lutande mark</td><td><span class="status-ok">Annat (Blandat grus och packad lera med vattenpölar.)</span></td></tr>
+  <tr><td><code>tipping_causes[]</code></td><td>3 orsaker</td><td>3 orsaker (baseline S1)</td></tr>
+</table>
+
+<h2>حقول S6 — OK في PDF</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>surface_types[0]</code></td><td>annat</td><td>Underlag: Annat (…)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>surface_other</code></td><td>Blandat grus och packad lera med vattenpölar.</td><td>داخل الأقواس بعد Annat</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>tipping_causes[]</code></td><td>korning_i_lutning, ojamnt_underlag, for_tung_last</td><td>Körning i lutning, Ojämnt underlag, För tung last</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>ground_slope</code> + description</td><td>ja_svag + Sidolutning…</td><td>Ja, svag lutning: …</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>motpart maskin + baseline</td><td>MASKIN-445566 / Sara Nilsson</td><td>مثل S1</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص مشتركة مع S1–S5 (Backend PDF)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>files[images]</code> / <code>driving_license</code></td><td>مرسل</td><td>لا bilagor</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>signature</code></td><td>PNG</td><td>صفحة 28 — تسميات فقط</td><td><span class="status-missing">Missing</span></td></tr>
+</table>
+
+<h2>أخطاء قالب PDF</h2>
+<table>
+  <tr><th>القسم</th><th>المشكلة</th><th>الحالة</th></tr>
+  <tr><td>Skadade delar + skadebeskrivning</td><td>صفحات 1–3 مُجزّأة</td><td><span class="status-layout">Layout bug</span></td></tr>
+  <tr><td>Ja/Nej (egendom … polis)</td><td>صفحات 4–27 مُجزّأة</td><td><span class="status-layout">Layout bug</span></td></tr>
+</table>
+
+<h2>ملخص Payload S6 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "valtning",
+  "surface_types[0]": "annat",
+  "surface_other": "Blandat grus och packad lera med vattenpölar.",
+  "tipping_causes": ["korning_i_lutning", "ojamnt_underlag", "for_tung_last"],
+  "ground_slope": "ja_svag",
+  "counterparties[0]": { "maskin", "MASKIN-445566", "Sara Nilsson" },
+  "safety_procedures_followed": "ja",
+  "date": "22-06-2026",
+  "time": "13:34",
+  "files": ["images", "driving_license"],
+  "signature": "(truncated)"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF bugs (valtning S6)</h2>
+<pre class="scenario">Report type: valtning (valtningTippning Debug S6 — Underlag = Annat)
+Report ID: 6a390fd77d0e2fb8c8cd2ca2
+Environment: insuranceapp3.azurewebsites.net
+Date: 2026-06-22 · time 13:34
+
+App sends annat surface branch:
+  surface_types[0] = annat
+  surface_other = Blandat grus och packad lera med vattenpölar.
+
+PDF OK (S6-specific):
+  - Underlag: Annat (Blandat grus och packad lera med vattenpölar.)
+  - surface_other rendered inline with Annat label (same pattern as S5 tipping_cause_other)
+
+Same as valtning S1–S5 (still missing):
+  - safety_procedures_followed = ja
+  - images + driving_license attachments
+  - signature image on underskrift page
+
+Layout: PDF is 28 pages; Ja/X/Nej fragmented pages 4–27
+
+Attachment: report_6a390fd77d0e2fb8c8cd2ca2.pdf</pre>
+
+<p>
+  <a href="s5-cause-annat.html">← السابق: S5 Orsak = Annat</a>
+  ·
+  <a href="s7-not-loaded.html">التالي: S7 Maskin Ej Lastad →</a>
+</p>
+
+<div class="footer">
+  valtning S6 Underlag = Annat · Report 6a390fd77d0e2fb8c8cd2ca2 · 2026-06-22
+</div>
+
+</body>
+</html>

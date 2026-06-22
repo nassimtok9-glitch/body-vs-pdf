@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S11 — Vittnen Ja — valtning Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">valtning</a> /
+  S11 — Vittnen Ja
+</p>
+
+<h1>نواقص Body مقابل PDF — valtning S11 Vittnen Ja</h1>
+<p>سينario Debug S11: <code>witness_exist=true</code> + <code>witnesses[0]</code> (Lena Karlsson) — نفس بيانات kolliosn S8.</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = valtning</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S11 — Vittnen Ja (<code>valtning-s11</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3911ac7d0e2fb8c8cd2e80</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3911ac7d0e2fb8c8cd2e80.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>2026-06-22 · 13:42</dd>
+    <dt>مرجع الحقول</dt><dd><a href="https://github.com/nassimDev-ctrl/IH/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-VALTNING-FIELD-REFERENCE.html">MACHINE-VALTNING-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="../machineKollision/s8-witnesses.html">kolliosn S8</a> · <a href="s1-swedish-driver.html">valtning S1</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا signature base64 كامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل <code>witness_exist=true</code> و<code>witnesses[0]</code> كاملة (name, email, phone, personal_id_number).
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    بيانات الشاهد تظهر أعلى PDF — <strong>OK</strong> بما فيها <code>personal_id_number</code> (تحسّن عن kolliosn S8). لكن ترتيب القسم غير منطقي وPDF <strong>38 صفحة</strong> مع تفتيت شديد من صفحة 2.
+  </div>
+</div>
+
+<h2>مقارنة Vittnen — kolliosn S8 vs valtning S11</h2>
+<table>
+  <tr><th>البند</th><th>kolliosn S8</th><th>valtning S11</th></tr>
+  <tr><td><code>witnesses[0][name]</code></td><td>OK</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witnesses[0][phone]</code> / <code>[email]</code></td><td>OK</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witnesses[0][personal_id_number]</code></td><td><span class="status-missing">Missing</span> (-)</td><td><span class="status-ok">OK</span> — 19790202-5678</td></tr>
+  <tr><td>موضع قسم Vittnen</td><td>قبل Kompletterande</td><td><span class="status-wrong">Wrong</span> — نفس المشكلة</td></tr>
+  <tr><td>صفحات PDF</td><td>23</td><td><span class="status-layout">38</span></td></tr>
+</table>
+
+<h2>حقول Vittnen — OK في PDF</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF (قسم Vittnen — صفحة 1)</th><th>الحالة</th></tr>
+  <tr><td><code>witness_exist</code></td><td>true</td><td>Vittnen: <code>X Ja Nej</code> (صفحات 30–33)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witnesses[0][name]</code></td><td>Lena Karlsson</td><td>Lena Karlsson</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witnesses[0][personal_id_number]</code></td><td>19790202-5678</td><td>19790202-5678</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witnesses[0][phone]</code></td><td>0704445566</td><td>0704445566</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witnesses[0][email]</code></td><td>lena.karlsson@test.se</td><td>lena.karlsson@test.se</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>أخطاء قالب PDF (S11-specific)</h2>
+<table>
+  <tr><th>القسم</th><th>المشكلة</th><th>الحالة</th></tr>
+  <tr><td>موضع Vittnen</td><td>يظهر <strong>قبل</strong> Kompletterande uppgifter / Egen maskin block</td><td><span class="status-wrong">Wrong</span></td></tr>
+  <tr><td>Maskinen lastad + last + skador</td><td>صفحات 2–13 مُجزّأة (كان على صفحة 1 في S1)</td><td><span class="status-layout">Layout bug</span></td></tr>
+  <tr><td>Ja/Nej (egendom … polis)</td><td>صفحات 14–37 مُجزّأة</td><td><span class="status-layout">Layout bug</span></td></tr>
+</table>
+
+<h2>نواقص مشتركة مع S1–S10 (Backend PDF)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>files[images]</code> / <code>driving_license</code></td><td>مرسل</td><td>لا bilagor</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>signature</code></td><td>PNG</td><td>صفحة 38 — تسميات فقط</td><td><span class="status-missing">Missing</span></td></tr>
+</table>
+
+<h2>ملخص Payload S11 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "valtning",
+  "witness_exist": "true",
+  "witnesses[0][name]": "Lena Karlsson",
+  "witnesses[0][email]": "lena.karlsson@test.se",
+  "witnesses[0][phone]": "0704445566",
+  "witnesses[0][personal_id_number]": "19790202-5678",
+  "personal_injuries_exist": "false",
+  "police": "false",
+  "counterparties[0]": { "maskin", "MASKIN-445566", "Sara Nilsson" },
+  "safety_procedures_followed": "ja",
+  "date": "22-06-2026",
+  "time": "13:42",
+  "files": ["images", "driving_license"],
+  "signature": "(truncated)"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF bugs (valtning S11)</h2>
+<pre class="scenario">Report type: valtning (valtningTippning Debug S11 — Vittnen Ja)
+Report ID: 6a3911ac7d0e2fb8c8cd2e80
+Environment: insuranceapp3.azurewebsites.net
+Date: 2026-06-22 · time 13:42
+
+App sends witness branch:
+  witness_exist = true
+  witnesses[0] = Lena Karlsson, lena.karlsson@test.se, 0704445566, 19790202-5678
+
+PDF OK (S11-specific — better than kolliosn S8):
+  - Witness name, phone, email, personal_id_number all shown in top Vittnen block
+  - witness_exist Ja (pages 30–33)
+
+PDF Wrong / Layout (S11-specific):
+  - Vittnen block placed before Kompletterande uppgifter (illogical order)
+  - PDF is 38 pages; last/cargo/damage fields fragmented pages 2–13 (worse than S1's 28 pages)
+
+Same as valtning S1–S10 (still missing):
+  - safety_procedures_followed = ja
+  - images + driving_license attachments
+  - signature image on underskrift page
+
+Attachment: report_6a3911ac7d0e2fb8c8cd2e80.pdf</pre>
+
+<p>
+  <a href="s10-drivable.html">← السابق: S10 Körbar Ja</a>
+  ·
+  <a href="s12-personal-injuries.html">التالي: S12 Personskador Ja →</a>
+</p>
+
+<div class="footer">
+  valtning S11 Vittnen Ja · Report 6a3911ac7d0e2fb8c8cd2e80 · 2026-06-22
+</div>
+
+</body>
+</html>

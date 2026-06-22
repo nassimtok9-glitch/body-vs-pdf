@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S10 — Körbar Ja — valtning Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">valtning</a> /
+  S10 — Körbar Ja
+</p>
+
+<h1>نواقص Body مقابل PDF — valtning S10 Körbar Ja</h1>
+<p>سينario Debug S10: <code>machine_drivable=true</code> — بدون <code>needs_towing</code> (لا bärgning).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = valtning</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S10 — Körbar Ja (<code>valtning-s10</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3911457d0e2fb8c8cd2e21</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3911457d0e2fb8c8cd2e21.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>2026-06-22 · 13:41</dd>
+    <dt>مرجع الحقول</dt><dd><a href="https://github.com/nassimDev-ctrl/IH/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-VALTNING-FIELD-REFERENCE.html">MACHINE-VALTNING-FIELD-REFERENCE.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-swedish-driver.html">S1 (körbar Nej + bärgning)</a> · <a href="s7-not-loaded.html">S7</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا signature base64 كامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل <code>machine_drivable=true</code> بدون <code>needs_towing</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    Maskinen körbar <strong>Ja</strong> ولا يظهر Behöver bärgning — <strong>OK</strong>. نفس نواقص S1–S9: <code>safety_procedures_followed</code>، bilagor، signature. PDF <strong>24 صفحة</strong> (أقل من S1 — بدون بلوك bärgning).
+  </div>
+</div>
+
+<h2>مقارنة Körbar / Bärgning — S1 vs S10</h2>
+<table>
+  <tr><th>البند</th><th>S1</th><th>S10</th></tr>
+  <tr><td><code>machine_drivable</code></td><td>false</td><td><strong>true</strong></td></tr>
+  <tr><td><code>needs_towing</code></td><td>true</td><td>— (غير مُرسل)</td></tr>
+  <tr><td>PDF Maskinen körbar</td><td>Nej (<code>Ja X Nej</code>)</td><td><span class="status-ok">Ja</span> (<code>X Ja Nej</code>)</td></tr>
+  <tr><td>PDF Behöver bärgning</td><td>Ja</td><td><span class="status-ok">غائب (متوقع)</span></td></tr>
+  <tr><td>صفحات PDF</td><td>28</td><td>24</td></tr>
+</table>
+
+<h2>حقول S10 — OK في PDF</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>machine_drivable</code></td><td>true</td><td>Maskinen körbar: <code>X Ja Nej</code> (صفحات 8–11)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>لا <code>needs_towing</code></td><td>—</td><td>لا Behöver bärgning بعد körbar</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>vältning + motpart baseline</td><td>مثل S1</td><td>مثل S1</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>third_party_property_damage_exist</code></td><td>false</td><td>Nej</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص مشتركة مع S1–S9 (Backend PDF)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>غائب</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>files[images]</code> / <code>driving_license</code></td><td>مرسل</td><td>لا bilagor</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><code>signature</code></td><td>PNG</td><td>صفحة 24 — تسميات فقط</td><td><span class="status-missing">Missing</span></td></tr>
+</table>
+
+<h2>أخطاء قالب PDF</h2>
+<table>
+  <tr><th>القسم</th><th>المشكلة</th><th>الحالة</th></tr>
+  <tr><td>Skadade delar + skadebeskrivning</td><td>صفحات 1–3 مُجزّأة</td><td><span class="status-layout">Layout bug</span></td></tr>
+  <tr><td>Ja/Nej (egendom, körbar, personskador, vittnen, polis)</td><td>صفحات 4–23 مُجزّأة</td><td><span class="status-layout">Layout bug</span></td></tr>
+</table>
+
+<h2>ملخص Payload S10 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "valtning",
+  "machine_drivable": "true",
+  "counterparties[0]": { "maskin", "MASKIN-445566", "Sara Nilsson" },
+  "machine_loaded": true,
+  "cargo_type": "Grus i skopa",
+  "safety_procedures_followed": "ja",
+  "date": "22-06-2026",
+  "time": "13:41",
+  "files": ["images", "driving_license"],
+  "signature": "(truncated)"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF bugs (valtning S10)</h2>
+<pre class="scenario">Report type: valtning (valtningTippning Debug S10 — Körbar Ja)
+Report ID: 6a3911457d0e2fb8c8cd2e21
+Environment: insuranceapp3.azurewebsites.net
+Date: 2026-06-22 · time 13:41
+
+App sends drivable branch:
+  machine_drivable = true
+  (no needs_towing field)
+
+PDF OK (S10-specific):
+  - Maskinen körbar: Ja
+  - Behöver bärgning section omitted (correct when drivable)
+
+Same as valtning S1–S9 (still missing):
+  - safety_procedures_followed = ja
+  - images + driving_license attachments
+  - signature image on underskrift page
+
+Layout: PDF is 24 pages (4 fewer than S1 — no bärgning block); Ja/X/Nej fragmented
+
+Attachment: report_6a3911457d0e2fb8c8cd2e21.pdf</pre>
+
+<p>
+  <a href="s9-no-third-party-property.html">← السابق: S9 Ingen Egendomsskada</a>
+  ·
+  <a href="s11-witnesses.html">التالي: S11 Vittnen Ja →</a>
+</p>
+
+<div class="footer">
+  valtning S10 Körbar Ja · Report 6a3911457d0e2fb8c8cd2e21 · 2026-06-22
+</div>
+
+</body>
+</html>
