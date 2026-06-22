@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S9 — Safety Okänt — machineBrand Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineBrand</a> /
+  S9 — Safety Okänt
+</p>
+
+<h1>نواقص Body مقابل PDF — machineBrand S9 Safety Okänt</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Brandskador (<code>brandskador-s9</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>سينario Debug</dt><dd>S9 — Safety Okänt (<code>brandskador-s9</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3929457d0e2fb8c8cd36c8</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3929457d0e2fb8c8cd36c8.pdf</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 15:22</dd>
+    <dt>عدد الحقول</dt><dd><strong>40</strong> (+ comment عند okant)</dd>
+    <dt>الفرق عن S1</dt><dd><code>safety_procedures_followed=okant</code> + <code>safety_procedures_comment</code></dd>
+    <dt>مقارنة</dt><dd><a href="s8-safety-nej.html">S8 (nej)</a> · <a href="s1-happy-path.html">S1 (ja)</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>safety_procedures_followed=okant</code> + <code>safety_procedures_comment</code> = «Föraren kunde inte bekräfta vilka rutiner som följdes.»
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <strong>كل حقول safety — OK:</strong> Okänt + «Kommentar säkerhetsrutiner» مع النص الكامل.<br />
+    لا فجوات خاصة بـ S9 — نفس نواقص S1–S8 المشتركة.
+  </div>
+</div>
+
+<h2>التركيز — S9 vs S8 vs S1 (safety branches)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1</th><th>S8</th><th>S9 Body</th><th>S9 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>safety_procedures_followed</code></td>
+    <td>ja</td>
+    <td>nej</td>
+    <td>okant</td>
+    <td>Säkerhetsrutiner följda: Okänt</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>safety_procedures_not_followed_description</code></td>
+    <td>—</td>
+    <td>Skyddsskärm…</td>
+    <td>—</td>
+    <td>—</td>
+    <td><span class="status-ok">N/A</span></td>
+  </tr>
+  <tr>
+    <td><code>safety_procedures_comment</code></td>
+    <td>—</td>
+    <td>—</td>
+    <td>Föraren kunde inte…</td>
+    <td>Kommentar säkerhetsrutiner: نفس النص</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<h2>حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>machine identity + org.nr + insurance</td><td>نفس S1</td><td>Egen maskin</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>ownership_type</code> / reporter / ضرر / step3</td><td>baseline S1</td><td>Kompletterande</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص مشتركة (ليست خاصة بـ S9)</h2>
+<table>
+  <tr><th>البند</th><th>الحالة</th></tr>
+  <tr><td><code>signature</code> image</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td>Polisen / Svenskt körkort</td><td><span class="status-artifact">Artifact</span></td></tr>
+  <tr><td>Ja X Nej (ملخص علوي)</td><td><span class="status-layout">Layout</span></td></tr>
+</table>
+
+<h2>ملخص safety branches (S1 / S8 / S9)</h2>
+<table>
+  <tr><th>السينario</th><th>القيمة</th><th>حقل إضافي</th><th>PDF</th></tr>
+  <tr><td>S1</td><td>ja</td><td>—</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>S8</td><td>nej</td><td>not_followed_description</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>S9</td><td>okant</td><td>comment</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineBrand S9)</h2>
+<pre class="scenario">Report type: machineBrand (Brandskador Debug S9 — Safety Okänt)
+Report ID: 6a3929457d0e2fb8c8cd36c8
+Date: 22-06-2026 · time 15:22
+
+App sends S9 correctly:
+  - safety_procedures_followed=okant
+  - safety_procedures_comment=
+    "Föraren kunde inte bekräfta vilka rutiner som följdes."
+
+PDF OK for S9 (no S9-specific gaps):
+  - Säkerhetsrutiner följda: Okänt
+  - Kommentar säkerhetsrutiner: full comment text shown
+
+All three safety branches (ja/nej/okant) work in machineBrand PDF — S1, S8, S9.
+
+Same issues as S1–S8: polis/körkort artifact, top Ja X Nej layout, signature image
+
+Attachment: report_6a3929457d0e2fb8c8cd36c8.pdf</pre>
+
+<div class="footer">
+  machineBrand S9 Safety Okänt · Report 6a3929457d0e2fb8c8cd36c8 · 2026-06-22
+</div>
+
+</body>
+</html>

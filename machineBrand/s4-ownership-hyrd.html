@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S4 — Ownership Hyrd — machineBrand Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineBrand</a> /
+  S4 — Ownership Hyrd
+</p>
+
+<h1>نواقص Body مقابل PDF — machineBrand S4 Ownership Hyrd</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Brandskador (<code>brandskador-s4</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineBrand</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S4 — Ownership Hyrd (<code>brandskador-s4</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3927cb7d0e2fb8c8cd3561</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3927cb7d0e2fb8c8cd3561.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 15:17</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>الفرق عن S1</dt><dd><code>ownership_type=hyrd</code> + حقول <code>rental_*</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="https://github.com/nassimDev-ctrl/IH/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-BRAND-FIELD-REFERENCE.html">MACHINE-BRAND-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="https://github.com/nassimDev-ctrl/IH/blob/main/docs/test-references/orgistrerat%20frodon%20test/MACHINE-BRAND-test-cases.html">MACHINE-BRAND-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s3-ownership-leasad.html">S3 Leasad</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    43 حقلًا — baseline S1 مع <code>ownership_type=hyrd</code> وحقول rental كاملة: company، period، contact name/email.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <strong>كل حقول rental — OK</strong> في Kompletterande uppgifter (Hyrd، Uthyrningsföretag، Hyresperiod، Kontakt).<br />
+    نفس نواقص S1–S3: artifact polis/körkort، layout Ja X Nej، underskrift بدون صورة.
+  </div>
+</div>
+
+<h2>التركيز — S4 vs S3 (ownership blocks)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S4 Body</th><th>S4 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>ownership_type</code></td>
+    <td>hyrd</td>
+    <td>Ägande/leasing: Hyrd</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>rental_company</code></td>
+    <td>Hyresmaskin Stockholm AB</td>
+    <td>Uthyrningsföretag: Hyresmaskin Stockholm AB</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>rental_period</code></td>
+    <td>2026-06-01 till 2026-07-01</td>
+    <td>Hyresperiod: 2026-06-01 till 2026-07-01</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>rental_contact_name</code></td>
+    <td>Mikael Sand</td>
+    <td>Kontakt uthyrare: Mikael Sand</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>rental_contact_email</code></td>
+    <td>mikael.sand@hyresmaskin.example</td>
+    <td>Kontakt uthyrare e-post: mikael.sand@hyresmaskin.example</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>مقارنة S3 vs S4:</strong> بلوك <code>rental_*</code> (S4) يُعرض كاملًا في PDF، بينما S3 Leasad يفتقد <code>contract_number</code> — الفجوة في finance block وليست في rental block.
+</div>
+
+<h2>منطق الحكم</h2>
+<table>
+  <tr><th>الحالة</th><th>المعنى</th><th>المسؤول المرجّح</th></tr>
+  <tr><td><span class="status-ok">OK</span></td><td>القيمة في Body وتظهر في PDF بشكل صحيح</td><td>—</td></tr>
+  <tr><td><span class="status-missing">Missing</span></td><td>مُرسل في Body وغائب من PDF</td><td>Backend PDF template</td></tr>
+  <tr><td><span class="status-artifact">Artifact</span></td><td>قسم لا ينتمي لـ machineBrand v1</td><td>Backend PDF template</td></tr>
+  <tr><td><span class="status-layout">Layout</span></td><td>Ja / X / Nej أو تكرار مربك</td><td>Backend PDF layout</td></tr>
+</table>
+
+<h2>حقول متطابقة (OK) — كامل S4</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>machineBrand</td><td>Skadeanmälningstyp: Brandskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>22-06-2026 / 15:17</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_type]</code></td><td>hjullastare</td><td>Maskintyp: Hjullastare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>serial_number</code></td><td>MBR-S1-001</td><td>Serienummer: MBR-S1-001</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>organization_number</code></td><td>6990593003</td><td>Org.nr: 6990593003</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>reporter_role</code></td><td>forare</td><td>Rapportörens roll: Förare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>Säkerhetsrutiner följda: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>حقول الضرر + step3</td><td>نفس S1 baseline</td><td>مطابق</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>كل <code>rental_*</code></td><td>انظر جدول التركيز</td><td>Kompletterande rental block</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص مشتركة مع S1–S3 (ليست خاصة بـ S4)</h2>
+<table>
+  <tr><th>القسم</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>مُرسل (base64)</td>
+    <td>صفحة 2 — تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td>Polisen / Svenskt körkort</td>
+    <td>غير مُرسل</td>
+    <td>أعلى PDF</td>
+    <td><span class="status-artifact">Artifact</span></td>
+  </tr>
+  <tr>
+    <td>Ja X Nej (ملخص علوي)</td>
+    <td>—</td>
+    <td>personskador / polis / körkort</td>
+    <td><span class="status-layout">Layout</span></td>
+  </tr>
+</table>
+
+<h2>ملخص Payload S4 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "ownership_type": "hyrd",
+  "rental_company": "Hyresmaskin Stockholm AB",
+  "rental_period": "2026-06-01 till 2026-07-01",
+  "rental_contact_name": "Mikael Sand",
+  "rental_contact_email": "mikael.sand@hyresmaskin.example",
+  "machine_type": "hjullastare",
+  "serial_number": "MBR-S1-001",
+  "date": "22-06-2026",
+  "time": "15:17",
+  "signature": "(base64 — omitted)"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineBrand S4)</h2>
+<pre class="scenario">Report type: machineBrand (Brandskador Debug S4 — Ownership Hyrd)
+Report ID: 6a3927cb7d0e2fb8c8cd3561
+Environment: insuranceapp3.azurewebsites.net
+Date: 22-06-2026 · time 15:17
+
+App sends S4 correctly:
+  - ownership_type=hyrd
+  - rental_company=Hyresmaskin Stockholm AB
+  - rental_period=2026-06-01 till 2026-07-01
+  - rental_contact_name=Mikael Sand
+  - rental_contact_email=mikael.sand@hyresmaskin.example
+
+PDF OK for S4 (all rental fields):
+  - Ägande/leasing: Hyrd
+  - Uthyrningsföretag, Hyresperiod, Kontakt uthyrare, e-post — all correct
+
+Contrast with S3 (leasad):
+  - S3 finance block missing contract_number in PDF
+  - S4 rental block is complete — no S4-specific gaps
+
+Same issues as S1–S3:
+  - Artifact: Polisen, Svenskt körkort sections
+  - Layout: "Ja X Nej" on top summary
+  - signature image missing on page 2
+
+Attachment: report_6a3927cb7d0e2fb8c8cd3561.pdf</pre>
+
+<div class="footer">
+  machineBrand S4 Ownership Hyrd · Report 6a3927cb7d0e2fb8c8cd3561 · 2026-06-22
+</div>
+
+</body>
+</html>

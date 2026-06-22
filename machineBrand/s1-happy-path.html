@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S1 — Happy Path — machineBrand Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineBrand</a> /
+  S1 — Happy Path
+</p>
+
+<h1>نواقص Body مقابل PDF — machineBrand S1 Happy Path</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Brandskador (<code>brandskador-s1</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineBrand</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S1 — Happy Path — Reporter Förare (<code>brandskador-s1</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a39229a7d0e2fb8c8cd344e</code></dd>
+    <dt>PDF</dt><dd><code>report_6a39229a7d0e2fb8c8cd344e.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 14:54</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong> (مقابل 28 في valtning S1)</dd>
+    <dt>مرجع الحقول</dt><dd><a href="https://github.com/nassimDev-ctrl/IH/blob/main/docs/orgistrerat-frodon-backend-docs/MACHINE-BRAND-FIELD-REFERENCE.html">MACHINE-BRAND-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="https://github.com/nassimDev-ctrl/IH/blob/main/docs/test-references/orgistrerat%20frodon%20test/MACHINE-BRAND-test-cases.html">MACHINE-BRAND-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="../valtning/s1-swedish-driver.html">valtning S1</a> · <a href="../machineKollision/s1-swedish-driver.html">kolliosn S1</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    39 حقلًا — مسار S1 كامل: machine identity، <code>reporter_role=forare</code>، safety ja، حقول ضرر الخطوة 2، step3 Nej (egendom/person/vittnen)، <code>machine_drivable=true</code>. بدون <code>police</code> / <code>driving_license</code> (ممنوع v1).
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    قالب <strong>Brandskador</strong> أفضل من kolliosn — machine identity و org.nr و Kompletterande uppgifter <strong>OK</strong>. لكن أعلى PDF يعرض أقسام <strong>polis / körkort</strong> غير مناسبة لـ machineBrand، وتخطيط <strong>Ja X Nej</strong> مربك، وصفحة التوقيع بدون صورة.
+  </div>
+</div>
+
+<h2>مقارنة مع أنواع أخرى (S1)</h2>
+<table>
+  <tr><th>البند</th><th>kolliosn S1</th><th>valtning S1</th><th>machineBrand S1</th></tr>
+  <tr><td>machine identity في PDF</td><td><span class="status-missing">Missing</span></td><td><span class="status-ok">OK</span></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>organization_number</code></td><td><span class="status-missing">Missing</span></td><td><span class="status-ok">OK</span></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>Händelseförloppet (علوي)</td><td><span class="status-wrong">N/A</span></td><td><span class="status-ok">OK</span></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>عنوان / typ</td><td>Motorfordon artifact</td><td>Maskin / valtning</td><td><span class="status-ok">Maskin / Brandskador</span></td></tr>
+  <tr><td><code>reporter_role</code></td><td>— (körkort)</td><td>— (körkort)</td><td><span class="status-ok">Förare</span></td></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>OK (kolliosn)</td><td><span class="status-missing">Missing</span></td><td><span class="status-ok">OK</span> (Kompletterande)</td></tr>
+  <tr><td>عدد صفحات PDF</td><td>2</td><td><span class="status-layout">28</span></td><td><span class="status-ok">2</span></td></tr>
+</table>
+
+<h2>منطق الحكم</h2>
+<table>
+  <tr><th>الحالة</th><th>المعنى</th><th>المسؤول المرجّح</th></tr>
+  <tr><td><span class="status-ok">OK</span></td><td>القيمة في Body وتظهر في PDF بشكل صحيح</td><td>—</td></tr>
+  <tr><td><span class="status-missing">Missing</span></td><td>مُرسل في Body وغائب من PDF</td><td>Backend PDF template</td></tr>
+  <tr><td><span class="status-wrong">Wrong</span></td><td>قيمة خاطئة أو تناقض مع Body</td><td>Backend PDF mapping</td></tr>
+  <tr><td><span class="status-artifact">Artifact</span></td><td>قسم لا ينتمي لـ machineBrand v1</td><td>Backend PDF template</td></tr>
+  <tr><td><span class="status-layout">Layout</span></td><td>Ja / X / Nej أو تكرار مربك</td><td>Backend PDF layout</td></tr>
+</table>
+
+<h2>حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>machineBrand</td><td>Skadeanmälningstyp: Brandskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>22-06-2026 / 14:54</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>address</code> / <code>post_number_post_address</code></td><td>Virkesvägen 10… / 12030</td><td>Skadeplats + Postnr 12030</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_type]</code></td><td>hjullastare</td><td>Maskintyp: Hjullastare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>serial_number</code></td><td>MBR-S1-001</td><td>Serienummer: MBR-S1-001</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_brand/model/year]</code></td><td>Volvo CE / L90H / 2020</td><td>Märke / Modell / Årsmodell</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[operating_hours]</code></td><td>3150</td><td>Drifttimmar: 3150</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_insured]</code></td><td>true</td><td>Försäkrad: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>organization_number</code></td><td>6990593003</td><td>Org.nr: 6990593003</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[insurance_company_name_text]</code></td><td>If Skadeförsäkring</td><td>Försäkringsbolag</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>ownership_type</code></td><td>agd</td><td>Ägande/leasing: Ägd</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>reporter_role</code></td><td>forare</td><td>Rapportörens roll: Förare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>driver_full_name</code> / <code>personal_id_number</code></td><td>QA Brand S1 / 198505151234</td><td>Förarens namn / personnummer</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>phone</code> / <code>email</code></td><td>0704567890 / qa.brand.s1@example.com</td><td>Telefon / E-Post</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>Säkerhetsrutiner följda: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_cause</code></td><td>pakorning</td><td>Skadeorsak: Påkörning</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damaged_parts[0]</code></td><td>framruta</td><td>Skadade delar: Framruta</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_appearance</code></td><td>spricka</td><td>Skadans utseende: Spricka</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>affects_visibility_or_safety</code></td><td>true</td><td>Påverkar sikt/säkerhet: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_state</code></td><td>i_arbete</td><td>Maskinens tillstånd: I arbete</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>external_influence</code></td><td>nej</td><td>Yttre påverkan: Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_occurred_suddenly</code></td><td>ja</td><td>Uppstod plötsligt: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>event_narrative</code></td><td>نص كامل</td><td>Händelseförloppet + Händelseförlopp (نفس النص)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_drivable</code></td><td>true</td><td>Maskinen körbar: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>personal_injuries_exist</code></td><td>false</td><td>Personskador: Nej (أسفل)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>third_party_property_damage_exist</code></td><td>false</td><td>Skada på annans egendom: Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witness_exist</code></td><td>false</td><td>Vittnen: Nej</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend)</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>مطلوب في S1 (validation)</td>
+    <td>صفحة 2 — تسميات underskrift فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>بدون صورة توقيع؛ <code>FILES (0)</code> في الطلب</td>
+  </tr>
+  <tr>
+    <td><code>images</code></td>
+    <td>غير مرفق في S1</td>
+    <td>لا bilagor</td>
+    <td><span class="status-ok">N/A</span></td>
+    <td>S1 baseline لا يرسل صورًا (متوقع)</td>
+  </tr>
+</table>
+
+<h2>أقسام Artifact / Wrong (قالب PDF)</h2>
+<table>
+  <tr><th>القسم في PDF</th><th>Body</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td>Känner polisen till händelsen?</td>
+    <td>لا <code>police</code> (ممنوع v1)</td>
+    <td><span class="status-artifact">Artifact</span></td>
+    <td>يظهر «Ja X Nej» — لا ينطبق على machineBrand</td>
+  </tr>
+  <tr>
+    <td>Svenskt körkort? / Födelsedatum</td>
+    <td>لا <code>swedish_driver_license</code></td>
+    <td><span class="status-artifact">Artifact</span></td>
+    <td>مسار reporter — ليس körkort block</td>
+  </tr>
+  <tr>
+    <td>Gällande svenskt körkort: Ja X Nej</td>
+    <td>—</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>يعرض خيارات رخصة رغم عدم الإرسال</td>
+  </tr>
+  <tr>
+    <td>Personskador (أعلى الصفحة)</td>
+    <td>false</td>
+    <td><span class="status-layout">Layout</span></td>
+    <td>«Ja X Nej» — القيمة الصحيحة في الأسفل (Nej)</td>
+  </tr>
+</table>
+
+<h2>ملخص Payload S1 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "machineBrand",
+  "report_category": "machine",
+  "serial_number": "MBR-S1-001",
+  "organization_number": "6990593003",
+  "machine_identity": {
+    "machine_type": "hjullastare",
+    "machine_brand": "Volvo CE",
+    "machine_model": "L90H",
+    "machine_year": "2020",
+    "operating_hours": "3150",
+    "machine_insured": true,
+    "insurance_company_name_text": "If Skadeförsäkring"
+  },
+  "ownership_type": "agd",
+  "reporter_role": "forare",
+  "driver_full_name": "QA Brand S1",
+  "personal_id_number": "198505151234",
+  "safety_procedures_followed": "ja",
+  "damage_cause": "pakorning",
+  "damaged_parts[0]": "framruta",
+  "damage_appearance": "spricka",
+  "affects_visibility_or_safety": true,
+  "machine_state": "i_arbete",
+  "external_influence": "nej",
+  "damage_occurred_suddenly": "ja",
+  "event_narrative": "Framrutan sprack när maskinen blev påkörd…",
+  "machine_drivable": true,
+  "third_party_property_damage_exist": false,
+  "personal_injuries_exist": false,
+  "witness_exist": false,
+  "date": "22-06-2026",
+  "time": "14:54",
+  "location": { "lat": 59.3026, "lng": 18.1023, "address": "Byggarbetsplats Hammarby Sjöstad…" },
+  "NOT sent (v1 forbidden)": ["police", "swedish_driver_license", "driving_license", "counterparties", "needs_towing"]
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF bugs (machineBrand S1)</h2>
+<pre class="scenario">Report type: machineBrand (Brandskador Debug S1 — Happy Path)
+Report ID: 6a39229a7d0e2fb8c8cd344e
+Environment: insuranceapp3.azurewebsites.net
+Date: 22-06-2026 · time 14:54
+
+App sends machineBrand S1 correctly:
+  - Full machine identity + org.nr + insurance
+  - reporter_role=forare (no swedish_driver_license — by design v1)
+  - safety_procedures_followed=ja
+  - damage_cause, damaged_parts, appearance, machine_state, external_influence, sudden
+  - step3: drivable=true, third_party/injuries/witnesses=false
+  - NO police / driving_license / counterparties in payload (Joi v1)
+
+PDF OK (Brandskador template — better than machineKollision):
+  - Title: Skadeanmälan - Maskin · Brandskador
+  - Full Egen maskin block (type, serial, brand, model, year, hours, insured, org.nr, bolag)
+  - Kompletterande: reporter role, ownership, safety, all damage fields, step3 Ja/Nej
+  - Top Händelseförloppet shows event_narrative
+  - Only 2 pages (no 28-page fragmentation like valtning)
+
+Issues in PDF:
+  - Artifact sections: Polisen, Svenskt körkort, Födelsedatum (not applicable to machineBrand v1)
+  - Layout: "Ja X Nej" on top summary fields (polis, personskador, körkort)
+  - signature image missing on page 2 (labels only)
+
+Attachment: report_6a39229a7d0e2fb8c8cd344e.pdf</pre>
+
+<div class="footer">
+  machineBrand S1 Happy Path · Report 6a39229a7d0e2fb8c8cd344e · 2026-06-22
+</div>
+
+</body>
+</html>

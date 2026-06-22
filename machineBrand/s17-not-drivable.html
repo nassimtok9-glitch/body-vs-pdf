@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S17 — Ej Körbar — machineBrand Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineBrand</a> /
+  S17 — Ej Körbar
+</p>
+
+<h1>نواقص Body مقابل PDF — machineBrand S17 Ej Körbar</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Brandskador (<code>brandskador-s17</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>سينario Debug</dt><dd>S17 — Ej Körbar (<code>brandskador-s17</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a392c087d0e2fb8c8cd390f</code></dd>
+    <dt>PDF</dt><dd><code>report_6a392c087d0e2fb8c8cd390f.pdf</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 15:35</dd>
+    <dt>الفرق عن S1</dt><dd><code>machine_drivable=false</code> (بدون <code>needs_towing</code> — ممنوع v1)</dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">S1 (körbar true)</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>machine_drivable=false</code> — لا <code>needs_towing</code> (صحيح لـ machineBrand v1).
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    Maskinen körbar: <code>Ja X Nej</code> — يميّز عن S1 (<code>X Ja Nej</code>) لكن <span class="status-layout">Layout</span> غامض (نمط S7/S16).
+  </div>
+</div>
+
+<h2>التركيز — S17 vs S1 (machine_drivable)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S17 Body</th><th>S17 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>machine_drivable</code></td>
+    <td>true</td>
+    <td>false</td>
+    <td>Maskinen körbar: Ja X Nej</td>
+    <td><span class="status-layout">Layout</span></td>
+  </tr>
+  <tr>
+    <td><code>needs_towing</code></td>
+    <td>—</td>
+    <td>غير مُرسل</td>
+    <td>لا حقل bärgning</td>
+    <td><span class="status-ok">OK</span> (v1 forbidden)</td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>مقارنة checkbox:</strong><br />
+  S1 (true): <code>Maskinen körbar: X Ja Nej</code><br />
+  S17 (false): <code>Maskinen körbar: Ja X Nej</code><br />
+  موضع X يتغيّر — يُفضّل نص صريح «Nej» كباقي حقول Kompletterande enum.
+</div>
+
+<h2>حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>machine identity + reporter + safety + ضرر</td><td>baseline S1</td><td>مطابق</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>step3 booleans (egendom/person/vittnen)</td><td>false</td><td>Nej</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص S17 + مشتركة</h2>
+<table>
+  <tr><th>البند</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>machine_drivable</code> (عرض صريح)</td>
+    <td>false</td>
+    <td>Ja X Nej</td>
+    <td><span class="status-layout">Layout</span></td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>مُرسل</td>
+    <td>تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td>Polisen / Svenskt körkort</td>
+    <td>غير مُرسل</td>
+    <td>أعلى PDF</td>
+    <td><span class="status-artifact">Artifact</span></td>
+  </tr>
+</table>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineBrand S17)</h2>
+<pre class="scenario">Report type: machineBrand (Brandskador Debug S17 — Ej Körbar)
+Report ID: 6a392c087d0e2fb8c8cd390f
+Date: 22-06-2026 · time 15:35
+
+App sends S17 correctly:
+  - machine_drivable=false
+  - NO needs_towing (forbidden in machineBrand v1)
+
+PDF Layout issue (S17):
+  - Maskinen körbar: "Ja X Nej" for false
+    vs S1 true "X Ja Nej"
+  - Recommend explicit "Nej" label in Kompletterande
+
+No needs_towing field expected — OK
+
+Same issues as S1–S16: polis/körkort artifact, top Ja X Nej, signature image
+
+Attachment: report_6a392c087d0e2fb8c8cd390f.pdf</pre>
+
+<div class="footer">
+  machineBrand S17 Ej Körbar · Report 6a392c087d0e2fb8c8cd390f · 2026-06-22
+</div>
+
+</body>
+</html>

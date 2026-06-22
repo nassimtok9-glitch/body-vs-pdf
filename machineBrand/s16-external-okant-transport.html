@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S16 — Extern Okänt + Transport — machineBrand Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineBrand</a> /
+  S16 — Extern Okänt + Transport
+</p>
+
+<h1>نواقص Body مقابل PDF — machineBrand S16 Extern Okänt + Transport</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Brandskador (<code>brandskador-s16</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>سينario Debug</dt><dd>S16 — Extern Okänt + Transport (<code>brandskador-s16</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a392b857d0e2fb8c8cd384e</code></dd>
+    <dt>PDF</dt><dd><code>report_6a392b857d0e2fb8c8cd384e.pdf</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 15:32</dd>
+    <dt>الفرق عن S1</dt><dd><code>machine_state=transport</code>، <code>external_influence=okant</code>، <code>damage_occurred_suddenly=okant</code>، <code>affects_visibility_or_safety=false</code></dd>
+    <dt>مقارنة</dt><dd><a href="s15-external-nej.html">S15 (external nej)</a> · <a href="s7-uninsured.html">S7 (checkbox layout)</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>machine_state=transport</code>، <code>external_influence=okant</code>، <code>damage_occurred_suddenly=okant</code>، <code>affects_visibility_or_safety=false</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    Transport / Okänt / Okänt في Kompletterande — <span class="status-ok">OK</span> (نصوص صريحة).<br />
+    Påverkar sikt/säkerhet: <code>Ja X Nej</code> عند false — <span class="status-layout">Layout</span> (نمط S7).
+  </div>
+</div>
+
+<h2>التركيز — S16 vs S1</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S16 Body</th><th>S16 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>machine_state</code></td>
+    <td>i_arbete</td>
+    <td>transport</td>
+    <td>Maskinens tillstånd: Transport</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>external_influence</code></td>
+    <td>nej</td>
+    <td>okant</td>
+    <td>Yttre påverkan: Okänt</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>damage_occurred_suddenly</code></td>
+    <td>ja</td>
+    <td>okant</td>
+    <td>Uppstod plötsligt: Okänt</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>affects_visibility_or_safety</code></td>
+    <td>true</td>
+    <td>false</td>
+    <td>Påverkar sikt/säkerhet: Ja X Nej</td>
+    <td><span class="status-layout">Layout</span></td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>ملاحظة إيجابية:</strong> حقول enum بقيم <code>okant</code> و<code>transport</code> تُعرض كنص واضح في Kompletterande (ليس Ja/X/Nej). الفجوة الوحيدة S16 هي checkbox لـ <code>affects_visibility_or_safety</code>.
+</div>
+
+<h2>حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>machine identity + reporter + safety</td><td>baseline</td><td>Egen maskin</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>حقول الضرر</td><td>pakorning / framruta / spricka</td><td>مطابق</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>step3 booleans</td><td>baseline</td><td>Ja/Nej</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص S16 + مشتركة</h2>
+<table>
+  <tr><th>البند</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>affects_visibility_or_safety</code></td>
+    <td>false</td>
+    <td>Ja X Nej (غامض)</td>
+    <td><span class="status-layout">Layout</span></td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>مُرسل</td>
+    <td>تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td>Polisen / Svenskt körkort</td>
+    <td>غير مُرسل</td>
+    <td>أعلى PDF</td>
+    <td><span class="status-artifact">Artifact</span></td>
+  </tr>
+</table>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineBrand S16)</h2>
+<pre class="scenario">Report type: machineBrand (Brandskador Debug S16 — Extern Okänt + Transport)
+Report ID: 6a392b857d0e2fb8c8cd384e
+Date: 22-06-2026 · time 15:32
+
+App sends S16 correctly:
+  - machine_state=transport
+  - external_influence=okant
+  - damage_occurred_suddenly=okant
+  - affects_visibility_or_safety=false
+
+PDF OK for S16:
+  - Maskinens tillstånd: Transport
+  - Yttre påverkan: Okänt
+  - Uppstod plötsligt: Okänt
+  (explicit text labels — good)
+
+PDF Layout issue (S16):
+  - Påverkar sikt/säkerhet: "Ja X Nej" for false
+    (S1 true uses "X Ja Nej") — ambiguous checkbox pattern
+
+Same issues as S1–S15: polis/körkort artifact, top Ja X Nej, signature image
+
+Attachment: report_6a392b857d0e2fb8c8cd384e.pdf</pre>
+
+<div class="footer">
+  machineBrand S16 Extern Okänt + Transport · Report 6a392b857d0e2fb8c8cd384e · 2026-06-22
+</div>
+
+</body>
+</html>

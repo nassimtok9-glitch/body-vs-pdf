@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S8 — Safety Nej — machineBrand Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineBrand</a> /
+  S8 — Safety Nej
+</p>
+
+<h1>نواقص Body مقابل PDF — machineBrand S8 Safety Nej</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Brandskador (<code>brandskador-s8</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>سينario Debug</dt><dd>S8 — Safety Nej (<code>brandskador-s8</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3928e07d0e2fb8c8cd366d</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3928e07d0e2fb8c8cd366d.pdf</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 15:21</dd>
+    <dt>عدد الحقول</dt><dd><strong>40</strong> (+ description عند nej)</dd>
+    <dt>الفرق عن S1</dt><dd><code>safety_procedures_followed=nej</code> + <code>safety_procedures_not_followed_description</code></dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">S1 (safety ja)</a> · <a href="../valtning/s1-swedish-driver.html">valtning S1 (safety Missing)</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>safety_procedures_followed=nej</code> + <code>safety_procedures_not_followed_description</code> = «Skyddsskärm var demonterad under pågående arbete.»
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <strong>كل حقول safety — OK</strong> في Kompletterande: Nej + «Varför följdes inte rutinerna» مع النص الكامل.<br />
+    (عكس valtning حيث safety Missing) — نفس نواقص S1–S7: polis/körkort artifact، layout علوي، underskrift.
+  </div>
+</div>
+
+<h2>التركيز — S8 vs S1 (safety)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S8 Body</th><th>S8 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>safety_procedures_followed</code></td>
+    <td>ja</td>
+    <td>nej</td>
+    <td>Säkerhetsrutiner följda: Nej</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>safety_procedures_not_followed_description</code></td>
+    <td>—</td>
+    <td>Skyddsskärm var demonterad…</td>
+    <td>Varför följdes inte rutinerna: نفس النص</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>مقارنة مع valtning:</strong> في valtning S1 كان <code>safety_procedures_followed</code> <span class="status-missing">Missing</span> من PDF. في machineBrand S8 القالب يعرض safety + description بشكل صحيح.
+</div>
+
+<h2>حقول متطابقة (OK) — كامل S8</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>machine identity + org.nr + insurance</td><td>نفس S1</td><td>Egen maskin</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>ownership_type</code></td><td>agd</td><td>Ägd</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>reporter_role</code> + kontakt</td><td>forare</td><td>Förare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>حقول الضرر + step3</td><td>نفس baseline</td><td>Kompletterande</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص مشتركة (ليست خاصة بـ S8)</h2>
+<table>
+  <tr><th>البند</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>signature</code></td><td>تسميات فقط</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td>Polisen / Svenskt körkort</td><td>أعلى PDF</td><td><span class="status-artifact">Artifact</span></td></tr>
+  <tr><td>Ja X Nej (ملخص علوي)</td><td>personskador / polis / körkort</td><td><span class="status-layout">Layout</span></td></tr>
+</table>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineBrand S8)</h2>
+<pre class="scenario">Report type: machineBrand (Brandskador Debug S8 — Safety Nej)
+Report ID: 6a3928e07d0e2fb8c8cd366d
+Date: 22-06-2026 · time 15:21
+
+App sends S8 correctly:
+  - safety_procedures_followed=nej
+  - safety_procedures_not_followed_description=
+    "Skyddsskärm var demonterad under pågående arbete."
+
+PDF OK for S8 (no S8-specific gaps):
+  - Säkerhetsrutiner följda: Nej
+  - Varför följdes inte rutinerna: full description text shown
+
+Contrast: valtning PDF often Missing safety fields — machineBrand template handles this branch.
+
+Same issues as S1–S7: polis/körkort artifact, top Ja X Nej layout, signature image
+
+Attachment: report_6a3928e07d0e2fb8c8cd366d.pdf</pre>
+
+<div class="footer">
+  machineBrand S8 Safety Nej · Report 6a3928e07d0e2fb8c8cd366d · 2026-06-22
+</div>
+
+</body>
+</html>

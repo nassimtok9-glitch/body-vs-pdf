@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S12 — Orsak Annat — machineBrand Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineBrand</a> /
+  S12 — Orsak Annat
+</p>
+
+<h1>نواقص Body مقابل PDF — machineBrand S12 Orsak = Annat</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Brandskador (<code>brandskador-s12</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>سينario Debug</dt><dd>S12 — Orsak = Annat (<code>brandskador-s12</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a392a867d0e2fb8c8cd379a</code></dd>
+    <dt>PDF</dt><dd><code>report_6a392a867d0e2fb8c8cd379a.pdf</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 15:28</dd>
+    <dt>عدد الحقول</dt><dd><strong>40</strong> (+ <code>damage_cause_other</code>)</dd>
+    <dt>الفرق عن S1</dt><dd><code>damage_cause=annat</code> + <code>damage_cause_other</code></dd>
+    <dt>مقارنة</dt><dd><a href="s2-machine-type-annan.html">S2 (machine_type_other)</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>damage_cause=annat</code> + <code>damage_cause_other</code> = «Skadan upptäcktes vid rutinbesiktning efter nattlig parkering.»
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    Skadeorsak: <strong>Annat: …</strong> مع النص الكامل — <span class="status-ok">OK</span>.<br />
+    لا فجوات خاصة بـ S12 — نفس نواقص S1–S11 المشتركة.
+  </div>
+</div>
+
+<h2>التركيز — S12 vs S1 (damage cause)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S12 Body</th><th>S12 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>damage_cause</code></td>
+    <td>pakorning</td>
+    <td>annat</td>
+    <td>Skadeorsak: Annat: …</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>damage_cause_other</code></td>
+    <td>—</td>
+    <td>Skadan upptäcktes vid rutinbesiktning…</td>
+    <td>مُلحق بعد «Annat:» في نفس السطر</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>نمط mapping:</strong> مثل S2 (<code>machine_type_other</code>) — عند <code>annat</code> يعرض PDF «Annat:» + النص الحر في Kompletterande uppgifter.
+</div>
+
+<h2>حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>machine identity + reporter + safety</td><td>baseline S1</td><td>Egen maskin + Kompletterande</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damaged_parts</code> / <code>damage_appearance</code></td><td>framruta / spricka</td><td>Framruta / Spricka</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>step3 booleans</td><td>baseline</td><td>Ja/Nej</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص مشتركة (ليست خاصة بـ S12)</h2>
+<table>
+  <tr><th>البند</th><th>الحالة</th></tr>
+  <tr><td><code>signature</code> image</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td>Polisen / Svenskt körkort</td><td><span class="status-artifact">Artifact</span></td></tr>
+  <tr><td>Ja X Nej (ملخص علوي)</td><td><span class="status-layout">Layout</span></td></tr>
+</table>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineBrand S12)</h2>
+<pre class="scenario">Report type: machineBrand (Brandskador Debug S12 — Orsak Annat)
+Report ID: 6a392a867d0e2fb8c8cd379a
+Date: 22-06-2026 · time 15:28
+
+App sends S12 correctly:
+  - damage_cause=annat
+  - damage_cause_other=
+    "Skadan upptäcktes vid rutinbesiktning efter nattlig parkering."
+
+PDF OK for S12 (no S12-specific gaps):
+  - Skadeorsak: Annat: [full other text]
+
+Same issues as S1–S11: polis/körkort artifact, top Ja X Nej, signature image
+
+Attachment: report_6a392a867d0e2fb8c8cd379a.pdf</pre>
+
+<div class="footer">
+  machineBrand S12 Orsak Annat · Report 6a392a867d0e2fb8c8cd379a · 2026-06-22
+</div>
+
+</body>
+</html>

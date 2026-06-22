@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S15 — Extern Påverkan Nej — machineBrand Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineBrand</a> /
+  S15 — Extern Påverkan Nej
+</p>
+
+<h1>نواقص Body مقابل PDF — machineBrand S15 Extern Påverkan Nej</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Brandskador (<code>brandskador-s15</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>سينario Debug</dt><dd>S15 — Extern Påverkan Nej (<code>brandskador-s15</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a392b5b7d0e2fb8c8cd3838</code></dd>
+    <dt>PDF</dt><dd><code>report_6a392b5b7d0e2fb8c8cd3838.pdf</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 15:32</dd>
+    <dt>عدد الحقول</dt><dd><strong>39</strong> (بدون <code>external_influence_description</code>)</dd>
+    <dt>الفرق عن S1</dt><dd>تأكيد صريح <code>external_influence=nej</code> بدون beskrivning</dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">S1</a> (نفس nej في baseline)</dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>external_influence=nej</code> — لا <code>external_influence_description</code> ولا حقول transport/annat (صحيح حسب API).
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    Yttre påverkan: <strong>Nej</strong> — OK. لا بلوك beskrivning فارغ — OK.<br />
+    لا فجوات خاصة بـ S15 (مطابق لـ S1 لهذا الحقل).
+  </div>
+</div>
+
+<h2>التركيز — S15 (external influence)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S15 Body</th><th>S15 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>external_influence</code></td>
+    <td>nej</td>
+    <td>Yttre påverkan: Nej</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>external_influence_description</code></td>
+    <td>غير مُرسل</td>
+    <td>لا حقل beskrivning</td>
+    <td><span class="status-ok">OK</span> (conditional rendering)</td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>ملاحظة اختبار:</strong> S1 baseline يستخدم أيضًا <code>external_influence=nej</code>. S15 يؤكد regression صريحًا أن فرع nej لا يرسل ولا يعرض حقول وصف زائدة.
+</div>
+
+<h2>حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>machine identity + reporter + safety</td><td>baseline S1</td><td>Egen maskin + Kompletterande</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>حقول الضرر</td><td>pakorning / framruta / spricka</td><td>Påkörning / Framruta / Spricka</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_occurred_suddenly</code></td><td>ja</td><td>Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>step3 booleans</td><td>baseline</td><td>Ja/Nej</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص مشتركة (ليست خاصة بـ S15)</h2>
+<table>
+  <tr><th>البند</th><th>الحالة</th></tr>
+  <tr><td><code>signature</code> image</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td>Polisen / Svenskt körkort</td><td><span class="status-artifact">Artifact</span></td></tr>
+  <tr><td>Ja X Nej (ملخص علوي)</td><td><span class="status-layout">Layout</span></td></tr>
+</table>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineBrand S15)</h2>
+<pre class="scenario">Report type: machineBrand (Brandskador Debug S15 — Extern Påverkan Nej)
+Report ID: 6a392b5b7d0e2fb8c8cd3838
+Date: 22-06-2026 · time 15:32
+
+App sends S15 correctly:
+  - external_influence=nej
+  - NO external_influence_description or transport fields
+
+PDF OK for S15 (no S15-specific gaps):
+  - Yttre påverkan: Nej
+  - No empty description block shown
+
+Same as S1 for this field — explicit regression confirmation.
+
+Same issues as S1–S14: polis/körkort artifact, top Ja X Nej, signature image
+
+Attachment: report_6a392b5b7d0e2fb8c8cd3838.pdf</pre>
+
+<div class="footer">
+  machineBrand S15 Extern Påverkan Nej · Report 6a392b5b7d0e2fb8c8cd3838 · 2026-06-22
+</div>
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S14 — Utseende Annat — machineBrand Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineBrand</a> /
+  S14 — Utseende Annat
+</p>
+
+<h1>نواقص Body مقابل PDF — machineBrand S14 Utseende = Annat</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Brandskador (<code>brandskador-s14</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>سينario Debug</dt><dd>S14 — Utseende = Annat (<code>brandskador-s14</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a392b427d0e2fb8c8cd3824</code></dd>
+    <dt>PDF</dt><dd><code>report_6a392b427d0e2fb8c8cd3824.pdf</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 15:31</dd>
+    <dt>عدد الحقول</dt><dd><strong>40</strong> (+ <code>damage_appearance_other</code>)</dd>
+    <dt>الفرق عن S1</dt><dd><code>damage_appearance=annat</code> + <code>damage_appearance_other</code></dd>
+    <dt>مقارنة</dt><dd><a href="s12-damage-cause-annat.html">S12</a> · <a href="s13-damaged-part-annat.html">S13</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>damage_appearance=annat</code> + <code>damage_appearance_other</code> = «Kombinerad spricka och deformation runt infästningen.»
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    Skadans utseende: <strong>Annat: …</strong> مع النص الكامل — <span class="status-ok">OK</span>.<br />
+    لا فجوات خاصة بـ S14.
+  </div>
+</div>
+
+<h2>التركيز — S14 vs S1 (damage appearance)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S14 Body</th><th>S14 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>damage_appearance</code></td>
+    <td>spricka</td>
+    <td>annat</td>
+    <td>Skadans utseende: Annat: …</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>damage_appearance_other</code></td>
+    <td>—</td>
+    <td>Kombinerad spricka och deformation…</td>
+    <td>بعد «Annat:» في نفس السطر</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<h2>ملخص حقول «annat» (S12–S14)</h2>
+<table>
+  <tr><th>السينario</th><th>الحقل</th><th>تنسيق PDF</th><th>الحالة</th></tr>
+  <tr><td>S12</td><td><code>damage_cause_other</code></td><td>Annat: [text]</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>S13</td><td><code>damaged_parts_other</code></td><td>Annat ([text]) في قائمة</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>S14</td><td><code>damage_appearance_other</code></td><td>Annat: [text]</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص مشتركة (ليست خاصة بـ S14)</h2>
+<table>
+  <tr><th>البند</th><th>الحالة</th></tr>
+  <tr><td><code>signature</code> image</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td>Polisen / Svenskt körkort</td><td><span class="status-artifact">Artifact</span></td></tr>
+  <tr><td>Ja X Nej (ملخص علوي)</td><td><span class="status-layout">Layout</span></td></tr>
+</table>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineBrand S14)</h2>
+<pre class="scenario">Report type: machineBrand (Brandskador Debug S14 — Utseende Annat)
+Report ID: 6a392b427d0e2fb8c8cd3824
+Date: 22-06-2026 · time 15:31
+
+App sends S14 correctly:
+  - damage_appearance=annat
+  - damage_appearance_other=
+    "Kombinerad spricka och deformation runt infästningen."
+
+PDF OK for S14 (no S14-specific gaps):
+  - Skadans utseende: Annat: [full other text]
+
+Same issues as S1–S13: polis/körkort artifact, top Ja X Nej, signature image
+
+Attachment: report_6a392b427d0e2fb8c8cd3824.pdf</pre>
+
+<div class="footer">
+  machineBrand S14 Utseende Annat · Report 6a392b427d0e2fb8c8cd3824 · 2026-06-22
+</div>
+
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S18 — Full Stack — machineBrand Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineBrand</a> /
+  S18 — Full Stack
+</p>
+
+<h1>نواقص Body مقابل PDF — machineBrand S18 Full Stack</h1>
+<p>مقارنة شاملة — <code>fillDebugBrandskador</code> / <code>brandskador-s18</code> — 60 حقلًا + صورة + توقيع.</p>
+
+<div class="meta">
+  <dl>
+    <dt>سينario Debug</dt><dd>S18 — Full Stack (<code>brandskador-s18</code> = <code>fillDebugBrandskador</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a392c367d0e2fb8c8cd3951</code></dd>
+    <dt>PDF</dt><dd><code>report_6a392c367d0e2fb8c8cd3951.pdf</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 15:36</dd>
+    <dt>عدد الحقول / FILES</dt><dd><strong>60</strong> حقول + <strong>1</strong> image + signature</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    مسار كامل: ej försäkrad + leasad/finance، stenskott، 3 skadade delar، external ja + beskrivning، third_party + personskador + vittnen، event_narrative، bilaga image.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    معظم الحقول <strong>OK</strong> — بلوكات personskador/vittnen/third_party تظهر (صفحة 1 + Kompletterande).<br />
+  <strong>Missing:</strong> <code>contract_number</code>، <code>images</code>، صورة <code>signature</code>.<br />
+  <strong>Layout/Artifact:</strong> ملخص علوي Ja X Nej يتناقض مع التفاصيل؛ polis/körkort.
+  </div>
+</div>
+
+<h2>OK — حقول رئيسية</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body (مختصر)</th><th>PDF</th></tr>
+  <tr><td><code>serial_number</code></td><td>MBR-556677</td><td>Serienummer MBR-556677</td></tr>
+  <tr><td><code>machine_insured</code></td><td>false</td><td>لا Försäkringsbolag</td></tr>
+  <tr><td><code>organization_number</code></td><td>6990593003</td><td>Org.nr</td></tr>
+  <tr><td><code>ownership_type</code> + finance</td><td>leasad + bolag/kontakt</td><td>Leasad + Finansbolag/Kontakt</td></tr>
+  <tr><td><code>driver_full_name</code> / email</td><td>Johan Andersson</td><td>Förarens namn + E-Post</td></tr>
+  <tr><td><code>damage_cause</code></td><td>stenskott_flygande_material</td><td>Stenskott / flygande material</td></tr>
+  <tr><td><code>damaged_parts[0..2]</code></td><td>framruta, spegel, kaross_plat</td><td>Framruta, Spegel, Kaross / plåt</td></tr>
+  <tr><td><code>external_influence</code> + description</td><td>ja + lastbil…</td><td>Ja: En lastbil passerade…</td></tr>
+  <tr><td><code>event_narrative</code></td><td>نص كامل</td><td>Händelseförloppet + Händelseförlopp</td></tr>
+  <tr><td><code>third_party_property_damage</code></td><td>Stockholm Byggstängsel AB + …</td><td>Skadad part block كامل</td></tr>
+  <tr><td><code>personal_injuries[0]</code></td><td>Karin Johansson + …</td><td>Personskador block (صفحة 1)</td></tr>
+  <tr><td><code>witnesses[0]</code></td><td>Anna Svensson + …</td><td>Vittnen block (صفحة 1)</td></tr>
+</table>
+
+<h2>Missing — Backend PDF</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>contract_number</code></td>
+    <td>VF-2026-4455</td>
+    <td>— (نفس S3/S5)</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td><code>images</code></td>
+    <td>ih_debug_brandskador_skada1.png</td>
+    <td>لا bilagor / صور</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>base64 مُرسل</td>
+    <td>تسميات underskrift فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+</table>
+
+<h2>Layout / Artifact</h2>
+<table>
+  <tr><th>البند</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td>ملخص علوي Personskador</td>
+    <td>true</td>
+    <td>«Ja X Nej» (أعلى) رغم تفاصيل Karin</td>
+    <td><span class="status-layout">Layout</span></td>
+  </tr>
+  <tr>
+    <td><code>machine_insured</code></td>
+    <td>false</td>
+    <td>Försäkrad: Ja X Nej</td>
+    <td><span class="status-layout">Layout</span></td>
+  </tr>
+  <tr>
+    <td>Polisen / Svenskt körkort</td>
+    <td>غير مُرسل</td>
+    <td>أعلى PDF</td>
+    <td><span class="status-artifact">Artifact</span></td>
+  </tr>
+  <tr>
+    <td>Personskador/Vittnen في Kompletterande</td>
+    <td>Ja</td>
+    <td>«X Ja Nej» + تفاصيل في صفحة 1</td>
+    <td><span class="status-layout">Layout</span> (تكرار)</td>
+  </tr>
+</table>
+
+<h2>ملاحظات S18</h2>
+<ul>
+  <li>شاهد Anna Svensson — لا <code>address</code> في Body؛ PDF يعرض «-» — <span class="status-ok">OK</span></li>
+  <li>لا <code>witness description</code> في API؛ PDF «Beskrivning:» فارغ — <span class="status-ok">N/A</span></li>
+  <li>PDF <strong>صفحتان</strong> فقط رغم التعقيد — <span class="status-ok">جيد</span></li>
+</ul>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineBrand S18)</h2>
+<pre class="scenario">Report type: machineBrand (Brandskador Debug S18 — Full Stack)
+Report ID: 6a392c367d0e2fb8c8cd3951
+Date: 22-06-2026 · time 15:36
+
+App sends full stack correctly (60 fields):
+  - machine_insured=false, leasad + finance_* including contract_number
+  - damage: stenskott, 3 damaged parts, external ja + description
+  - third_party_property_damage: Stockholm Byggstängsel AB (full)
+  - personal_injuries[0]: Karin Johansson (full)
+  - witnesses[0]: Anna Svensson (no address in API)
+  - event_narrative + images[1] + signature
+
+PDF OK:
+  - Machine identity, org.nr, uninsured (no bolag)
+  - Finance block (except contract_number)
+  - All damage fields, external "Ja: [description]"
+  - Third party block in Kompletterande (name, email, phone, address, skadans art)
+  - Personal injury detail block page 1 (Karin — all fields)
+  - Witness detail block page 1 (Anna — address "-" as not sent)
+  - event_narrative top + bottom
+  - Only 2 pages
+
+PDF Missing (S18 + recurring):
+  - contract_number VF-2026-4455 (finance template gap — S3/S5/S18)
+  - images attachment ih_debug_brandskador_skada1.png — no bilagor section
+  - signature image — labels only
+
+PDF Layout/Artifact:
+  - Top summary "Personskador Ja X Nej" contradicts injury details below
+  - Polis / Svenskt körkort sections (not in machineBrand v1 API)
+  - Ja X Nej pattern on boolean summaries
+  - Duplicate personskador/vittnen flags in Kompletterande vs detail blocks
+
+Attachment: report_6a392c367d0e2fb8c8cd3951.pdf</pre>
+
+<div class="footer">
+  machineBrand S18 Full Stack · Report 6a392c367d0e2fb8c8cd3951 · 2026-06-22 · S1–S18 complete
+</div>
+
+</body>
+</html>

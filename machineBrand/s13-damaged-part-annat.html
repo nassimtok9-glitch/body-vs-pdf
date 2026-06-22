@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S13 — Skadad Del Annat — machineBrand Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineBrand</a> /
+  S13 — Skadad Del Annat
+</p>
+
+<h1>نواقص Body مقابل PDF — machineBrand S13 Skadad Del = Annat</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Brandskador (<code>brandskador-s13</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>سينario Debug</dt><dd>S13 — Skadad Del = Annat (<code>brandskador-s13</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a392abf7d0e2fb8c8cd37df</code></dd>
+    <dt>PDF</dt><dd><code>report_6a392abf7d0e2fb8c8cd37df.pdf</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 15:29</dd>
+    <dt>عدد الحقول</dt><dd><strong>41</strong> (damaged_parts[0]+[1] + other)</dd>
+    <dt>الفرق عن S1</dt><dd>جزآن: <code>framruta</code> + <code>annat</code> + <code>damaged_parts_other</code></dd>
+    <dt>مقارنة</dt><dd><a href="s12-damage-cause-annat.html">S12 (orsak annat)</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>damaged_parts[0]=framruta</code>، <code>damaged_parts[1]=annat</code>، <code>damaged_parts_other=Hydraulslang och skyddskåpa</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    Skadade delar: <strong>Framruta, Annat (Hydraulslang och skyddskåpa)</strong> — <span class="status-ok">OK</span>.<br />
+    لا فجوات خاصة بـ S13.
+  </div>
+</div>
+
+<h2>التركيز — S13 vs S1 (damaged_parts)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S13 Body</th><th>S13 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>damaged_parts[0]</code></td>
+    <td>framruta</td>
+    <td>framruta</td>
+    <td>Framruta</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>damaged_parts[1]</code></td>
+    <td>—</td>
+    <td>annat</td>
+    <td>Annat (…)</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>damaged_parts_other</code></td>
+    <td>—</td>
+    <td>Hydraulslang och skyddskåpa</td>
+    <td>بين قوسين بعد Annat</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>نمط mapping:</strong> PDF يجمع القائمة بفاصلة ويعرض النص الحر لـ <code>annat</code> كـ «Annat (Hydraulslang och skyddskåpa)».
+</div>
+
+<h2>حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>damage_cause</code></td><td>pakorning</td><td>Påkörning</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_appearance</code></td><td>spricka</td><td>Spricka</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>machine identity + reporter + safety + step3</td><td>baseline S1</td><td>مطابق</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص مشتركة (ليست خاصة بـ S13)</h2>
+<table>
+  <tr><th>البند</th><th>الحالة</th></tr>
+  <tr><td><code>signature</code> image</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td>Polisen / Svenskt körkort</td><td><span class="status-artifact">Artifact</span></td></tr>
+  <tr><td>Ja X Nej (ملخص علوي)</td><td><span class="status-layout">Layout</span></td></tr>
+</table>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineBrand S13)</h2>
+<pre class="scenario">Report type: machineBrand (Brandskador Debug S13 — Skadad Del Annat)
+Report ID: 6a392abf7d0e2fb8c8cd37df
+Date: 22-06-2026 · time 15:29
+
+App sends S13 correctly:
+  - damaged_parts[0]=framruta
+  - damaged_parts[1]=annat
+  - damaged_parts_other=Hydraulslang och skyddskåpa
+
+PDF OK for S13 (no S13-specific gaps):
+  - Skadade delar: Framruta, Annat (Hydraulslang och skyddskåpa)
+
+Same issues as S1–S12: polis/körkort artifact, top Ja X Nej, signature image
+
+Attachment: report_6a392abf7d0e2fb8c8cd37df.pdf</pre>
+
+<div class="footer">
+  machineBrand S13 Skadad Del Annat · Report 6a392abf7d0e2fb8c8cd37df · 2026-06-22
+</div>
+
+</body>
+</html>

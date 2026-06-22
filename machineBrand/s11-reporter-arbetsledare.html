@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S11 — Reporter Arbetsledare — machineBrand Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineBrand</a> /
+  S11 — Reporter Arbetsledare
+</p>
+
+<h1>نواقص Body مقابل PDF — machineBrand S11 Reporter Arbetsledare</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Brandskador (<code>brandskador-s11</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>سينario Debug</dt><dd>S11 — Reporter Arbetsledare (<code>brandskador-s11</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3929af7d0e2fb8c8cd3752</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3929af7d0e2fb8c8cd3752.pdf</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 15:25</dd>
+    <dt>الفرق عن S1</dt><dd><code>reporter_role=arbetsledare</code> + اسم/بريد المُبلِّغ</dd>
+    <dt>مقارنة</dt><dd><a href="s10-reporter-agare.html">S10 (agare)</a> · <a href="s1-happy-path.html">S1 (forare)</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>reporter_role=arbetsledare</code>، <code>driver_full_name=Oskar Arbetsledare</code>، <code>email=oskar.arbetsledare@example.com</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    Rapportörens roll: <strong>Arbetsledare</strong> — OK. الاسم والبريد — OK.<br />
+    نفس فجوة S10: تسمية «<strong>Förarens namn</strong>» ثابتة — <span class="status-layout">Layout</span>.
+  </div>
+</div>
+
+<h2>التركيز — S11 vs S10 vs S1 (reporter_role)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1</th><th>S10</th><th>S11 Body</th><th>S11 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>reporter_role</code></td>
+    <td>forare</td>
+    <td>agare</td>
+    <td>arbetsledare</td>
+    <td>Rapportörens roll: Arbetsledare</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>driver_full_name</code></td>
+    <td>QA Brand S1</td>
+    <td>Eva Maskinägare</td>
+    <td>Oskar Arbetsledare</td>
+    <td>Förarens namn: Oskar Arbetsledare</td>
+    <td><span class="status-layout">Layout</span></td>
+  </tr>
+  <tr>
+    <td><code>email</code></td>
+    <td>qa.brand.s1@…</td>
+    <td>eva.maskinagare@…</td>
+    <td>oskar.arbetsledare@…</td>
+    <td>E-Post: oskar.arbetsledare@example.com</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>نمط مؤكد S10+S11:</strong> <code>reporter_role</code> يُعرض صحيحًا في Kompletterande، لكن تسمية «Förarens namn» لا تتغيّر لـ agare / arbetsledare / forare.
+</div>
+
+<h2>حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>machine identity + org.nr + insurance</td><td>نفس S1</td><td>Egen maskin</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>حقول الضرر + step3</td><td>baseline</td><td>Kompletterande</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص S11 + مشتركة</h2>
+<table>
+  <tr><th>البند</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>«Förarens namn» عند arbetsledare</td><td>تسمية ثابتة</td><td><span class="status-layout">Layout</span></td></tr>
+  <tr><td>«Förarens underskrift»</td><td>صفحة 2</td><td><span class="status-layout">Layout</span></td></tr>
+  <tr><td><code>signature</code> image</td><td>تسميات فقط</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td>Polisen / Svenskt körkort</td><td>أعلى PDF</td><td><span class="status-artifact">Artifact</span></td></tr>
+</table>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineBrand S11)</h2>
+<pre class="scenario">Report type: machineBrand (Brandskador Debug S11 — Reporter Arbetsledare)
+Report ID: 6a3929af7d0e2fb8c8cd3752
+Date: 22-06-2026 · time 15:25
+
+App sends S11 correctly:
+  - reporter_role=arbetsledare
+  - driver_full_name=Oskar Arbetsledare
+  - email=oskar.arbetsledare@example.com
+
+PDF OK:
+  - Rapportörens roll: Arbetsledare
+  - Contact values correct
+
+PDF Layout (confirmed S10+S11 pattern):
+  - Label "Förarens namn" does not change for agare/arbetsledare
+  - Recommend "Rapportörens namn" when reporter_role != forare
+
+Same issues as S1–S10: polis/körkort artifact, top Ja X Nej, signature image
+
+Attachment: report_6a3929af7d0e2fb8c8cd3752.pdf</pre>
+
+<div class="footer">
+  machineBrand S11 Reporter Arbetsledare · Report 6a3929af7d0e2fb8c8cd3752 · 2026-06-22
+</div>
+
+</body>
+</html>

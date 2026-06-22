@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S10 — Reporter Ägare — machineBrand Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">machineBrand</a> /
+  S10 — Reporter Ägare
+</p>
+
+<h1>نواقص Body مقابل PDF — machineBrand S10 Reporter Ägare</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Brandskador (<code>brandskador-s10</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>سينario Debug</dt><dd>S10 — Reporter Ägare (<code>brandskador-s10</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3929777d0e2fb8c8cd3711</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3929777d0e2fb8c8cd3711.pdf</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>22-06-2026 · 15:24</dd>
+    <dt>الفرق عن S1</dt><dd><code>reporter_role=agare</code> + اسم/بريد المُبلِّغ</dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">S1 (forare)</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>reporter_role=agare</code>، <code>driver_full_name=Eva Maskinägare</code>، <code>email=eva.maskinagare@example.com</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    Rapportörens roll: <strong>Ägare</strong> — OK. الاسم والبريد — OK.<br />
+    تسمية «<strong>Förarens namn</strong>» رغم أن الدور Ägare — <span class="status-layout">Layout</span> (تسمية مضللة، القيمة صحيحة).
+  </div>
+</div>
+
+<h2>التركيز — S10 vs S1 (reporter)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S10 Body</th><th>S10 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>reporter_role</code></td>
+    <td>forare</td>
+    <td>agare</td>
+    <td>Rapportörens roll: Ägare</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>driver_full_name</code></td>
+    <td>QA Brand S1</td>
+    <td>Eva Maskinägare</td>
+    <td>Förarens namn: Eva Maskinägare</td>
+    <td><span class="status-layout">Layout</span> (قيمة OK، تسمية Förare)</td>
+  </tr>
+  <tr>
+    <td><code>email</code></td>
+    <td>qa.brand.s1@example.com</td>
+    <td>eva.maskinagare@example.com</td>
+    <td>E-Post: eva.maskinagare@example.com</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>phone</code> / <code>personal_id_number</code></td>
+    <td>نفس baseline</td>
+    <td>نفس</td>
+    <td>Telefon / personnummer</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>ملاحظة:</strong> API يستخدم <code>driver_full_name</code> لاسم المُبلِّغ بغض النظر عن <code>reporter_role</code>. PDF يعرض القيمة صحيحة لكن التسمية الثابتة «Förarens namn» لا تتغيّر عند agare/arbetsledare.
+</div>
+
+<h2>حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>machine identity + org.nr + insurance</td><td>نفس S1</td><td>Egen maskin</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>حقول الضرر + step3</td><td>baseline</td><td>Kompletterande</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص S10 + مشتركة</h2>
+<table>
+  <tr><th>البند</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td>تسمية اسم المُبلِّغ</td>
+    <td>agare</td>
+    <td>«Förarens namn» (ثابتة)</td>
+    <td><span class="status-layout">Layout</span></td>
+  </tr>
+  <tr>
+    <td>صفحة التوقيع</td>
+    <td>—</td>
+    <td>«Förarens underskrift» رغم Ägare</td>
+    <td><span class="status-layout">Layout</span></td>
+  </tr>
+  <tr>
+    <td><code>signature</code> image</td>
+    <td>مُرسل</td>
+    <td>تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td>Polisen / Svenskt körkort</td>
+    <td>غير مُرسل</td>
+    <td>أعلى PDF</td>
+    <td><span class="status-artifact">Artifact</span></td>
+  </tr>
+</table>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (machineBrand S10)</h2>
+<pre class="scenario">Report type: machineBrand (Brandskador Debug S10 — Reporter Ägare)
+Report ID: 6a3929777d0e2fb8c8cd3711
+Date: 22-06-2026 · time 15:24
+
+App sends S10 correctly:
+  - reporter_role=agare
+  - driver_full_name=Eva Maskinägare
+  - email=eva.maskinagare@example.com
+
+PDF OK:
+  - Rapportörens roll: Ägare
+  - Name, phone, email, personnummer values correct
+
+PDF Layout (S10-specific):
+  - Contact block label still "Förarens namn" when role is Ägare
+  - Signature page still "Förarens underskrift"
+  - Recommend dynamic label: "Rapportörens namn" based on reporter_role
+
+Same issues as S1–S9: polis/körkort artifact, top Ja X Nej, signature image
+
+Attachment: report_6a3929777d0e2fb8c8cd3711.pdf</pre>
+
+<div class="footer">
+  machineBrand S10 Reporter Ägare · Report 6a3929777d0e2fb8c8cd3711 · 2026-06-22
+</div>
+
+</body>
+</html>
