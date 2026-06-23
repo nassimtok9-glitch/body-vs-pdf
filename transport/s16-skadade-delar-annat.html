@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S16 — Skadade delar Annat — transport Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">transport</a> /
+  S16 — Skadade delar Annat
+</p>
+
+<h1>نواقص Body مقابل PDF — transport S16 Skadade delar Annat</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Transportskador (<code>transport-s16</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = transport</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S16 — Skadade delar Annat (<code>transport-s16</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3af07ad14da146d1c513e1</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3af07ad14da146d1c513e1.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>23-06-2026 · 23:45</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>الفرق عن S1</dt><dd><code>damaged_parts[kaross, annat]</code> + <code>damaged_parts_other=Hydraulcylinder</code> · <code>serial_number=MTR-S16-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-TRANSPORT-FIELD-REFERENCE.html">MACHINE-TRANSPORT-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-TRANSPORT-test-cases.html">MACHINE-TRANSPORT-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">transport S1 (kaross فقط)</a> · <a href="s11-skadeorsak-annat.html">transport S11 (annat pattern)</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>damaged_parts[0]=kaross</code>، <code>damaged_parts[1]=annat</code>، <code>damaged_parts_other=Hydraulcylinder</code>. باقي baseline S1.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <strong>فرع S16 OK:</strong> Skadade delar: <em>Kaross, Annat (Hydraulcylinder)</em>. نفس نواقص S1–S15: booleans false → Ja · توقيع · machine_reference_images.
+  </div>
+</div>
+
+<h2>فرع S16 — damaged_parts annat</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S16 Body</th><th>S16 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>damaged_parts[0]</code></td>
+    <td>kaross</td>
+    <td>kaross</td>
+    <td>Kaross</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>damaged_parts[1]</code></td>
+    <td>—</td>
+    <td>annat</td>
+    <td>Annat (Hydraulcylinder)</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>damaged_parts_other</code></td>
+    <td>—</td>
+    <td>Hydraulcylinder</td>
+    <td>بين قوسين بعد Annat</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MTR-S1-001</td>
+    <td>MTR-S16-001</td>
+    <td>Serienummer: MTR-S16-001</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<h2>حقول متطابقة (OK) — باقي S1 baseline</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>transport</td><td>Transportskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>transport_performed_by</code> … <code>machine_drivable</code></td><td>egen_transport … true</td><td>Kompletterande transport</td><td><span class="status-ok">OK</span> — انظر <a href="s1-happy-path.html">S1</a></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend) — نفس S1–S15</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>transport_document_exists</code></td>
+    <td>false</td>
+    <td>Ja X Nej</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>نفس S1–S15</td>
+  </tr>
+  <tr>
+    <td><code>receipt_remark_exists</code></td>
+    <td>false</td>
+    <td>Ja X Nej</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>نفس S1–S15</td>
+  </tr>
+  <tr>
+    <td><code>witness_exist</code></td>
+    <td>false</td>
+    <td>Ja X Nej</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>نفس S1–S15</td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL</td>
+    <td>تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S15</td>
+  </tr>
+  <tr>
+    <td><code>machine_reference_images</code></td>
+    <td>ref photo</td>
+    <td>غير ظاهر</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S15</td>
+  </tr>
+</table>
+
+<h2>ملخص Payload S16 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "serial_number": "MTR-S16-001",
+  "damaged_parts": ["kaross", "annat"],
+  "damaged_parts_other": "Hydraulcylinder",
+  "transport_document_exists": false,
+  "receipt_remark_exists": false,
+  "witness_exist": false,
+  "machine_drivable": true,
+  "files": [{ "field": "machine_reference_images", "filename": "ih_debug_transport_ref_photo.png" }],
+  "diff_vs_S1": ["damaged_parts + annat", "damaged_parts_other Hydraulcylinder", "serial MTR-S16-001"]
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (transport S16)</h2>
+<pre class="scenario">Report type: transport (Transportskador Debug S16 — Skadade delar Annat)
+Report ID: 6a3af07ad14da146d1c513e1
+Date: 23-06-2026 · time 23:45
+
+S16 branch OK:
+  - damaged_parts=[kaross, annat] + damaged_parts_other → PDF "Kaross, Annat (Hydraulcylinder)"
+  - Remaining transport fields match S1 baseline (OK)
+
+Same issues as S1–S15:
+  1. transport_document_exists=false → PDF "Ja X Nej" (WRONG)
+  2. receipt_remark_exists=false → PDF "Ja X Nej" (WRONG)
+  3. witness_exist=false → PDF "Ja X Nej" (WRONG)
+  4. signature image missing
+  5. machine_reference_images[] ref photo not shown
+
+Attachment: report_6a3af07ad14da146d1c513e1.pdf</pre>
+
+<div class="footer">
+  transport S16 Skadade delar Annat · Report 6a3af07ad14da146d1c513e1 · 2026-06-23
+</div>
+
+</body>
+</html>

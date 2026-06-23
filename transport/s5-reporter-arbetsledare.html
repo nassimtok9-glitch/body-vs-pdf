@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S5 — Reporter Arbetsledare — transport Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">transport</a> /
+  S5 — Reporter Arbetsledare
+</p>
+
+<h1>نواقص Body مقابل PDF — transport S5 Reporter Arbetsledare</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Transportskador (<code>transport-s5</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = transport</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S5 — Reporter Arbetsledare (<code>transport-s5</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3abe2fd14da146d1c50d66</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3abe2fd14da146d1c50d66.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>23-06-2026 · 20:10</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>الفرق عن S1</dt><dd><code>reporter_role=arbetsledare</code> + <code>driver_full_name=QA Site Supervisor</code> · <code>serial_number=MTR-S5-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-TRANSPORT-FIELD-REFERENCE.html">MACHINE-TRANSPORT-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-TRANSPORT-test-cases.html">MACHINE-TRANSPORT-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">transport S1 (forare)</a> · <a href="s4-reporter-agare.html">transport S4 (agare)</a> · <a href="../natur/s5-reporter-arbetsledare.html">natur S5</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>reporter_role=arbetsledare</code>، <code>driver_full_name=QA Site Supervisor</code>، försäkrad true. باقي baseline S1 (transport enums، docs/receipt/witness false، kaross، körbar).
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    Rapportörens roll: <strong>Arbetsledare</strong> — <span class="status-ok">OK</span>. الاسم «QA Site Supervisor» — <span class="status-ok">OK</span> لكن تحت «<strong>Förarens namn</strong>» — <span class="status-layout">Layout</span>. نفس نواقص S1–S4: booleans false → Ja · توقيع · machine_reference_images.
+  </div>
+</div>
+
+<h2>التركيز — S5 vs S1 (reporter)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S5 Body</th><th>S5 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>reporter_role</code></td>
+    <td>forare</td>
+    <td>arbetsledare</td>
+    <td>Rapportörens roll: Arbetsledare</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>driver_full_name</code></td>
+    <td>QA Transport S1 …</td>
+    <td>QA Site Supervisor</td>
+    <td>Förarens namn: QA Site Supervisor</td>
+    <td><span class="status-layout">Layout</span> — قيمة OK، تسمية «Förare» ثابتة</td>
+  </tr>
+  <tr>
+    <td><code>personal_id_number</code></td>
+    <td>198505151234</td>
+    <td>198505151234</td>
+    <td>Person-/organisationsnummer: 198505151234</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>email</code></td>
+    <td>qa.transport.s1@…</td>
+    <td>qa.transport.s1@example.com</td>
+    <td>E-Post: qa.transport.s1@example.com</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MTR-S1-001</td>
+    <td>MTR-S5-001</td>
+    <td>Serienummer: MTR-S5-001</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<h2>حقول متطابقة (OK) — باقي S1 baseline</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>transport</td><td>Transportskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>23-06-2026 / 20:10</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_insured]</code></td><td>true</td><td>Försäkrad X Ja Nej + If Skadeförsäkring</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>transport_performed_by</code> … <code>damaged_parts</code></td><td>egen_transport … kaross</td><td>Kompletterande transport</td><td><span class="status-ok">OK</span> — انظر <a href="s1-happy-path.html">S1</a></td></tr>
+  <tr><td><code>machine_drivable</code></td><td>true</td><td>Maskinen körbar: X Ja Nej</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend)</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td>تسمية «Förarens namn»</td>
+    <td>reporter_role=arbetsledare</td>
+    <td>الاسم صحيح تحت Förarens namn</td>
+    <td><span class="status-layout">Layout</span></td>
+    <td>نفس نمط S4 / natur S5</td>
+  </tr>
+  <tr>
+    <td>صفحة التوقيع</td>
+    <td>arbetsledare</td>
+    <td>«Förarens underskrift» + «Försäkringstagarens … om annan än föraren»</td>
+    <td><span class="status-layout">Layout</span></td>
+    <td>تسميات ثابتة رغم Arbetsledare</td>
+  </tr>
+  <tr>
+    <td><code>transport_document_exists</code></td>
+    <td><strong>false</strong></td>
+    <td>Transportdokument finns: <strong>Ja</strong> X Nej</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>نفس S1–S4</td>
+  </tr>
+  <tr>
+    <td><code>receipt_remark_exists</code></td>
+    <td><strong>false</strong></td>
+    <td>Anmärkning vid mottagning: <strong>Ja</strong> X Nej</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>نفس S1–S4</td>
+  </tr>
+  <tr>
+    <td><code>witness_exist</code></td>
+    <td><strong>false</strong></td>
+    <td>Vittnen finns: <strong>Ja</strong> X Nej</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>نفس S1–S4</td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL</td>
+    <td>صفحة 2 — تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S4</td>
+  </tr>
+  <tr>
+    <td><code>machine_reference_images</code></td>
+    <td>ih_debug_transport_ref_photo.png</td>
+    <td>«Foto och bilagor» — غير ظاهر</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S4</td>
+  </tr>
+  <tr>
+    <td>Datum (underskrift)</td>
+    <td>23-06-2026</td>
+    <td>23-06-2026</td>
+    <td><span class="status-ok">OK</span></td>
+    <td>يطابق Skadedatum</td>
+  </tr>
+</table>
+
+<h2>ملخص Payload S5 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "serial_number": "MTR-S5-001",
+  "reporter_role": "arbetsledare",
+  "driver_full_name": "QA Site Supervisor",
+  "machine_identity": { "machine_insured": true },
+  "transport_document_exists": false,
+  "receipt_remark_exists": false,
+  "witness_exist": false,
+  "machine_drivable": true,
+  "files": [{ "field": "machine_reference_images", "filename": "ih_debug_transport_ref_photo.png" }],
+  "diff_vs_S1": ["reporter_role arbetsledare", "driver_full_name QA Site Supervisor", "serial MTR-S5-001"]
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (transport S5)</h2>
+<pre class="scenario">Report type: transport (Transportskador Debug S5 — Reporter Arbetsledare)
+Report ID: 6a3abe2fd14da146d1c50d66
+Date: 23-06-2026 · time 20:10
+
+S5 branch OK:
+  - reporter_role=arbetsledare → Rapportörens roll: Arbetsledare
+  - driver_full_name "QA Site Supervisor" rendered correctly
+  - Transport step-2 fields match S1 baseline (OK)
+
+Layout (not wrong data):
+  - Name shown under label "Förarens namn" despite Arbetsledare role
+  - Signature page still says "Förarens underskrift"
+
+Same issues as S1–S4:
+  1. transport_document_exists=false → PDF "Ja X Nej" (WRONG)
+  2. receipt_remark_exists=false → PDF "Ja X Nej" (WRONG)
+  3. witness_exist=false → PDF "Ja X Nej" (WRONG)
+  4. signature image missing
+  5. machine_reference_images[] ref photo not shown in Foto och bilagor
+
+Attachment: report_6a3abe2fd14da146d1c50d66.pdf</pre>
+
+<div class="footer">
+  transport S5 Reporter Arbetsledare · Report 6a3abe2fd14da146d1c50d66 · 2026-06-23
+</div>
+
+</body>
+</html>

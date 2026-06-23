@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S12 — Lastsäkrad Ja + Spännband — transport Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">transport</a> /
+  S12 — Lastsäkrad Ja + Spännband
+</p>
+
+<h1>نواقص Body مقابل PDF — transport S12 Lastsäkrad Ja + Spännband</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Transportskador (<code>transport-s12</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = transport</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S12 — Lastsäkrad Ja + Spännband (<code>transport-s12</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3aed48d14da146d1c51211</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3aed48d14da146d1c51211.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>23-06-2026 · 23:31</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>الفرق عن S1</dt><dd><code>correctly_load_secured=ja</code> + <code>load_securing_method=spanband</code> · <code>serial_number=MTR-S12-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-TRANSPORT-FIELD-REFERENCE.html">MACHINE-TRANSPORT-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-TRANSPORT-test-cases.html">MACHINE-TRANSPORT-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">transport S1 (lastsäkrad nej)</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    baseline S1 مع <code>correctly_load_secured=ja</code>، <code>load_securing_method=spanband</code>، <code>serial_number=MTR-S12-001</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <strong>فرع S12 OK:</strong> Korrekt lastsäkrad: <em>Ja</em> + Lastsäkringsmetod: <em>Spännband</em>. نفس نواقص S1–S11: booleans false → Ja · توقيع · machine_reference_images.
+  </div>
+</div>
+
+<h2>فرع S12 — load securing (ja + spanband)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S12 Body</th><th>S12 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>correctly_load_secured</code></td>
+    <td>nej</td>
+    <td>ja</td>
+    <td>Korrekt lastsäkrad: <strong>Ja</strong></td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>load_securing_method</code></td>
+    <td>— (غير مُرسل)</td>
+    <td>spanband</td>
+    <td>Lastsäkringsmetod: <strong>Spännband</strong></td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MTR-S1-001</td>
+    <td>MTR-S12-001</td>
+    <td>Serienummer: MTR-S12-001</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<h2>حقول متطابقة (OK) — باقي S1 baseline</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>transport</td><td>Transportskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>23-06-2026 / 23:31</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>transport_performed_by</code> … <code>machine_drivable</code></td><td>egen_transport … true</td><td>حقول Kompletterande transport</td><td><span class="status-ok">OK</span> — انظر <a href="s1-happy-path.html">S1</a></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend) — نفس S1–S11</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>transport_document_exists</code></td>
+    <td>false</td>
+    <td>Ja X Nej</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>نفس S1–S11</td>
+  </tr>
+  <tr>
+    <td><code>receipt_remark_exists</code></td>
+    <td>false</td>
+    <td>Ja X Nej</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>نفس S1–S11</td>
+  </tr>
+  <tr>
+    <td><code>witness_exist</code></td>
+    <td>false</td>
+    <td>Ja X Nej</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>نفس S1–S11</td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL</td>
+    <td>صفحة 2 — تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S11</td>
+  </tr>
+  <tr>
+    <td><code>machine_reference_images</code></td>
+    <td>ih_debug_transport_ref_photo.png</td>
+    <td>«Foto och bilagor» — غير ظاهر</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S11</td>
+  </tr>
+  <tr>
+    <td>Datum (underskrift)</td>
+    <td>23-06-2026</td>
+    <td>23-06-2026</td>
+    <td><span class="status-ok">OK</span></td>
+    <td>يطابق Skadedatum</td>
+  </tr>
+</table>
+
+<h2>أقسام غائبة صحيحة (v1)</h2>
+<table>
+  <tr><th>مفتاح</th><th>S1 (nej)</th><th>S12 (ja)</th><th>الحالة</th></tr>
+  <tr><td><code>load_securing_method</code></td><td>غير مُرسل</td><td>spanband — يظهر في PDF</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>load_securing_other</code></td><td>—</td><td>غير مطلوب (ليس annat)</td><td><span class="status-ok">N/A</span></td></tr>
+</table>
+
+<h2>ملخص Payload S12 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "serial_number": "MTR-S12-001",
+  "correctly_load_secured": "ja",
+  "load_securing_method": "spanband",
+  "transport_document_exists": false,
+  "receipt_remark_exists": false,
+  "witness_exist": false,
+  "machine_drivable": true,
+  "files": [{ "field": "machine_reference_images", "filename": "ih_debug_transport_ref_photo.png" }],
+  "diff_vs_S1": ["correctly_load_secured ja", "load_securing_method spanband", "serial MTR-S12-001"]
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (transport S12)</h2>
+<pre class="scenario">Report type: transport (Transportskador Debug S12 — Lastsäkrad Ja + Spännband)
+Report ID: 6a3aed48d14da146d1c51211
+Date: 23-06-2026 · time 23:31
+
+S12 branch OK:
+  - correctly_load_secured=ja → PDF "Ja"
+  - load_securing_method=spanband → PDF "Lastsäkringsmetod: Spännband"
+  - Remaining transport step-2 fields match S1 baseline (OK)
+
+Same issues as S1–S11:
+  1. transport_document_exists=false → PDF "Ja X Nej" (WRONG)
+  2. receipt_remark_exists=false → PDF "Ja X Nej" (WRONG)
+  3. witness_exist=false → PDF "Ja X Nej" (WRONG)
+  4. signature image missing
+  5. machine_reference_images[] ref photo not shown in Foto och bilagor
+
+Attachment: report_6a3aed48d14da146d1c51211.pdf</pre>
+
+<div class="footer">
+  transport S12 Lastsäkrad Ja + Spännband · Report 6a3aed48d14da146d1c51211 · 2026-06-23
+</div>
+
+</body>
+</html>

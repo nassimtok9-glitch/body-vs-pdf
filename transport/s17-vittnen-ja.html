@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S17 — Vittnen Ja — transport Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">transport</a> /
+  S17 — Vittnen Ja
+</p>
+
+<h1>نواقص Body مقابل PDF — transport S17 Vittnen Ja</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Transportskador (<code>transport-s17</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = transport</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S17 — Vittnen Ja (<code>transport-s17</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3af137d14da146d1c5142a</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3af137d14da146d1c5142a.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>23-06-2026 · 23:48</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>الفرق عن S1</dt><dd><code>witness_exist=true</code> + <code>witnesses[0]</code> (5 حقول) · <code>serial_number=MTR-S17-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-TRANSPORT-FIELD-REFERENCE.html">MACHINE-TRANSPORT-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-TRANSPORT-test-cases.html">MACHINE-TRANSPORT-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">transport S1 (witness false)</a> · <a href="s14-fraktsedel-ja-pdf.html">transport S14 (boolean true OK)</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>witness_exist=true</code> + صف <code>witnesses[0]</code> كامل (QA Transport Witness، personnummer، adress، telefon، e-post). docs/receipt false.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <strong>فرع S17 OK:</strong> Vittnen finns: <em>X Ja</em> + قسم Vittnen بصف البيانات. نفس نواقص متكررة: false booleans أخرى · توقيع · machine_reference_images.
+  </div>
+</div>
+
+<h2>فرع S17 — witness_exist true + witnesses[]</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S17 Body</th><th>S17 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>witness_exist</code></td>
+    <td>false</td>
+    <td><strong>true</strong></td>
+    <td>Vittnen finns: <strong>X Ja</strong> Nej</td>
+    <td><span class="status-ok">OK</span> — true يُعرض صحيحاً (عكس S1–S16)</td>
+  </tr>
+  <tr>
+    <td><code>witnesses[0][name]</code></td>
+    <td>—</td>
+    <td>QA Transport Witness</td>
+    <td>Vittnen: QA Transport Witness</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>witnesses[0][personal_id_number]</code></td>
+    <td>—</td>
+    <td>197707071234</td>
+    <td>197707071234</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>witnesses[0][address]</code></td>
+    <td>—</td>
+    <td>Byggarbetsplats 5, Stockholm</td>
+    <td>Byggarbetsplats 5, Stockholm</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>witnesses[0][phone]</code></td>
+    <td>—</td>
+    <td>0704445566</td>
+    <td>0704445566</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>witnesses[0][email]</code></td>
+    <td>—</td>
+    <td>witness.transport@example.com</td>
+    <td>witness.transport@example.com</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td>قسم Vittnen (موضع)</td>
+    <td>—</td>
+    <td>صف 3</td>
+    <td>صفحة 1 — بعد E-Post المُبلِّغ وقبل Kompletterande</td>
+    <td><span class="status-layout">Layout</span> — بيانات صحيحة</td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MTR-S1-001</td>
+    <td>MTR-S17-001</td>
+    <td>MTR-S17-001</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<h2>حقول متطابقة (OK) — باقي S1 baseline</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>damaged_parts[0]</code></td><td>kaross</td><td>Skadade delar: Kaross</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_drivable</code></td><td>true</td><td>Maskinen körbar: X Ja Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>حقول transport step-2</td><td>baseline S1</td><td>Kompletterande</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend)</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>transport_document_exists</code></td>
+    <td>false</td>
+    <td>Ja X Nej</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>نفس S1–S16 عند false</td>
+  </tr>
+  <tr>
+    <td><code>receipt_remark_exists</code></td>
+    <td>false</td>
+    <td>Ja X Nej</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>نفس S1–S16</td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL</td>
+    <td>تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S16</td>
+  </tr>
+  <tr>
+    <td><code>machine_reference_images</code></td>
+    <td>ref photo</td>
+    <td>غير ظاهر</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S16</td>
+  </tr>
+</table>
+
+<h2>ملاحظة — نمط boolean غير متماثل (witness_exist)</h2>
+<table>
+  <tr><th>القيمة</th><th>PDF</th><th>مثال</th></tr>
+  <tr><td><code>false</code></td><td><span class="status-wrong">Wrong</span> → Ja X Nej</td><td>S1–S16</td></tr>
+  <tr><td><code>true</code></td><td><span class="status-ok">OK</span> → X Ja Nej</td><td>S17</td></tr>
+</table>
+<p>نفس النمط لـ <code>transport_document_exists</code> (S14 true OK، S1–S13 false wrong).</p>
+
+<h2>ملخص Payload S17 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "serial_number": "MTR-S17-001",
+  "witness_exist": true,
+  "witnesses": [{
+    "name": "QA Transport Witness",
+    "email": "witness.transport@example.com",
+    "personal_id_number": "197707071234",
+    "phone": "0704445566",
+    "address": "Byggarbetsplats 5, Stockholm"
+  }],
+  "transport_document_exists": false,
+  "receipt_remark_exists": false,
+  "files": [{ "field": "machine_reference_images", "filename": "ih_debug_transport_ref_photo.png" }]
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (transport S17)</h2>
+<pre class="scenario">Report type: transport (Transportskador Debug S17 — Vittnen Ja)
+Report ID: 6a3af137d14da146d1c5142a
+Date: 23-06-2026 · time 23:48
+
+S17 branch OK:
+  - witness_exist=true → PDF "X Ja Nej" (checkbox correct)
+  - witnesses[0] row rendered: name, personnummer, adress, telefon, e-post (all match body)
+
+Layout (not wrong data):
+  - Vittnen block on page 1 between reporter contact and Kompletterande section
+
+Still WRONG when false:
+  - transport_document_exists=false → PDF "Ja X Nej"
+  - receipt_remark_exists=false → PDF "Ja X Nej"
+
+Still MISSING (all scenarios):
+  - signature image
+  - machine_reference_images[] in Foto och bilagor
+
+Note: witness_exist=false renders Ja (WRONG) in S1–S16; true renders correctly in S17 — asymmetric boolean bug (same class as transport_document_exists).
+
+Attachment: report_6a3af137d14da146d1c5142a.pdf</pre>
+
+<div class="footer">
+  transport S17 Vittnen Ja · Report 6a3af137d14da146d1c5142a · 2026-06-23
+</div>
+
+</body>
+</html>

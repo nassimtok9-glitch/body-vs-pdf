@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S18 — Full Stack MKT-01 — transport Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">transport</a> /
+  S18 — Full Stack MKT-01
+</p>
+
+<h1>نواقص Body مقابل PDF — transport S18 Full Stack MKT-01</h1>
+<p>مقارنة شاملة — <code>fillTransportFullStack</code> / <code>transport-s18</code> — تجميع فروع S3–S17 في مسار واحد (MKT-01).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = transport</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S18 — Full Stack MKT-01 (<code>transport-s18</code> = <code>fillTransportFullStack</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3af1a2d14da146d1c5146f</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3af1a2d14da146d1c5146f.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>23-06-2026 · 23:49</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>ملفات multipart</dt><dd><code>images</code> + <code>machine_reference_images</code> + <code>transport_documents[]</code> + <code>signature</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-TRANSPORT-FIELD-REFERENCE.html">MACHINE-TRANSPORT-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-TRANSPORT-test-cases.html">MACHINE-TRANSPORT-test-cases.html</a> — MKT-01</dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">S1</a> · <a href="s14-fraktsedel-ja-pdf.html">S14</a> · <a href="s17-vittnen-ja.html">S17</a> · <a href="../natur/s18-full-stack.html">natur S18</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    مسار كامل MKT-01: ej försäkrad، företagskontakt، lastsäkrad ja + spännband، transportdokument ja + PDF، anmärkning ja، 4 skadade delar، 2 vittnen، körbar ja، 3 ملفات مرفقة.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    معظم حقول Kompletterande + Vittnen ×2 <strong>OK</strong>. booleans عند <strong>true</strong> → X Ja (صحيح).<br />
+    <strong>Missing:</strong> <code>images</code>، <code>machine_reference_images</code>، <code>transport_documents[]</code>، <code>signature</code>.<br />
+    <strong>Layout:</strong> «Förarens namn» رغم Företagskontakt · Försäkrad Ja X Nej عند false.
+  </div>
+</div>
+
+<h2>OK — فروع مدمجة من S3–S17</h2>
+<table>
+  <tr><th>فرع</th><th>مفتاح API</th><th>Body (مختصر)</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>S3</td><td><code>machine_insured</code></td><td>false</td><td>Ja X Nej · لا Försäkringsbolag</td><td><span class="status-ok">OK</span> + <span class="status-layout">Layout</span> checkbox</td></tr>
+  <tr><td>S6</td><td><code>reporter_role</code></td><td>foretag_kontakt</td><td>Företagskontakt · QA Logistics Contact</td><td><span class="status-ok">OK</span> + <span class="status-layout">Layout</span> Förarens namn</td></tr>
+  <tr><td>S12</td><td><code>correctly_load_secured</code> + method</td><td>ja + spanband</td><td>Ja + Spännband</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>S14</td><td><code>transport_document_exists</code></td><td>true</td><td>Transportdokument: X Ja Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>—</td><td><code>receipt_remark_exists</code></td><td>true</td><td>Anmärkning vid mottagning: X Ja Nej</td><td><span class="status-ok">OK</span> — أول تأكيد true</td></tr>
+  <tr><td>S18</td><td><code>damaged_parts[]</code></td><td>hytt, kaross, redskap, underdel</td><td>Hytt, Kaross, Redskap, Underdel</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>S17</td><td><code>witness_exist</code> + <code>witnesses[]</code></td><td>true + 2 rows</td><td>X Ja + Transport Supervisor + Loading Bay Operator</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>S1</td><td><code>machine_drivable</code></td><td>true</td><td>Maskinen körbar: X Ja Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>—</td><td><code>serial_number</code></td><td>POSTMAN-TRN-001</td><td>POSTMAN-TRN-001</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>—</td><td><code>operating_hours</code></td><td>4200</td><td>Drifttimmar: 4200</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>—</td><td><code>post_number_post_address</code></td><td>N/A</td><td>Postnr: N/A</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>baseline</td><td>transport step-2</td><td>egen_transport, lastbil, under_transport, påkörning, kontroll ja</td><td>Kompletterande</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>Missing — Backend PDF</h2>
+<table>
+  <tr><th>مفتاح API / ملف</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>images</code></td>
+    <td>ih_debug_transport_skada_photo.png</td>
+    <td>«Foto och bilagor» — فارغ</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td><code>machine_reference_images</code></td>
+    <td>ih_debug_transport_ref_photo.png</td>
+    <td>غير ظاهر</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td><code>transport_documents[]</code></td>
+    <td>ih_debug_transport_document.pdf</td>
+    <td>غير ظاهر (رغم exists=true OK)</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL</td>
+    <td>صفحة 2 — تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+</table>
+
+<h2>Layout</h2>
+<table>
+  <tr><th>البند</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>«Förarens namn»</td><td>foretag_kontakt</td><td>QA Logistics Contact</td><td><span class="status-layout">Layout</span></td></tr>
+  <tr><td>Försäkrad checkbox</td><td>false</td><td>Ja X Nej</td><td><span class="status-layout">Layout</span> — نفس S3</td></tr>
+  <tr><td>قسم Vittnen</td><td>صف 3</td><td>صفحة 1 قبل Kompletterande</td><td><span class="status-layout">Layout</span> — بيانات صحيحة</td></tr>
+  <tr><td>صفحة التوقيع</td><td>foretag_kontakt</td><td>Förarens underskrift</td><td><span class="status-layout">Layout</span></td></tr>
+</table>
+
+<h2>ملخص boolean — transport (S1–S18)</h2>
+<table>
+  <tr><th>الحقل</th><th>false في PDF</th><th>true في PDF</th></tr>
+  <tr><td><code>transport_document_exists</code></td><td><span class="status-wrong">Wrong</span> Ja X Nej (S1–S13, S15–S16)</td><td><span class="status-ok">OK</span> X Ja (S14, S18)</td></tr>
+  <tr><td><code>receipt_remark_exists</code></td><td><span class="status-wrong">Wrong</span> (S1–S17)</td><td><span class="status-ok">OK</span> X Ja (S18)</td></tr>
+  <tr><td><code>witness_exist</code></td><td><span class="status-wrong">Wrong</span> (S1–S16)</td><td><span class="status-ok">OK</span> X Ja (S17, S18)</td></tr>
+</table>
+
+<h2>ملخص Payload S18 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "serial_number": "POSTMAN-TRN-001",
+  "machine_insured": false,
+  "reporter_role": "foretag_kontakt",
+  "correctly_load_secured": "ja",
+  "load_securing_method": "spanband",
+  "transport_document_exists": true,
+  "receipt_remark_exists": true,
+  "damaged_parts": ["hytt", "kaross", "redskap", "underdel"],
+  "witness_exist": true,
+  "witnesses": [{ "name": "Transport Supervisor" }, { "name": "Loading Bay Operator" }],
+  "machine_drivable": true,
+  "files": [
+    { "field": "images", "filename": "ih_debug_transport_skada_photo.png" },
+    { "field": "machine_reference_images", "filename": "ih_debug_transport_ref_photo.png" },
+    { "field": "transport_documents[]", "filename": "ih_debug_transport_document.pdf" }
+  ]
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (transport S18 MKT-01)</h2>
+<pre class="scenario">Report type: transport (Transportskador Debug S18 — Full Stack MKT-01)
+Report ID: 6a3af1a2d14da146d1c5146f
+Date: 23-06-2026 · time 23:49
+
+Full stack text/enum fields: OK
+  - uninsured (no insurance company), foretag_kontakt, load securing ja+spanband
+  - transport_document_exists=true, receipt_remark_exists=true (checkboxes X Ja)
+  - 4 damaged parts, 2 witness rows, drivable true
+  - POSTMAN-TRN-001, operating_hours 4200
+
+MISSING (all multipart — recurring across S1–S18):
+  1. images[] skada photo
+  2. machine_reference_images[] ref photo
+  3. transport_documents[] PDF (flag true but file not embedded/shown)
+  4. signature image
+
+Layout (not wrong data):
+  - "Förarens namn" despite Företagskontakt
+  - Försäkrad Ja X Nej when machine_insured=false (same as S3)
+  - Witness block placement on page 1
+
+ASYMMETRIC BOOLEAN BUG (false only):
+  - transport_document_exists, receipt_remark_exists, witness_exist render "Ja" when body sends false (S1–S17)
+  - true values render correctly (S14, S17, S18)
+
+Attachment: report_6a3af1a2d14da146d1c5146f.pdf</pre>
+
+<div class="footer">
+  transport S18 Full Stack MKT-01 · Report 6a3af1a2d14da146d1c5146f · 18/18 ✓ · 2026-06-23
+</div>
+
+</body>
+</html>
