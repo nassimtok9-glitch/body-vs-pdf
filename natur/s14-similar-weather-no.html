@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S14 — Liknande väder Nej — natur Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">natur</a> /
+  S14 — Liknande väder Nej
+</p>
+
+<h1>نواقص Body مقابل PDF — natur S14 Liknande väder Nej</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Naturskador (<code>natur-s14</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = natur</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S14 — Liknande väder Nej (<code>natur-s14</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3aa512d14da146d1c50805</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3aa512d14da146d1c50805.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>23-06-2026 · 18:23</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>الفرق عن S1</dt><dd>سينario صريح لـ <code>similar_weather_before=nej</code> · <code>serial_number=MNA-S14-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-NATUR-FIELD-REFERENCE.html">MACHINE-NATUR-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-NATUR-test-cases.html">MACHINE-NATUR-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">natur S1</a> (نفس قيمة nej في baseline)</dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>similar_weather_before=nej</code>، <code>serial_number=MNA-S14-001</code>. باقي baseline كما S1.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <strong>فرع S14 OK:</strong> Liknande väder tidigare <em>Nej</em> — يطابق S1. <strong>نفس نواقص S1–S13:</strong> weather_evidence · توقيع · images.
+  </div>
+</div>
+
+<h2>فرع S14 — similar_weather_before nej</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>similar_weather_before</code></td>
+    <td>nej</td>
+    <td>Liknande väder tidigare: <strong>Nej</strong></td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MNA-S14-001</td>
+    <td>Serienummer: MNA-S14-001 (×2)</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<h2>حقول متطابقة (OK) — باقي S1 baseline</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>natur</td><td>Naturskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>23-06-2026 / 18:23</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>weather_event_type</code></td><td>storm_kraftig</td><td>Storm / kraftig vind</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damaged_parts</code> … <code>machine_drivable</code></td><td>kaross … true</td><td>باقي Kompletterande الطقس</td><td><span class="status-ok">OK</span> — انظر <a href="s1-happy-path.html">S1</a></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend)</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>weather_evidence_exists</code></td>
+    <td><strong>false</strong></td>
+    <td>Väderunderlag finns: <strong>Ja</strong> X Nej</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>نفس S1–S13</td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL</td>
+    <td>صفحة 2 — تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S13</td>
+  </tr>
+  <tr>
+    <td><code>images</code></td>
+    <td>ih_debug_natur_ref_photo.png</td>
+    <td>«Foto och bilagor» — غير ظاهر</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S13</td>
+  </tr>
+  <tr>
+    <td>Datum (underskrift)</td>
+    <td>23-06-2026</td>
+    <td>23-06-2026</td>
+    <td><span class="status-ok">OK</span></td>
+    <td>يطابق Skadedatum</td>
+  </tr>
+</table>
+
+<h2>ملخص Payload S14 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "serial_number": "MNA-S14-001",
+  "similar_weather_before": "nej",
+  "weather_evidence_exists": false,
+  "files": [{ "field": "images", "filename": "ih_debug_natur_ref_photo.png" }],
+  "note": "Same similar_weather_before branch as S1; dedicated serial for QA traceability"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (natur S14)</h2>
+<pre class="scenario">Report type: natur (Naturskador Debug S14 — Liknande väder Nej)
+Report ID: 6a3aa512d14da146d1c50805
+Date: 23-06-2026 · time 18:23
+
+S14 branch OK:
+  - similar_weather_before=nej → Liknande väder tidigare: Nej
+  - serial MNA-S14-001 correct
+  - Matches S1 similar_weather branch
+
+Same issues as S1–S13:
+  1. weather_evidence_exists=false but PDF shows Ja (WRONG)
+  2. signature image missing
+  3. images[] ref photo not shown
+
+Attachment: report_6a3aa512d14da146d1c50805.pdf</pre>
+
+<div class="footer">
+  natur S14 Liknande väder Nej · Report 6a3aa512d14da146d1c50805 · 2026-06-23
+</div>
+
+</body>
+</html>

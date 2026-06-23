@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S18 — Full Stack MKN-01 — natur Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">natur</a> /
+  S18 — Full Stack MKN-01
+</p>
+
+<h1>نواقص Body مقابل PDF — natur S18 Full Stack MKN-01</h1>
+<p>مقارنة شاملة — <code>fillNaturFullStack</code> / <code>natur-s18</code> — تجميع فروع S3–S17 في مسار واحد (MKN-01).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = natur</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S18 — Full Stack MKN-01 (<code>natur-s18</code> = <code>fillNaturFullStack</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3aa5cdd14da146d1c5090d</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3aa5cdd14da146d1c5090d.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>23-06-2026 · 18:26</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>ملفات multipart</dt><dd><code>images</code> ×2 + <code>weather_evidence_documents[]</code> ×1 + <code>signature</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-NATUR-FIELD-REFERENCE.html">MACHINE-NATUR-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-NATUR-test-cases.html">MACHINE-NATUR-test-cases.html</a> — MKN-01</dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">S1</a> · <a href="s15-weather-evidence-yes.html">S15</a> · <a href="../machineGlass/s18-full-stack.html">machineGlass S18</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    مسار كامل MKN-01: ej försäkrad، ägare، preventive ja + وصف، 5 skadade delar، liknande väder ja، väderunderlag ja + PDF، 2 images، körbar ja.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    معظم حقول Kompletterande + Egen maskin <strong>OK</strong>.<br />
+    <strong>Missing:</strong> <code>images</code> ×2، <code>weather_evidence_documents[]</code>، <code>signature</code>.<br />
+    <strong>Layout:</strong> «Förarens namn» رغم Ägare · Försäkrad Ja X Nej · لا أقسام witness/transport/polis (صحيح v1).
+  </div>
+</div>
+
+<h2>OK — فروع مدمجة من S3–S17</h2>
+<table>
+  <tr><th>فرع (سينario)</th><th>مفتاح API</th><th>Body (مختصر)</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>S3</td><td><code>machine_insured</code></td><td>false</td><td>Försäkrad: Ja X Nej · لا Försäkringsbolag</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>S4</td><td><code>reporter_role</code></td><td>agare</td><td>Ägare · QA Owner تحت Förarens namn</td><td><span class="status-ok">OK</span> + <span class="status-layout">Layout</span></td></tr>
+  <tr><td>S11</td><td><code>preventive_measures_*</code></td><td>ja + windbreak…</td><td>Ja + Beskrivning av åtgärder</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>S13-like</td><td><code>damaged_parts[]</code></td><td>motor…hytt (5)</td><td>Motor, Hydraulik, Elsystem, Kaross, Hytt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>—</td><td><code>similar_weather_before</code></td><td>ja</td><td>Liknande väder tidigare: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>S15</td><td><code>weather_evidence_exists</code></td><td>true</td><td>Väderunderlag: X Ja Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>S1/S17</td><td><code>machine_drivable</code></td><td>true</td><td>Maskinen körbar: X Ja Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>—</td><td><code>serial_number</code></td><td>POSTMAN-NAT-001</td><td>POSTMAN-NAT-001</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>—</td><td><code>operating_hours</code></td><td>4200</td><td>Drifttimmar: 4200</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>—</td><td><code>machine_event_description</code></td><td>tipped unsecured cab…</td><td>Händelsebeskrivning (نفس النص)</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>Missing — Backend PDF</h2>
+<table>
+  <tr><th>مفتاح API / ملف</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>images</code></td>
+    <td>ih_debug_natur_ref_photo.png + ih_debug_natur_skada_photo.png</td>
+    <td>«Foto och bilagor» — فارغ</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td><code>weather_evidence_documents[]</code></td>
+    <td>ih_debug_natur_weather_evidence.pdf</td>
+    <td>غير ظاهر في Foto</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL</td>
+    <td>صفحة 2 — تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+</table>
+
+<h2>Layout / N/A</h2>
+<table>
+  <tr><th>البند</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>«Förarens namn»</td><td>agare</td><td>QA Owner</td><td><span class="status-layout">Layout</span></td></tr>
+  <tr><td>Försäkrad checkbox</td><td>false</td><td>Ja X Nej</td><td><span class="status-layout">Layout</span></td></tr>
+  <tr><td><code>post_number_post_address</code></td><td>N/A</td><td>Postnr: N/A</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>witness / transport / polis</td><td>غير مُرسل (v1)</td><td>غير موجود</td><td><span class="status-ok">N/A</span></td></tr>
+</table>
+
+<h2>ملخص Payload S18 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "serial_number": "POSTMAN-NAT-001",
+  "machine_insured": false,
+  "reporter_role": "agare",
+  "preventive_measures_taken": "ja",
+  "damaged_parts": ["motor", "hydraulik", "elsystem", "kaross", "hytt"],
+  "similar_weather_before": "ja",
+  "weather_evidence_exists": true,
+  "machine_drivable": true,
+  "files": [
+    { "field": "images", "filename": "ih_debug_natur_ref_photo.png" },
+    { "field": "images", "filename": "ih_debug_natur_skada_photo.png" },
+    { "field": "weather_evidence_documents[]", "filename": "ih_debug_natur_weather_evidence.pdf" }
+  ]
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (natur S18 MKN-01)</h2>
+<pre class="scenario">Report type: natur (Naturskador Debug S18 — Full Stack MKN-01)
+Report ID: 6a3aa5cdd14da146d1c5090d
+Date: 23-06-2026 · time 18:26
+
+Full stack field rendering: OK for machine identity, reporter, weather fields,
+preventive measures, damaged parts (5), similar weather ja, weather evidence ja,
+machine drivable ja, uninsured branch.
+
+Missing in PDF:
+  1. images[] (ref + skada photos) not shown in Foto och bilagor
+  2. weather_evidence_documents[] PDF not shown
+  3. signature image missing
+
+Layout: Förarens namn label with Ägare role; Försäkrad Ja X Nej for false
+
+No forbidden v1 sections (witness, transport, police) — correct absence
+
+Attachment: report_6a3aa5cdd14da146d1c5090d.pdf</pre>
+
+<div class="footer">
+  natur S18 Full Stack MKN-01 · Report 6a3aa5cdd14da146d1c5090d · 18/18 مكتمل · 2026-06-23
+</div>
+
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S7 — Reporter Annan — natur Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">natur</a> /
+  S7 — Reporter Annan
+</p>
+
+<h1>نواقص Body مقابل PDF — natur S7 Reporter Annan</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Naturskador (<code>natur-s7</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = natur</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S7 — Reporter Annan (<code>natur-s7</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3aa2e4d14da146d1c50603</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3aa2e4d14da146d1c50603.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>23-06-2026 · 18:14</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>الفرق عن S1</dt><dd><code>reporter_role=annan</code> · <code>driver_full_name=QA Annan Kontakt</code> · <code>serial_number=MNA-S7-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-NATUR-FIELD-REFERENCE.html">MACHINE-NATUR-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-NATUR-test-cases.html">MACHINE-NATUR-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">natur S1</a> · <a href="../hydraulik/s7-reporter-annan.html">hydraulik S7</a> — يكمل تغطية <code>reporter_role</code></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>reporter_role=annan</code>، <code>driver_full_name=QA Annan Kontakt</code>. باقي baseline S1 (försäkrad، storm، evidence false). لا <code>reporter_role_other</code> في v1.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    Rapportörens roll: <strong>Annan</strong> — <span class="status-ok">OK</span> (آخر دور في enum natur). الاسم «QA Annan Kontakt» — <span class="status-ok">OK</span> لكن تحت «<strong>Förarens namn</strong>» — <span class="status-layout">Layout</span>. نفس نواقص S1–S6.
+  </div>
+</div>
+
+<h2>التركيز — S7 vs S1 (reporter)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S7 Body</th><th>S7 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>reporter_role</code></td>
+    <td>forare</td>
+    <td>annan</td>
+    <td>Rapportörens roll: Annan</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>driver_full_name</code></td>
+    <td>QA Natur S1</td>
+    <td>QA Annan Kontakt</td>
+    <td>Förarens namn: QA Annan Kontakt</td>
+    <td><span class="status-layout">Layout</span> — قيمة OK، تسمية «Förare» ثابتة</td>
+  </tr>
+  <tr>
+    <td><code>email</code></td>
+    <td>qa.natur.s1@example.com</td>
+    <td>qa.natur.s1@example.com</td>
+    <td>E-Post: qa.natur.s1@example.com</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>phone</code> / <code>personal_id_number</code></td>
+    <td>نفس baseline</td>
+    <td>نفس</td>
+    <td>Telefon / personnummer</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MNA-S1-001</td>
+    <td>MNA-S7-001</td>
+    <td>Serienummer: MNA-S7-001</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<h2>تغطية reporter_role (natur v1)</h2>
+<table>
+  <tr><th>API</th><th>سينario</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>forare</code></td><td><a href="s1-happy-path.html">S1</a></td><td>Förare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>agare</code></td><td><a href="s4-reporter-agare.html">S4</a></td><td>Ägare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>arbetsledare</code></td><td><a href="s5-reporter-arbetsledare.html">S5</a></td><td>Arbetsledare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>foretag_kontakt</code></td><td><a href="s6-reporter-foretag-kontakt.html">S6</a></td><td>Företagskontakt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>annan</code></td><td>S7</td><td>Annan</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>حقول متطابقة (OK) — باقي S1 baseline</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>natur</td><td>Naturskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>23-06-2026 / 18:14</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_insured]</code></td><td>true</td><td>Försäkrad Ja + If Skadeförsäkring</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>weather_event_type</code> … <code>machine_drivable</code></td><td>storm_kraftig … true</td><td>Kompletterande الطقس</td><td><span class="status-ok">OK</span> — انظر <a href="s1-happy-path.html">S1</a></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend)</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td>تسمية «Förarens namn»</td>
+    <td>reporter_role=annan</td>
+    <td>الاسم صحيح تحت Förarens namn</td>
+    <td><span class="status-layout">Layout</span></td>
+    <td>نفس S4–S6</td>
+  </tr>
+  <tr>
+    <td>صفحة التوقيع</td>
+    <td>annan</td>
+    <td>«Förarens underskrift» + «Försäkringstagarens … om annan än föraren»</td>
+    <td><span class="status-layout">Layout</span></td>
+    <td>تسميات ثابتة</td>
+  </tr>
+  <tr>
+    <td><code>weather_evidence_exists</code></td>
+    <td><strong>false</strong></td>
+    <td>Väderunderlag finns: <strong>Ja</strong> X Nej</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>نفس S1–S6</td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL</td>
+    <td>صفحة 2 — تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S6</td>
+  </tr>
+  <tr>
+    <td><code>images</code></td>
+    <td>ih_debug_natur_ref_photo.png</td>
+    <td>«Foto och bilagor» — غير ظاهر</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S6</td>
+  </tr>
+  <tr>
+    <td>Datum (underskrift)</td>
+    <td>23-06-2026</td>
+    <td>23-06-2026</td>
+    <td><span class="status-ok">OK</span></td>
+    <td>يطابق Skadedatum</td>
+  </tr>
+</table>
+
+<h2>ملخص Payload S7 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "serial_number": "MNA-S7-001",
+  "reporter_role": "annan",
+  "driver_full_name": "QA Annan Kontakt",
+  "machine_identity": { "machine_insured": true },
+  "weather_evidence_exists": false,
+  "files": [{ "field": "images", "filename": "ih_debug_natur_ref_photo.png" }],
+  "diff_vs_S1": ["reporter_role annan", "driver_full_name QA Annan Kontakt", "serial MNA-S7-001"]
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (natur S7)</h2>
+<pre class="scenario">Report type: natur (Naturskador Debug S7 — Reporter Annan)
+Report ID: 6a3aa2e4d14da146d1c50603
+Date: 23-06-2026 · time 18:14
+
+S7 branch OK:
+  - reporter_role=annan → Rapportörens roll: Annan (completes all 5 reporter_role values in natur v1)
+  - driver_full_name "QA Annan Kontakt" rendered correctly
+
+Layout (not wrong data):
+  - Name shown under label "Förarens namn" despite Annan role
+  - Signature page still says "Förarens underskrift"
+
+Same issues as S1–S6:
+  1. weather_evidence_exists=false but PDF shows Ja (WRONG)
+  2. signature image missing
+  3. images[] ref photo not shown
+
+Attachment: report_6a3aa2e4d14da146d1c50603.pdf</pre>
+
+<div class="footer">
+  natur S7 Reporter Annan · Report 6a3aa2e4d14da146d1c50603 · 2026-06-23
+</div>
+
+</body>
+</html>

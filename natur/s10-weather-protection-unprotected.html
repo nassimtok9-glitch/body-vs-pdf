@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S10 — Skydd Nej oskyddad — natur Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">natur</a> /
+  S10 — Skydd Nej oskyddad
+</p>
+
+<h1>نواقص Body مقابل PDF — natur S10 Skydd Nej oskyddad</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Naturskador (<code>natur-s10</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = natur</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S10 — Skydd Nej oskyddad (<code>natur-s10</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3aa3b6d14da146d1c506d4</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3aa3b6d14da146d1c506d4.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>23-06-2026 · 18:18</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>الفرق عن S1</dt><dd><code>weather_protection=nej_oskyddad</code> · <code>serial_number=MNA-S10-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-NATUR-FIELD-REFERENCE.html">MACHINE-NATUR-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-NATUR-test-cases.html">MACHINE-NATUR-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">natur S1 (ja_delvis)</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    نفس baseline S1 مع <code>weather_protection=nej_oskyddad</code>، <code>serial_number=MNA-S10-001</code>. باقي حقول الطقس والخطوة 3 كما S1.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <strong>فرع S10 OK:</strong> Väderskydd يعرض <em>Nej - oskyddad</em> (مقابل S1 «Ja - delvis»). <strong>نفس نواقص S1–S9:</strong> <code>weather_evidence_exists=false</code> لكن PDF يعرض Ja · توقيع · images.
+  </div>
+</div>
+
+<h2>فرع S10 — weather_protection nej_oskyddad</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>weather_protection</code></td>
+    <td>nej_oskyddad</td>
+    <td>Väderskydd: <strong>Nej - oskyddad</strong></td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>weather_protection</code> (S1 مرجع)</td>
+    <td>ja_delvis</td>
+    <td>Ja - delvis</td>
+    <td><span class="status-ok">OK</span> — انظر <a href="s1-happy-path.html">S1</a></td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MNA-S10-001</td>
+    <td>Serienummer: MNA-S10-001 (×2)</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<h2>حقول متطابقة (OK) — باقي S1 baseline</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>natur</td><td>Naturskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>23-06-2026 / 18:18</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>weather_event_type</code></td><td>storm_kraftig</td><td>Storm / kraftig vind</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_placement</code></td><td>parkerad_utomhus</td><td>Parkerad utomhus</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>preventive_measures_taken</code> … <code>machine_drivable</code></td><td>nej … true</td><td>باقي Kompletterande الطقس</td><td><span class="status-ok">OK</span> — انظر <a href="s1-happy-path.html">S1</a></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend)</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>weather_evidence_exists</code></td>
+    <td><strong>false</strong></td>
+    <td>Väderunderlag finns: <strong>Ja</strong> X Nej</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>نفس S1–S9</td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL</td>
+    <td>صفحة 2 — تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S9</td>
+  </tr>
+  <tr>
+    <td><code>images</code></td>
+    <td>ih_debug_natur_ref_photo.png</td>
+    <td>«Foto och bilagor» — غير ظاهر</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S9</td>
+  </tr>
+  <tr>
+    <td>Datum (underskrift)</td>
+    <td>23-06-2026</td>
+    <td>23-06-2026</td>
+    <td><span class="status-ok">OK</span></td>
+    <td>يطابق Skadedatum</td>
+  </tr>
+</table>
+
+<h2>ملخص Payload S10 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "serial_number": "MNA-S10-001",
+  "weather_protection": "nej_oskyddad",
+  "weather_evidence_exists": false,
+  "files": [{ "field": "images", "filename": "ih_debug_natur_ref_photo.png" }],
+  "diff_vs_S1": ["weather_protection nej_oskyddad", "serial MNA-S10-001"]
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (natur S10)</h2>
+<pre class="scenario">Report type: natur (Naturskador Debug S10 — Skydd Nej oskyddad)
+Report ID: 6a3aa3b6d14da146d1c506d4
+Date: 23-06-2026 · time 18:18
+
+S10 branch OK:
+  - weather_protection=nej_oskyddad → Väderskydd: Nej - oskyddad
+  - serial MNA-S10-001 correct
+
+Same issues as S1–S9:
+  1. weather_evidence_exists=false but PDF shows Ja (WRONG)
+  2. signature image missing
+  3. images[] ref photo not shown
+
+Attachment: report_6a3aa3b6d14da146d1c506d4.pdf</pre>
+
+<div class="footer">
+  natur S10 Skydd Nej oskyddad · Report 6a3aa3b6d14da146d1c506d4 · 2026-06-23
+</div>
+
+</body>
+</html>

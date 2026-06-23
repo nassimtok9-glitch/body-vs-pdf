@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S16 — Väderunderlag Nej — natur Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">natur</a> /
+  S16 — Väderunderlag Nej
+</p>
+
+<h1>نواقص Body مقابل PDF — natur S16 Väderunderlag Nej</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Naturskador (<code>natur-s16</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = natur</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S16 — Väderunderlag Nej (<code>natur-s16</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3aa576d14da146d1c50889</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3aa576d14da146d1c50889.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>23-06-2026 · 18:25</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>الفرق عن S1</dt><dd>سينario صريح لـ <code>weather_evidence_exists=false</code> (بدون documents) · <code>serial_number=MNA-S16-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-NATUR-FIELD-REFERENCE.html">MACHINE-NATUR-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-NATUR-test-cases.html">MACHINE-NATUR-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s15-weather-evidence-yes.html">natur S15 (true + PDF)</a> · <a href="s1-happy-path.html">natur S1</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    <code>weather_evidence_exists=false</code> — لا <code>weather_evidence_documents[]</code>. <code>serial_number=MNA-S16-001</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <strong>فرع S16 Wrong:</strong> Body <code>false</code> لكن PDF <em>Ja X Nej</em> — ي imply <strong>Ja</strong> (مقابل S15 <code>true</code> → <em>X Ja Nej</em>).<br />
+    يؤكد فجوة S1–S14. <strong>Missing:</strong> توقيع · images.
+  </div>
+</div>
+
+<h2>التركيز — S16 vs S15 (väderunderlag)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S15 Body</th><th>S16 Body</th><th>S16 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>weather_evidence_exists</code></td>
+    <td>true</td>
+    <td>false</td>
+    <td>Väderunderlag finns: <strong>Ja X Nej</strong></td>
+    <td><span class="status-wrong">Wrong</span></td>
+  </tr>
+  <tr>
+    <td><code>weather_evidence_exists</code> (S15 PDF)</td>
+    <td>true</td>
+    <td>—</td>
+    <td>X Ja Nej</td>
+    <td><span class="status-ok">OK</span> — انظر <a href="s15-weather-evidence-yes.html">S15</a></td>
+  </tr>
+  <tr>
+    <td><code>weather_evidence_documents[]</code></td>
+    <td>PDF مرفق</td>
+    <td>—</td>
+    <td>— (غير مُرسل — صحيح)</td>
+    <td><span class="status-ok">OK</span> — عدم الإرسال</td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MNA-S15-001</td>
+    <td>MNA-S16-001</td>
+    <td>Serienummer: MNA-S16-001</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<h2>تحليل تنسيق Ja/Nej (S15 مقابل S16)</h2>
+<table>
+  <tr><th>Body</th><th>سينario</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>true</code></td><td><a href="s15-weather-evidence-yes.html">S15</a></td><td><strong>X Ja</strong> Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>false</code></td><td>S16 (و S1–S14)</td><td>Ja <strong>X Nej</strong></td><td><span class="status-wrong">Wrong</span> — يجب Nej وليس Ja</td></tr>
+</table>
+
+<h2>حقول متطابقة (OK) — باقي S1 baseline</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>natur</td><td>Naturskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>23-06-2026 / 18:25</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>weather_event_type</code> … <code>machine_drivable</code></td><td>storm_kraftig … true</td><td>Kompletterande الطقس</td><td><span class="status-ok">OK</span> — انظر <a href="s1-happy-path.html">S1</a></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend)</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>weather_evidence_exists</code></td>
+    <td><strong>false</strong></td>
+    <td>Ja X Nej (Ja implied)</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>مؤكد مع S15 — الباك إند لا يعرض Nej عند false</td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL</td>
+    <td>صفحة 2 — تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S15</td>
+  </tr>
+  <tr>
+    <td><code>images</code></td>
+    <td>ih_debug_natur_ref_photo.png</td>
+    <td>«Foto och bilagor» — غير ظاهر</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S15</td>
+  </tr>
+  <tr>
+    <td>Datum (underskrift)</td>
+    <td>23-06-2026</td>
+    <td>23-06-2026</td>
+    <td><span class="status-ok">OK</span></td>
+    <td>يطابق Skadedatum</td>
+  </tr>
+</table>
+
+<h2>ملخص Payload S16 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "serial_number": "MNA-S16-001",
+  "weather_evidence_exists": false,
+  "files": [{ "field": "images", "filename": "ih_debug_natur_ref_photo.png" }],
+  "absent_vs_S15": ["weather_evidence_documents[]"],
+  "note": "Explicit false branch; pairs with S15 for väderunderlag QA"
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (natur S16)</h2>
+<pre class="scenario">Report type: natur (Naturskador Debug S16 — Väderunderlag Nej)
+Report ID: 6a3aa576d14da146d1c50889
+Date: 23-06-2026 · time 18:25
+
+S16 branch WRONG (confirmed with S15):
+  - weather_evidence_exists=false but PDF shows "Ja X Nej" (Ja implied)
+  - S15 with true correctly shows "X Ja Nej"
+  - Backend does not render Nej when false
+
+Same issues as S1–S15:
+  - signature image missing
+  - images[] ref photo not shown
+
+Attachment: report_6a3aa576d14da146d1c50889.pdf</pre>
+
+<div class="footer">
+  natur S16 Väderunderlag Nej · Report 6a3aa576d14da146d1c50889 · 2026-06-23
+</div>
+
+</body>
+</html>

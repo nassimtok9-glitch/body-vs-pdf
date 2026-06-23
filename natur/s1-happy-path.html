@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S1 — Happy Path — natur Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">natur</a> /
+  S1 — Happy Path
+</p>
+
+<h1>نواقص Body مقابل PDF — natur S1 Happy Path</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Naturskador (<code>natur-s1</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = natur</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S1 — Happy Path — Förare (<code>natur-s1</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3aa0a5d14da146d1c50426</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3aa0a5d14da146d1c50426.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت (Body)</dt><dd>23-06-2026 · 18:05</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-NATUR-FIELD-REFERENCE.html">MACHINE-NATUR-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-NATUR-test-cases.html">MACHINE-NATUR-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="../hydraulik/s1-happy-path.html">hydraulik S1</a> · <a href="../machineBrand/s1-happy-path.html">machineBrand S1</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    مسار S1 كامل: machine identity، <code>reporter_role=forare</code>، حقول الطقس الخطوة 2 (<code>weather_event_type</code>, <code>machine_event_description</code>, <code>machine_placement</code>, <code>weather_protection</code>, <code>preventive_measures_taken=nej</code>, <code>damaged_parts[kaross]</code>, <code>similar_weather_before=nej</code>, <code>weather_evidence_exists=false</code>)، step3 <code>machine_drivable=true</code>. بدون ownership، safety، vittnen، transport. ملف واحد: <code>images</code> (ref photo).
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    قالب <strong>Naturskador</strong> يعرض حقول الطقس في Kompletterande <strong>بشكل صحيح تقريباً</strong>. مشكلتان حرجتان: <strong><code>weather_evidence_exists</code> يظهر Ja بينما Body = false</strong>؛ <strong>صورة التوقيع غائبة</strong>. Datum التوقيع = Skadedatum (23-06-2026) — OK.
+  </div>
+</div>
+
+<h2>منطق الحكم</h2>
+<table>
+  <tr><th>الحالة</th><th>المعنى</th><th>المسؤول المرجّح</th></tr>
+  <tr><td><span class="status-ok">OK</span></td><td>القيمة في Body وتظهر في PDF بشكل صحيح</td><td>—</td></tr>
+  <tr><td><span class="status-missing">Missing</span></td><td>مُرسل في Body وغائب من PDF</td><td>Backend PDF template</td></tr>
+  <tr><td><span class="status-wrong">Wrong</span></td><td>قيمة خاطئة أو تناقض مع Body</td><td>Backend PDF mapping</td></tr>
+  <tr><td><span class="status-layout">Layout</span></td><td>Ja / X / Nej — تنسيق مربك لكن القيمة صحيحة</td><td>Backend PDF layout</td></tr>
+</table>
+
+<h2>حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>natur</td><td>Skadeanmälningstyp: Naturskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>23-06-2026 / 18:05</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>address</code> / <code>post_number_post_address</code></td><td>Virkesvägen 10… / 12030</td><td>Skadeplats + Postnr 12030</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_type]</code></td><td>traktor</td><td>Maskintyp: Traktor</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>serial_number</code></td><td>MNA-S1-001</td><td>Serienummer: MNA-S1-001 (×2)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_brand/model/year]</code></td><td>Volvo CE / EC220E / 2019</td><td>Märke / Modell / Årsmodell</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[operating_hours]</code></td><td>3150</td><td>Drifttimmar: 3150</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_insured]</code></td><td>true</td><td>Försäkrad: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>organization_number</code></td><td>6990593003</td><td>Org.nr: 6990593003</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[insurance_company_name_text]</code></td><td>If Skadeförsäkring</td><td>Försäkringsbolag</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>reporter_role</code></td><td>forare</td><td>Rapportörens roll: Förare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>driver_full_name</code> / <code>personal_id_number</code></td><td>QA Natur S1 / 198505151234</td><td>Förarens namn / personnummer</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>phone</code> / <code>email</code></td><td>0704567890 / qa.natur.s1@example.com</td><td>Telefon / E-Post</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>weather_event_type</code></td><td>storm_kraftig</td><td>Väderhändelse: Storm / kraftig vind</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_event_description</code></td><td>Strong wind damaged…</td><td>Händelsebeskrivning</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_placement</code></td><td>parkerad_utomhus</td><td>Maskinens placering: Parkerad utomhus</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>weather_protection</code></td><td>ja_delvis</td><td>Väderskydd: Ja - delvis</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>preventive_measures_taken</code></td><td>nej</td><td>Förebyggande åtgärder: Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damaged_parts[0]</code></td><td>kaross</td><td>Skadade delar: Kaross</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>similar_weather_before</code></td><td>nej</td><td>Liknande väder tidigare: Nej</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_drivable</code></td><td>true</td><td>Maskinen körbar: Ja</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend)</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>weather_evidence_exists</code></td>
+    <td><strong>false</strong></td>
+    <td>Väderunderlag finns: <strong>Ja</strong> X Nej</td>
+    <td><span class="status-wrong">Wrong</span></td>
+    <td>تناقض حرج — S1 يرسل nej/لا underlag لكن PDF يحدد Ja</td>
+  </tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL في fields</td>
+    <td>صفحة 2 — تسميات فقط بدون صورة</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس مشكلة hydraulik/machineGlass — التوقيع لا يُطبع كصورة</td>
+  </tr>
+  <tr>
+    <td><code>images</code></td>
+    <td>ih_debug_natur_ref_photo.png (70 bytes)</td>
+    <td>«Foto och bilagor» — لا يظهر المرفق بوضوح</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>صورة المرجع مُرسلة في multipart لكن غير ظاهرة في PDF المستخرج</td>
+  </tr>
+  <tr>
+    <td><code>location[latitude/longitude]</code></td>
+    <td>59.3293 / 18.0686</td><td>غير معروض صراحة</td>
+    <td><span class="status-ok">N/A</span></td>
+    <td>العنوان النصي يكفي في PDF</td>
+  </tr>
+</table>
+
+<h2>أقسام Layout (قالب PDF — القيم صحيحة)</h2>
+<table>
+  <tr><th>القسم في PDF</th><th>Body</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td>Försäkrad: X Ja Nej</td>
+    <td>true</td>
+    <td><span class="status-layout">Layout</span></td>
+    <td>علامة X قبل Ja — القيمة Ja صحيحة</td>
+  </tr>
+  <tr>
+    <td>Maskinen körbar: X Ja Nej</td>
+    <td>true</td>
+    <td><span class="status-layout">Layout</span></td>
+    <td>X قبل Ja — القيمة Ja صحيحة</td>
+  </tr>
+</table>
+
+<h2>غير موجود في PDF (متوقع — natur v1)</h2>
+<table>
+  <tr><th>مفتاح Body (غير مُرسل أو ممنوع)</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>ownership_type</code></td><td>لا قسم Ägande</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>لا قسم Säkerhetsrutiner</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witness_exist</code> / <code>witnesses[]</code></td><td>لا vittnen</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>transport_*</code> / <code>workshop_*</code></td><td>لا أقسام</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>police</code> / counterparty / injuries</td><td>لا أقسام</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_description</code></td><td>لا Skadebeskrivning منفصلة</td><td><span class="status-ok">OK</span> — يستخدم <code>machine_event_description</code></td></tr>
+</table>
+
+<h2>ملخص Payload S1 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "type": "natur",
+  "report_category": "machine",
+  "serial_number": "MNA-S1-001",
+  "organization_number": "6990593003",
+  "machine_identity": {
+    "machine_type": "traktor",
+    "machine_brand": "Volvo CE",
+    "machine_model": "EC220E",
+    "machine_year": "2019",
+    "operating_hours": "3150",
+    "machine_insured": true,
+    "insurance_company_name_text": "If Skadeförsäkring"
+  },
+  "reporter_role": "forare",
+  "driver_full_name": "QA Natur S1",
+  "weather_event_type": "storm_kraftig",
+  "machine_event_description": "Strong wind damaged the machine while parked on site",
+  "machine_placement": "parkerad_utomhus",
+  "weather_protection": "ja_delvis",
+  "preventive_measures_taken": "nej",
+  "damaged_parts": ["kaross"],
+  "similar_weather_before": "nej",
+  "weather_evidence_exists": false,
+  "machine_drivable": true,
+  "date": "23-06-2026",
+  "time": "18:05",
+  "files": [{ "field": "images", "filename": "ih_debug_natur_ref_photo.png" }],
+  "NOT sent": ["ownership_*", "safety_*", "damage_description", "witness_*", "transport_*", "police", "counterparty_*"]
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF bugs (natur S1)</h2>
+<pre class="scenario">Report type: natur (Naturskador Debug S1 — Happy Path)
+Report ID: 6a3aa0a5d14da146d1c50426
+Environment: insuranceapp3.azurewebsites.net
+Date: 23-06-2026 · time 18:05
+
+App sends natur S1 correctly:
+  - Full machine identity + org.nr + insurance
+  - reporter_role=forare
+  - NO ownership, NO safety, NO witness/transport/polis (forbidden v1)
+  - Weather step2: storm_kraftig, placement, protection, preventive=nej,
+    damaged_parts=kaross, similar_weather=nej, weather_evidence_exists=FALSE
+  - Step3: machine_drivable=true
+  - signature in fields; 1 image (ref photo) in multipart images[]
+
+PDF OK (Naturskador template):
+  - Title: Skadeanmälan - Maskin · Naturskador
+  - Full Egen maskin block + Kompletterande weather fields match Body
+  - NO witness/transport/polis sections (correct v1)
+  - Signature date 23-06-2026 matches Skadedatum
+  - 2 pages
+
+Issues in PDF:
+  1. weather_evidence_exists: Body=false but PDF shows "Väderunderlag finns: Ja" (WRONG)
+  2. signature image missing on page 2 (labels only)
+  3. images[] ref photo not visible under Foto och bilagor
+  4. Layout: "X" marker on Ja/Nej rows (cosmetic where values correct)
+
+Attachment: report_6a3aa0a5d14da146d1c50426.pdf</pre>
+
+<div class="footer">
+  natur S1 Happy Path · Report 6a3aa0a5d14da146d1c50426 · 2026-06-23
+</div>
+
+</body>
+</html>
