@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S15 — Full Stack MKS-01 — stealing Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">stealing</a> /
+  S15 — Full Stack MKS-01
+</p>
+
+<h1>نواقص Body مقابل PDF — stealing S15 Full Stack MKS-01</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Stöld och inbrott (<code>stealing-s15</code> / MKS-01).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineStealing</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S15 — Full Stack MKS-01 (<code>stealing-s15</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3d424f6834a24ee5366227</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3d424f6834a24ee5366227.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>25-06-2026 · 17:59</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>الفرق عن S1</dt><dd>leasad + uninsured · 3 <code>stolen_items</code> · <code>post_number_post_address=N/A</code> · 2× <code>machine_reference_images</code> · <code>serial=POSTMAN-MST-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-STEALING-FIELD-REFERENCE.html">MACHINE-STEALING-FIELD-REFERENCE.html</a> — MKS-01</dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-STEALING-test-cases.html">MACHINE-STEALING-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">stealing S1</a> · <a href="s5-ownership-leasad.html">S5</a> · <a href="s3-uninsured.html">S3</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    MKS-01: leased + uninsured، förare svensk، 3 stolen_items (verktyg + diesel + gps_display)، GPS/inbrott/skador/polis كلها <code>true</code>، ملفان <code>machine_reference_images</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <strong>كل فروع النص OK</strong> (finance، försäkring Nej، 3 stulna föremål، أمان، GPS، polis + diarienummer). <span class="status-layout">Layout</span>: Diarienummer على صفحة 2 بعد فاصل. نفس نواقص S1–S14: توقيع · referensbild (×2).
+  </div>
+</div>
+
+<h2>التركيز — فروع MKS-01 مجمّعة</h2>
+<table>
+  <tr><th>فرع</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>S3 uninsured</td><td><code>machine_insured=false</code></td><td>Försäkrad: Ja X Nej · لا Försäkringsbolag</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>S5 leased</td><td><code>ownership_type=leasad</code> + finance_*</td><td>Leasad + Finansbolag + Avtalsnummer LEASE-MKS-01 + kontakt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>3 stolen_items</td><td>verktyg, diesel, gps_display</td><td>Verktyg / utrustning, Diesel / bränsle, GPS / display</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>GPS + inbrott + polis</td><td>كلها true + beskrivningar + diarienummer</td><td>X Ja Nej على Ja لكل boolean</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>Serial MKS-01</td><td>POSTMAN-MST-001</td><td>Serienummer: POSTMAN-MST-001 (×2)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>Postnr</td><td>N/A</td><td>Skadeplats/Adress: …, N/A</td><td><span class="status-ok">OK</span> — يطابق Body حرفياً</td></tr>
+</table>
+
+<h2>حقول متطابقة (OK) — تفصيل</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>machineStealing</td><td>Stöld och inbrott</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>25-06-2026 / 17:59</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity</code></td><td>hjullastare, Volvo CE EC220E 2019</td><td>Egen maskin</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>organization_number</code></td><td>6990593003</td><td>Org.nr: 6990593003</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>driver_full_name</code></td><td>QA Driver</td><td>Förarens namn</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>phone</code> / <code>email</code></td><td>+46701234567 / qa.stealing@…</td><td>Telefon / E-Post</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>Säkerhetsrutiner följda: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>theft_location_type</code></td><td>byggarbetsplats</td><td>Plats vid stöld: Byggarbetsplats</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_locked</code> … <code>keys_storage</code></td><td>ja / ja / i_last_utrymme</td><td>lås, startspärr, nycklar</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>gps_last_position_address</code></td><td>Industrivägen 45, Stockholm</td><td>Senaste GPS-position</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>break_in_damage_description</code></td><td>Cab door lock forced…</td><td>Inbrottsskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_during_theft_description</code></td><td>Ignition wiring cut…</td><td>Skadebeskrivning</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>diarienummer</code></td><td>POL-2026-99887</td><td>Diarienummer: POL-2026-99887 (صفحة 2)</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend)</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL (PNG)</td>
+    <td>صفحة 2 — تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1–S14</td>
+  </tr>
+  <tr>
+    <td><code>machine_reference_images[]</code></td>
+    <td>ih_debug_mks_ref_1.png + ih_debug_mks_ref_2.png</td>
+    <td>«Referensbilder:» فارغ</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>ملفان مُرسلان — لا يظهران</td>
+  </tr>
+</table>
+
+<h2>ملاحظات تخطيط (Artifact)</h2>
+<ul>
+  <li><code>Diarienummer</code> يظهر أعلى صفحة 2 (بعد فاصل صفحة 1) بدل مباشرة تحت Polisanmälan — محتوى صحيح، ترتيب فقط</li>
+  <li><code>post_number_post_address=N/A</code> يُعرض حرفياً في Skadeplats وAdress — يطابق Body (Postman MKS-01)</li>
+  <li>لا <code>reporter_role</code> · لا <code>police</code> (سيارة) — صحيح</li>
+</ul>
+
+<h2>ملخص Payload S15 / MKS-01 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "scenario": { "id": "stealing-s15", "title": "Full Stack MKS-01" },
+  "method": "postMachineStealing",
+  "serial_number": "POSTMAN-MST-001",
+  "machine_insured": false,
+  "ownership_type": "leasad",
+  "finance_company": "Volvo Financial Services",
+  "contract_number": "LEASE-MKS-01",
+  "stolen_items": ["verktyg_utrustning", "diesel_bransle", "gps_display"],
+  "gps_tracking_present": true,
+  "break_in_signs": true,
+  "damage_during_theft": true,
+  "police_report_filed": true,
+  "diarienummer": "POL-2026-99887",
+  "files": [
+    { "field": "machine_reference_images", "filename": "ih_debug_mks_ref_1.png" },
+    { "field": "machine_reference_images", "filename": "ih_debug_mks_ref_2.png" }
+  ]
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (stealing S15 / MKS-01)</h2>
+<pre class="scenario">Report type: machineStealing (Stöld och inbrott Debug S15 — Full Stack MKS-01)
+Report ID: 6a3d424f6834a24ee5366227
+Date: 25-06-2026 · time 17:59
+Serial: POSTMAN-MST-001
+
+MKS-01 text branches: ALL OK
+  - uninsured (no Försäkringsbolag) + leased finance block incl. Avtalsnummer
+  - 3 stolen_items incl. GPS/display
+  - GPS, inbrott, skador, polisanmälan + diarienummer
+
+Layout (minor):
+  - Diarienummer rendered at top of page 2 after page break
+
+Same issues as S1–S14:
+  1. signature image missing on page 2
+  2. machine_reference_images[] (2 files) — Referensbilder empty
+
+Attachment: report_6a3d424f6834a24ee5366227.pdf</pre>
+
+<div class="footer">
+  stealing S15 Full Stack MKS-01 · Report 6a3d424f6834a24ee5366227 · 2026-06-25 · 15/15 complete
+</div>
+
+</body>
+</html>

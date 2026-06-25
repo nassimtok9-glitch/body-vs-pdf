@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S9 — Säkerhetsrutiner Okänt — stealing Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">stealing</a> /
+  S9 — Säkerhetsrutiner Okänt
+</p>
+
+<h1>نواقص Body مقابل PDF — stealing S9 Säkerhetsrutiner Okänt</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Stöld och inbrott (<code>stealing-s9</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineStealing</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S9 — Säkerhetsrutiner Okänt (<code>stealing-s9</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3d3e756834a24ee536601f</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3d3e756834a24ee536601f.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>25-06-2026 · 17:42</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>الفرق عن S1</dt><dd><code>safety_procedures_followed=okant</code> + <code>safety_procedures_comment</code> · <code>serial_number=MKS-S9-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-STEALING-FIELD-REFERENCE.html">MACHINE-STEALING-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-STEALING-test-cases.html">MACHINE-STEALING-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s8-safety-nej.html">stealing S8</a> · <a href="../machineGlass/s9-safety-okant.html">machineGlass S9</a> · <a href="../machineBrand/s9-safety-okant.html">machineBrand S9</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    baseline S1 مع <code>safety_procedures_followed=okant</code> و<code>safety_procedures_comment=Unclear who last secured the machine</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <strong>فرع S9 OK:</strong> Säkerhetsrutiner följda: Okänt + Kommentar säkerhetsrutiner — نفس نمط machineGlass/machineBrand S9. نفس نواقص S1: توقيع · referensbild.
+  </div>
+</div>
+
+<h2>التركيز — S9 vs S1 (safety)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S9 Body</th><th>S9 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>safety_procedures_followed</code></td>
+    <td>ja</td>
+    <td>okant</td>
+    <td>Säkerhetsrutiner följda: <strong>Okänt</strong></td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>safety_procedures_comment</code></td>
+    <td>—</td>
+    <td>Unclear who last secured the machine</td>
+    <td>Kommentar säkerhetsrutiner: Unclear who last secured the machine</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>safety_procedures_not_followed_description</code></td>
+    <td>—</td>
+    <td>— (غير مُرسل)</td>
+    <td>لا يظهر</td>
+    <td><span class="status-ok">N/A</span></td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MKS-S1-001</td>
+    <td>MKS-S9-001</td>
+    <td>Serienummer: MKS-S9-001 (×2)</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<h2>مقارنة فرع safety (S8 / S9 / S1)</h2>
+<table>
+  <tr><th>القيمة</th><th>حقل شرطي</th><th>تسمية PDF</th><th>stealing</th></tr>
+  <tr><td>ja</td><td>—</td><td>Säkerhetsrutiner följda: Ja</td><td>S1 <span class="status-ok">OK</span></td></tr>
+  <tr><td>nej</td><td><code>safety_procedures_not_followed_description</code></td><td>Varför följdes inte rutinerna</td><td>S8 <span class="status-ok">OK</span></td></tr>
+  <tr><td>okant</td><td><code>safety_procedures_comment</code></td><td>Kommentar säkerhetsrutiner</td><td>S9 <span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>حقول متطابقة (OK) — باقي S1 baseline</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>machineStealing</td><td>Stöld och inbrott</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>25-06-2026 / 17:42</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity</code> … försäkring</td><td>hjullastare, agd, insured</td><td>Egen maskin + Ägd + försäkring</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>driver_full_name</code> … förare</td><td>swedish_driver_license=Yes</td><td>Förarens namn + personnummer</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>stolen_items[]</code> … <code>theft_location_type</code></td><td>verktyg + diesel, byggarbetsplats</td><td>Stulna föremål / Plats vid stöld</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_locked</code> … <code>police_report_filed</code></td><td>ja … true</td><td>أمان + GPS + inbrott + polis</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>diarienummer</code></td><td>POL-2026-99887</td><td>Diarienummer</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend) — نفس S1</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL (PNG)</td>
+    <td>صفحة 2 — تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1</td>
+  </tr>
+  <tr>
+    <td><code>machine_reference_images</code></td>
+    <td>ih_debug_stealing_ref_photo.png (70 B)</td>
+    <td>«Referensbilder:» فارغ</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1</td>
+  </tr>
+</table>
+
+<h2>ملخص Payload S9 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "scenario": { "id": "stealing-s9", "title": "Säkerhetsrutiner Okänt" },
+  "method": "postMachineStealing",
+  "serial_number": "MKS-S9-001",
+  "safety_procedures_followed": "okant",
+  "safety_procedures_comment": "Unclear who last secured the machine",
+  "diff_vs_S1": ["safety okant + comment", "serial MKS-S9-001"]
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (stealing S9)</h2>
+<pre class="scenario">Report type: machineStealing (Stöld och inbrott Debug S9 — Säkerhetsrutiner Okänt)
+Report ID: 6a3d3e756834a24ee536601f
+Date: 25-06-2026 · time 17:42
+
+S9 branch OK:
+  - safety_procedures_followed = okant → Säkerhetsrutiner följda: Okänt
+  - safety_procedures_comment → Kommentar säkerhetsrutiner
+
+Same issues as S1:
+  1. signature image missing on page 2
+  2. machine_reference_images[] — Referensbilder empty
+
+Attachment: report_6a3d3e756834a24ee536601f.pdf</pre>
+
+<div class="footer">
+  stealing S9 Säkerhetsrutiner Okänt · Report 6a3d3e756834a24ee536601f · 2026-06-25
+</div>
+
+</body>
+</html>

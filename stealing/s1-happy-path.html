@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S1 — Happy Path — stealing Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">stealing</a> /
+  S1 — Happy Path
+</p>
+
+<h1>نواقص Body مقابل PDF — stealing S1 Happy Path</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Stöld och inbrott (<code>stealing-s1</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineStealing</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S1 — Happy Path — Svensk förare (<code>stealing-s1</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3d209c6834a24ee5365c05</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3d209c6834a24ee5365c05.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>25-06-2026 · 15:35</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-STEALING-FIELD-REFERENCE.html">MACHINE-STEALING-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-STEALING-test-cases.html">MACHINE-STEALING-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="../transport/s1-happy-path.html">transport S1</a> · <a href="../natur/s1-happy-path.html">natur S1</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    مسار S1 كامل: machine identity، مسار <strong>förare</strong> (<code>swedish_driver_license=Yes</code> — بدون <code>reporter_role</code>)، سياق السرقة (<code>stolen_items[]</code>, <code>theft_location_type</code>)، أمان الخطوة 2 (lås, startspärr, nycklar, GPS, inbrott, skador)، <code>police_report_filed=true</code> + diarienummer. ملف: <code>machine_reference_images</code> (ih_debug_stealing_ref_photo.png).
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    قالب <strong>Stöld och inbrott</strong> يعرض كل حقول النص في Kompletterande <strong>بشكل صحيح</strong> — أفضل من transport لحقول boolean عند <code>true</code>. فجوات متكررة: <span class="status-missing">Missing</span> توقيع + referensbild. لا أقسام vittnen/körbar/polis (سيارة) — صحيح لـ v1.
+  </div>
+</div>
+
+<h2>حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>machineStealing</td><td>Skadeanmälningstyp: Stöld och inbrott</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>25-06-2026 / 15:35</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>location[address]</code></td><td>QA Test site, Industrivägen 45…</td><td>Skadeplats + Adress</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>post_number_post_address</code></td><td>12030</td><td>Postnr och postadress: 12030</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_type]</code></td><td>hjullastare</td><td>Maskintyp: Hjullastare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>serial_number</code></td><td>MKS-S1-001</td><td>Serienummer: MKS-S1-001 (×2)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_brand/model/year]</code></td><td>Volvo CE / EC220E / 2019</td><td>Märke / Modell / Årsmodell</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[operating_hours]</code></td><td>4200</td><td>Drifttimmar: 4200</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity[machine_insured]</code></td><td>true</td><td>Försäkrad: X Ja Nej (Ja)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>organization_number</code></td><td>6990593003</td><td>Org.nr: 6990593003</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>insurance_company_name_text</code></td><td>If Skadeförsäkring</td><td>Försäkringsbolag</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>ownership_type</code></td><td>agd</td><td>Ägande/leasing: Ägd</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>driver_full_name</code></td><td>QA Driver</td><td>Förarens namn</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>personal_id_number</code></td><td>199001011234</td><td>Person-/organisationsnummer</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>phone</code> / <code>email</code></td><td>0701234567 / qa.stealing.s1@…</td><td>Telefon / E-Post</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>Säkerhetsrutiner följda: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>stolen_items[]</code></td><td>verktyg_utrustning, diesel_bransle</td><td>Stulna föremål: Verktyg / utrustning, Diesel / bränsle</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>theft_location_type</code></td><td>byggarbetsplats</td><td>Plats vid stöld: Byggarbetsplats</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_locked</code></td><td>ja</td><td>Maskinen låst: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>immobilizer_present</code></td><td>ja</td><td>Startspärr/stöldskydd: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>keys_storage</code></td><td>i_last_utrymme</td><td>Nyckelförvaring: I låst utrymme</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>gps_tracking_present</code></td><td>true</td><td>GPS-spårning: X Ja Nej (Ja)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>gps_last_position_address</code></td><td>Industrivägen 45, Stockholm</td><td>Senaste GPS-position</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>gps_active_tracking</code></td><td>true</td><td>Aktiv spårning: X Ja Nej (Ja)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>break_in_signs</code></td><td>true</td><td>Tecken på inbrott: X Ja Nej (Ja)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>break_in_damage_description</code></td><td>Cab door lock forced…</td><td>Inbrottsskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_during_theft</code></td><td>true</td><td>Skador vid stöld: X Ja Nej (Ja)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_during_theft_description</code></td><td>Ignition wiring cut…</td><td>Skadebeskrivning</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>police_report_filed</code></td><td>true</td><td>Polisanmälan gjord: X Ja Nej (Ja)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>diarienummer</code></td><td>POL-2026-99887</td><td>Diarienummer</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend)</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL (PNG)</td>
+    <td>صفحة 2 — تسميات «Förarens underskrift» فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نمط transport/natur — الصورة غير مضمّنة</td>
+  </tr>
+  <tr>
+    <td><code>machine_reference_images</code></td>
+    <td>ih_debug_stealing_ref_photo.png (70 B)</td>
+    <td>«Referensbilder:» تحت Foto och bilagor — فارغ</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>الملف مُرسل في multipart لكن لا يظهر في PDF</td>
+  </tr>
+  <tr>
+    <td>Datum (underskrift)</td>
+    <td>25-06-2026</td>
+    <td>Datum 25-06-2026</td>
+    <td><span class="status-ok">OK</span></td>
+    <td>يطابق Skadedatum</td>
+  </tr>
+</table>
+
+<h2>أقسام غائبة صحيحة (v1)</h2>
+<table>
+  <tr><th>مفتاح ممنوع / غير مُرسل</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>reporter_role</code></td><td>لا «Rapportörens roll» — مسار förare فقط</td><td><span class="status-ok">N/A</span></td></tr>
+  <tr><td><code>police</code> (سيارة)</td><td>يستخدم Polisanmälan gjord — ليس police/police_money</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witness_*</code> / <code>machine_drivable</code></td><td>غير موجود في PDF</td><td><span class="status-ok">N/A</span></td></tr>
+  <tr><td><code>counterparties</code> / injuries</td><td>غير موجود</td><td><span class="status-ok">N/A</span></td></tr>
+  <tr><td><code>driving_license[]</code></td><td>غير مُرسل (swedish_driver_license=Yes)</td><td><span class="status-ok">N/A</span></td></tr>
+</table>
+
+<h2>ملاحظات تخطيط (Artifact)</h2>
+<ul>
+  <li><code>serial_number</code> يظهر مرتين (رأس Egen maskin + Kompletterande) — تكرار شكلي</li>
+  <li>صفحة 2 تعرض «Försäkringstagarens underskrift» حتى عند مسار förare — قالب عام</li>
+</ul>
+
+<h2>ملخص Payload S1 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "scenario": { "id": "stealing-s1", "title": "Happy Path — Svensk förare" },
+  "method": "postMachineStealing",
+  "serial_number": "MKS-S1-001",
+  "swedish_driver_license": "Yes",
+  "stolen_items": ["verktyg_utrustning", "diesel_bransle"],
+  "theft_location_type": "byggarbetsplats",
+  "gps_tracking_present": true,
+  "break_in_signs": true,
+  "damage_during_theft": true,
+  "police_report_filed": true,
+  "diarienummer": "POL-2026-99887",
+  "files": [{ "field": "machine_reference_images", "filename": "ih_debug_stealing_ref_photo.png" }]
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (stealing S1)</h2>
+<pre class="scenario">Report type: machineStealing (Stöld och inbrott Debug S1 — Happy Path)
+Report ID: 6a3d209c6834a24ee5365c05
+Date: 25-06-2026 · time 15:35
+
+Stealing step-1/2/3 text fields: OK
+  - Driver path (no reporter_role): OK — Förarens namn shown
+  - stolen_items, theft location, security, GPS, inbrott, skador, polisanmälan: OK
+  - police_report_filed (not car-style police): OK
+
+Missing:
+  1. signature image on page 2 (labels only)
+  2. machine_reference_images[] — Referensbilder section empty despite multipart upload
+
+No WRONG boolean rendering observed on S1 (all sent true; PDF marks Ja correctly).
+
+Attachment: report_6a3d209c6834a24ee5365c05.pdf</pre>
+
+<div class="footer">
+  stealing S1 Happy Path · Report 6a3d209c6834a24ee5365c05 · 2026-06-25
+</div>
+
+</body>
+</html>

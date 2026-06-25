@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S13 — Inbrott + skador Nej — stealing Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">stealing</a> /
+  S13 — Inbrott + skador Nej
+</p>
+
+<h1>نواقص Body مقابل PDF — stealing S13 Inbrott + skador Nej</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Stöld och inbrott (<code>stealing-s13</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineStealing</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S13 — Inbrott + skador Nej (<code>stealing-s13</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3d41876834a24ee53661a0</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3d41876834a24ee53661a0.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>25-06-2026 · 17:55</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>الفرق عن S1</dt><dd><code>break_in_signs=false</code>, <code>damage_during_theft=false</code> — بدون وصفات · <code>serial_number=MKS-S13-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-STEALING-FIELD-REFERENCE.html">MACHINE-STEALING-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-STEALING-test-cases.html">MACHINE-STEALING-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s1-happy-path.html">stealing S1</a> · <a href="s12-gps-nej.html">stealing S12</a> · <a href="../transport/s1-happy-path.html">transport S1 (false → Wrong)</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    baseline S1 مع <code>break_in_signs=false</code> و<code>damage_during_theft=false</code> — لا <code>break_in_damage_description</code> / <code>damage_during_theft_description</code>. <code>police_report_filed=true</code> وGPS كما S1.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <strong>S13 فرع OK:</strong> booleans <code>false</code> → <code>Ja X Nej</code> (Nej) · <code>true</code> → <code>X Ja Nej</code> (Ja) — متسق مع S12 وليس مثل transport. لا Inbrottsskador/Skadebeskrivning — صحيح. نفس نواقص S1: توقيع · referensbild.
+  </div>
+</div>
+
+<h2>التركيز — S13 vs S1 (inbrott / skador)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S13 Body</th><th>S13 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>break_in_signs</code></td>
+    <td>true</td>
+    <td>false</td>
+    <td>Tecken på inbrott: <strong>Ja X Nej</strong></td>
+    <td><span class="status-ok">OK</span> — Nej (نمط false في stealing)</td>
+  </tr>
+  <tr>
+    <td><code>break_in_damage_description</code></td>
+    <td>Cab door lock forced…</td>
+    <td>— (غير مُرسل)</td>
+    <td>لا «Inbrottsskador»</td>
+    <td><span class="status-ok">OK</span> — N/A</td>
+  </tr>
+  <tr>
+    <td><code>damage_during_theft</code></td>
+    <td>true</td>
+    <td>false</td>
+    <td>Skador vid stöld: <strong>Ja X Nej</strong></td>
+    <td><span class="status-ok">OK</span> — Nej</td>
+  </tr>
+  <tr>
+    <td><code>damage_during_theft_description</code></td>
+    <td>Ignition wiring cut…</td>
+    <td>— (غير مُرسل)</td>
+    <td>لا «Skadebeskrivning»</td>
+    <td><span class="status-ok">OK</span> — N/A</td>
+  </tr>
+  <tr>
+    <td><code>police_report_filed</code></td>
+    <td>true</td>
+    <td>true</td>
+    <td>Polisanmälan gjord: X Ja Nej (Ja)</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MKS-S1-001</td>
+    <td>MKS-S13-001</td>
+    <td>Serienummer: MKS-S13-001 (×2)</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>مقارنة مع transport:</strong> في transport S1 حقول مثل <code>transport_document_exists=false</code> تظهر <span class="status-wrong">Wrong</span> (Ja مُعلَّم). في stealing S13 حقول <code>false</code> تتبع نمط <code>Ja X Nej</code> = Nej — سلوك صحيح ومتسق مع S12 وS3.
+</div>
+
+<h2>حقول متطابقة (OK) — باقي S1 baseline</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>machineStealing</td><td>Stöld och inbrott</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>25-06-2026 / 17:55</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>gps_tracking_present</code> … GPS</td><td>true + position + aktiv</td><td>GPS-spårning, Senaste position, Aktiv spårning (Ja)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>stolen_items[]</code> … أمان خطوة 2</td><td>verktyg + diesel, lås…</td><td>Stulna föremål, lås, startspärr, nycklar</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>diarienummer</code></td><td>POL-2026-99887</td><td>Diarienummer</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend)</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL (PNG)</td>
+    <td>صفحة 2 — تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1</td>
+  </tr>
+  <tr>
+    <td><code>machine_reference_images</code></td>
+    <td>ih_debug_stealing_ref_photo.png (70 B)</td>
+    <td>«Referensbilder:» فارغ</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1</td>
+  </tr>
+</table>
+
+<h2>ملخص Payload S13 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "scenario": { "id": "stealing-s13", "title": "Inbrott + skador Nej" },
+  "method": "postMachineStealing",
+  "serial_number": "MKS-S13-001",
+  "break_in_signs": false,
+  "damage_during_theft": false,
+  "police_report_filed": true,
+  "diff_vs_S1": ["no break-in/damage descriptions", "break_in and damage booleans false", "serial MKS-S13-001"]
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (stealing S13)</h2>
+<pre class="scenario">Report type: machineStealing (Stöld och inbrott Debug S13 — Inbrott + skador Nej)
+Report ID: 6a3d41876834a24ee53661a0
+Date: 25-06-2026 · time 17:55
+
+S13 branch OK:
+  - break_in_signs = false → Tecken på inbrott: Ja X Nej (Nej) — NOT transport-style Wrong
+  - damage_during_theft = false → Skador vid stöld: Ja X Nej (Nej)
+  - no break_in_damage_description / damage_during_theft_description in PDF — correct
+  - police_report_filed = true → Ja — OK
+
+Same issues as S1:
+  1. signature image missing on page 2
+  2. machine_reference_images[] — Referensbilder empty
+
+Attachment: report_6a3d41876834a24ee53661a0.pdf</pre>
+
+<div class="footer">
+  stealing S13 Inbrott + skador Nej · Report 6a3d41876834a24ee53661a0 · 2026-06-25
+</div>
+
+</body>
+</html>

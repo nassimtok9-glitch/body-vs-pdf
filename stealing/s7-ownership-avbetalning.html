@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>S7 — Ägande Avbetalning — stealing Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">stealing</a> /
+  S7 — Ägande Avbetalning
+</p>
+
+<h1>نواقص Body مقابل PDF — stealing S7 Ägande Avbetalning</h1>
+<p>مقارنة بين الـ <strong>payload</strong> المرسل من التطبيق و<strong>PDF</strong> المُولَّد من الباك إند — لتقرير Stöld och inbrott (<code>stealing-s7</code>).</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = machineStealing</code>, <code>report_category = machine</code></dd>
+    <dt>سينario Debug</dt><dd>S7 — Ägande Avbetalning (<code>stealing-s7</code>)</dd>
+    <dt>Report ID</dt><dd><code>6a3d3d7a6834a24ee5365f6a</code></dd>
+    <dt>PDF</dt><dd><code>report_6a3d3d7a6834a24ee5365f6a.pdf</code></dd>
+    <dt>البيئة</dt><dd><code>insuranceapp3.azurewebsites.net</code></dd>
+    <dt>التاريخ / الوقت</dt><dd>25-06-2026 · 17:38</dd>
+    <dt>عدد صفحات PDF</dt><dd><strong>2</strong></dd>
+    <dt>الفرق عن S1</dt><dd><code>ownership_type=avbetalning</code> + <code>finance_company</code>, <code>contract_number</code>, <code>finance_contact_*</code> · <code>serial_number=MKS-S7-001</code></dd>
+    <dt>مرجع الحقول</dt><dd><a href="../../orgistrerat-frodon-backend-docs/MACHINE-STEALING-FIELD-REFERENCE.html">MACHINE-STEALING-FIELD-REFERENCE.html</a></dd>
+    <dt>حالات الاختبار</dt><dd><a href="../../orgistrerat frodon test/MACHINE-STEALING-test-cases.html">MACHINE-STEALING-test-cases.html</a></dd>
+    <dt>مقارنة</dt><dd><a href="s5-ownership-leasad.html">stealing S5</a> · <a href="../machineGlass/s5-ownership-avbetalning.html">machineGlass S5</a> · <a href="../machineBrand/s5-ownership-avbetalning.html">machineBrand S5</a></dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان:</strong> لا tokens ولا x-api-key ولا محتوى <code>signature</code> الكامل في هذه الوثيقة.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    baseline S1 مع <code>ownership_type=avbetalning</code>، <code>finance_company=Santander Consumer</code>، <code>contract_number=FIN-884422</code>، <code>finance_contact_name</code>، <code>finance_contact_email</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    <strong>فرع S7 OK بالكامل:</strong> Avbetalning + كل حقول finance بما فيها Avtalsnummer — مثل stealing S5 (leasad) وأفضل من machineGlass/machineBrand S5 حيث <code>contract_number</code> كان Missing. نفس نواقص S1: توقيع · referensbild.
+  </div>
+</div>
+
+<h2>التركيز — S7 vs S1 (ownership / finance)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>S1 Body</th><th>S7 Body</th><th>S7 PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>ownership_type</code></td>
+    <td>agd</td>
+    <td>avbetalning</td>
+    <td>Ägande/leasing: <strong>Avbetalning</strong></td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>finance_company</code></td>
+    <td>—</td>
+    <td>Santander Consumer</td>
+    <td>Finansbolag: Santander Consumer</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>contract_number</code></td>
+    <td>—</td>
+    <td>FIN-884422</td>
+    <td>Avtalsnummer: FIN-884422</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>finance_contact_name</code></td>
+    <td>—</td>
+    <td>Finance Desk</td>
+    <td>Finanskontakt: Finance Desk</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>finance_contact_email</code></td>
+    <td>—</td>
+    <td>finance@santander.example</td>
+    <td>Finanskontakt e-post: finance@santander.example</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+  <tr>
+    <td><code>serial_number</code></td>
+    <td>MKS-S1-001</td>
+    <td>MKS-S7-001</td>
+    <td>Serienummer: MKS-S7-001 (×2)</td>
+    <td><span class="status-ok">OK</span></td>
+  </tr>
+</table>
+
+<div class="note">
+  <strong>مقارنة S5 vs S7:</strong> كلاهما يستخدم نفس بلوك <code>finance_*</code> في PDF — الفرق فقط في قيمة <code>ownership_type</code> (Leasad vs Avbetalning). stealing يعرض <code>contract_number</code> لكلا الفرعين.
+</div>
+
+<h2>حقول متطابقة (OK) — باقي S1 baseline</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>type</code></td><td>machineStealing</td><td>Stöld och inbrott</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>date</code> / <code>time</code></td><td>25-06-2026 / 17:38</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_identity</code> … försäkring</td><td>hjullastare, insured=true, If…</td><td>Egen maskin + Org.nr + Försäkringsbolag</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>driver_full_name</code> … förare</td><td>swedish_driver_license=Yes</td><td>Förarens namn + personnummer</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>safety_procedures_followed</code></td><td>ja</td><td>Säkerhetsrutiner följda: Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>stolen_items[]</code> … <code>theft_location_type</code></td><td>verktyg + diesel, byggarbetsplats</td><td>Stulna föremål / Plats vid stöld</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>machine_locked</code> … <code>police_report_filed</code></td><td>ja … true</td><td>أمان + GPS + inbrott + polis</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>diarienummer</code></td><td>POL-2026-99887</td><td>Diarienummer</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص / أخطاء في PDF (Backend) — نفس S1</h2>
+<table>
+  <tr><th>مفتاح API / القسم</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>signature</code></td>
+    <td>data URL (PNG)</td>
+    <td>صفحة 2 — تسميات فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1</td>
+  </tr>
+  <tr>
+    <td><code>machine_reference_images</code></td>
+    <td>ih_debug_stealing_ref_photo.png (70 B)</td>
+    <td>«Referensbilder:» فارغ</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس S1</td>
+  </tr>
+</table>
+
+<h2>أقسام غائبة صحيحة (v1)</h2>
+<table>
+  <tr><th>مفتاح</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>rental_*</code> (hyrd)</td><td>غير مُرسل — لا يظهر</td><td><span class="status-ok">N/A</span></td></tr>
+  <tr><td><code>reporter_role</code></td><td>مسار förare فقط</td><td><span class="status-ok">N/A</span></td></tr>
+  <tr><td><code>witness_*</code> / <code>machine_drivable</code></td><td>غير موجود</td><td><span class="status-ok">N/A</span></td></tr>
+</table>
+
+<h2>ملخص Payload S7 (بدون أسرار)</h2>
+<pre class="scenario">{
+  "scenario": { "id": "stealing-s7", "title": "Ägande Avbetalning" },
+  "method": "postMachineStealing",
+  "serial_number": "MKS-S7-001",
+  "ownership_type": "avbetalning",
+  "finance_company": "Santander Consumer",
+  "contract_number": "FIN-884422",
+  "finance_contact_name": "Finance Desk",
+  "finance_contact_email": "finance@santander.example",
+  "diff_vs_S1": ["ownership avbetalning + finance block", "serial MKS-S7-001"]
+}</pre>
+
+<h2>بلاغ جاهز للنسخ — Backend PDF (stealing S7)</h2>
+<pre class="scenario">Report type: machineStealing (Stöld och inbrott Debug S7 — Ägande Avbetalning)
+Report ID: 6a3d3d7a6834a24ee5365f6a
+Date: 25-06-2026 · time 17:38
+
+S7 branch OK (full finance block):
+  - ownership_type = avbetalning → Ägande/leasing: Avbetalning
+  - finance_company = Santander Consumer
+  - contract_number = FIN-884422 → Avtalsnummer shown (unlike machineGlass/machineBrand S5)
+  - finance_contact_name / finance_contact_email
+
+Same issues as S1:
+  1. signature image missing on page 2
+  2. machine_reference_images[] — Referensbilder empty
+
+Attachment: report_6a3d3d7a6834a24ee5365f6a.pdf</pre>
+
+<div class="footer">
+  stealing S7 Ägande Avbetalning · Report 6a3d3d7a6834a24ee5365f6a · 2026-06-25
+</div>
+
+</body>
+</html>
