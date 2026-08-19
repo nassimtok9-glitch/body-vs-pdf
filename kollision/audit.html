@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fordon Kollision — Full Body vs PDF Audit</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+  <style>html, body { background: #fff; }</style>
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  <a href="index.html">Fordon Kollision</a> /
+  Full audit
+</p>
+
+<h1>نواقص Body مقابل PDF — Fordon Kollision</h1>
+<p>
+  مقارنة كاملة لتقرير <strong>Kollision annat fordon</strong> الخاص بـ Fordon،
+  من الحقول الشرطية في الموبايل حتى PDF الناتج من الباك إند.
+</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = kollision</code>, <code>report_category = car</code></dd>
+    <dt>Endpoint</dt><dd><code>POST …/insurance-helper/api/reports</code></dd>
+    <dt>نوع الطلب</dt><dd><code>multipart/form-data</code></dd>
+    <dt>مصدر الدليل</dt><dd>Mobile builder + Joi + ReportService + ReportKollision + PDF renderer</dd>
+    <dt>Report ID</dt><dd>غير متوفر — لم يُنشأ تقرير staging</dd>
+    <dt>PDF فعلي</dt><dd>غير متوفر — النتيجة Code-derived</dd>
+    <dt>تاريخ التدقيق</dt><dd>2026-08-19</dd>
+  </dl>
+</div>
+
+<div class="note">
+  <strong>أمان ودقة:</strong> لا يحتوي التقرير على Authorization أو x-api-key أو بيانات شخصية حقيقية.
+  الحالات أدناه مستخرجة من الكود والاختبارات، وليست نتائج مشاهدة PDF من staging.
+</div>
+
+<h2>الخلاصة</h2>
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>المسارات المتطابقة</strong><br />
+    المركبات A–D، السائق السويدي/الأجنبي، المكان والتاريخ، الوصف، السرعة،
+    الإصابات الخارجية، الممتلكات، Lastbil، الصور، markera وصور الرخصة.
+  </div>
+  <div class="warn-box">
+    <strong>غير مطابق بالكامل</strong><br />
+    Annat الحر، المصابون الإضافيون داخل المركبة، الحيوان داخل السيارة،
+    وصورة التوقيع لا تصل إلى PDF بصورة صحيحة.
+  </div>
+</div>
+
+<h2>منطق الحكم</h2>
+<table>
+  <tr><th>الحالة</th><th>المعنى</th><th>المسؤول المرجّح</th></tr>
+  <tr><td><span class="status-ok">OK</span></td><td>القيمة تُرسل، تُخزن، وتظهر في PDF</td><td>—</td></tr>
+  <tr><td><span class="status-missing">Missing</span></td><td>القيمة تُجمع أو تُرسل لكنها لا تظهر في PDF</td><td>Mobile mapping أو Backend PDF</td></tr>
+  <tr><td><span class="status-wrong">Partial</span></td><td>جزء من الحالة يظهر أو توجد شروط غير مضمونة</td><td>Validation / mapping</td></tr>
+  <tr><td><span class="status-artifact">400 risk</span></td><td>الموبايل قد يبني طلبًا يرفضه Joi</td><td>Mobile validation / API contract</td></tr>
+</table>
+
+<h2 id="s1">S1 — Core + Fordon A/B/C</h2>
+<table>
+  <tr><th>Mobile / Body</th><th>Backend / DB</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr><td><code>type=kollision</code>, <code>car_type</code></td><td>Report + ReportKollision</td><td>Skadeanmälningstyp</td><td><span class="status-ok">OK</span></td><td>personbil/lastbil/buss/släp</td></tr>
+  <tr><td><code>date</code>, <code>time</code></td><td>UTC Date + time</td><td>Skadedatum / Tidpunkt</td><td><span class="status-ok">OK</span></td><td>الإنتاج يرسل DD-MM-YYYY</td></tr>
+  <tr><td><code>address</code>, <code>location[…]</code></td><td>Report location/address</td><td>Skadeplats</td><td><span class="status-ok">OK</span></td><td>postal code قد يصبح N/A</td></tr>
+  <tr><td><code>cars[0][…]</code></td><td>يُخزن ويُنسخ إلى حقول Report الأساسية</td><td>Eget fordon (Fordon A)</td><td><span class="status-ok">OK</span></td><td>عدم إرسال driver top-level لا يسبب فقدًا</td></tr>
+  <tr><td><code>cars[1..n][…]</code></td><td>ReportKollision.cars[]</td><td>Motpartens fordon B/C/D/E</td><td><span class="status-ok">OK</span></td><td>PDF يعرض بحد أقصى 5 مركبات</td></tr>
+  <tr><td><code>accident_description</code></td><td>ReportKollision</td><td>Händelseförloppet</td><td><span class="status-ok">OK</span></td><td>—</td></tr>
+  <tr><td><code>damage_reason</code></td><td>ReportKollision</td><td>Vem anser ni vållat skadan</td><td><span class="status-ok">OK</span></td><td>—</td></tr>
+  <tr><td><code>vehicle_speed</code></td><td>Number</td><td>Kompletterande uppgifter</td><td><span class="status-ok">OK</span></td><td>يظهر "-" عند الغياب</td></tr>
+</table>
+
+<h2 id="s2">S2 — Foreign Driver + Släp</h2>
+<table>
+  <tr><th>مفتاح Body</th><th>القيمة/الشرط</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr><td><code>cars[i][swedish_driver_license]</code></td><td>Yes / No</td><td>Gällande svenskt körkort</td><td><span class="status-ok">OK</span></td><td>يحوّلها الباك إلى Boolean</td></tr>
+  <tr><td><code>cars[i][birth_date]</code></td><td>مطلوب عند No؛ DD-MM-YYYY</td><td>Födelsedatum</td><td><span class="status-ok">OK</span></td><td>الموبايل يحول من YYYY-MM-DD</td></tr>
+  <tr><td><code>cars[0][license_issuing_country]</code></td><td>مطلوب عند No</td><td>Utfärdande land</td><td><span class="status-ok">OK</span></td><td>يظهر في Kompletterande</td></tr>
+  <tr><td><code>cars[i][has_slaps]</code>, <code>slaps[]</code></td><td>slaps مطلوب عند true</td><td>قسم Släp + بيانات VTR</td><td><span class="status-ok">OK</span></td><td>تغطية الاختبارات لهذا الفرع محدودة</td></tr>
+  <tr><td><code>driving_license</code></td><td>ملف اختياري</td><td>Körkortsbilder</td><td><span class="status-ok">OK</span></td><td>الصورة غير مطلوبة في mobile validation</td></tr>
+</table>
+
+<h2 id="s3">S3 — Accident Type / Annat</h2>
+<table>
+  <tr><th>الحالة</th><th>Body</th><th>Backend</th><th>PDF</th><th>الحكم</th></tr>
+  <tr><td>خيار ثابت A/B/C/D</td><td><code>cars[i][accident_type]</code></td><td>يُخزن لكل مركبة</td><td>Omständigheter checkbox</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>Annat قبل sync</td><td><code>accident_type=other</code></td><td>يتطلب <code>accident_type_other</code></td><td>يعرض النص الآخر في Händelseförloppet</td><td><span class="status-artifact">400 risk</span></td></tr>
+  <tr><td>Annat بعد <code>setValues()</code></td><td>قد يصبح النص الحر داخل <code>accident_type</code> فقط</td><td>يمر كنص حر</td><td>لا يطابق checkbox ولا يُطبع كنص Annat</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td>مركبة خامسة وما بعدها</td><td>لا توجد خاصية UI بعد D</td><td>cars[] تقبل المزيد</td><td>يعرض حتى E فقط</td><td><span class="status-wrong">Partial</span></td></tr>
+</table>
+
+<div class="warn-box">
+  <strong>الإصلاح المطلوب لـ Annat:</strong>
+  يجب أن يبقى <code>accident_type=other</code> ويُرسل النص الحر في
+  <code>accident_type_other</code> على المستوى نفسه (root أو cars[i]).
+</div>
+
+<h2 id="s4">S4 — Personal Injuries</h2>
+<table>
+  <tr><th>حالة UI</th><th>Body</th><th>DB</th><th>PDF</th><th>الحكم</th></tr>
+  <tr><td>إصابات داخل المركبة = Ja</td><td><code>with_partner=true</code> + <code>partner[]</code></td><td>جميع الصفوف محفوظة</td><td>Personskador</td><td><span class="status-ok">OK</span> لأول صف</td></tr>
+  <tr><td>مصاب ثانٍ أو أكثر داخل المركبة</td><td>جميع <code>partner[i]</code></td><td>جميع الصفوف محفوظة</td><td>يقرأ <code>partner[0]</code> فقط</td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td>إصابات خارج المركبة = Ja</td><td><code>external_person_injuries_exist</code> + array</td><td>canonical array محفوظ</td><td>قسم cyklist/fotgängare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>legacy duplicate</td><td><code>partner_outside[]</code></td><td>يحذفه Joi</td><td>غير مستخدم</td><td><span class="status-artifact">Redundant</span></td></tr>
+</table>
+
+<h2 id="s5">S5 — Witnesses + Third-party Property</h2>
+<table>
+  <tr><th>Body</th><th>Backend rule</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr><td><code>witness=true</code> + <code>witnesses[]</code></td><td>name/email/person_number مطلوبة</td><td>Vittnen</td><td><span class="status-artifact">400 risk</span></td><td>builder يرسل الحقول غير الفارغة فقط</td></tr>
+  <tr><td><code>third_party_property_damage_exist</code> + array</td><td>يحفظ canonical array</td><td>Materiella skador</td><td><span class="status-ok">OK</span></td><td>جميع الصفوف تظهر</td></tr>
+  <tr><td><code>egendom_owner[]</code></td><td>Unknown → stripUnknown</td><td>غير مستخدم</td><td><span class="status-artifact">Redundant</span></td><td>نسخة legacy زائدة</td></tr>
+  <tr><td>قيم ناقصة في injury/property</td><td>الموبايل يستخدم "-"</td><td>تُخزن</td><td>يظهر "-" في الجدول</td><td><span class="status-wrong">Partial</span></td><td>لا يوجد فقد تقني لكن الجودة ضعيفة</td></tr>
+</table>
+
+<h2 id="s6">S6 — Police + Towing</h2>
+<table>
+  <tr><th>Body</th><th>Validation / DB</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr><td><code>police=true/false</code></td><td>مطلوب ويُخزن Boolean</td><td>Känner polisen till händelsen</td><td><span class="status-ok">OK</span></td><td>—</td></tr>
+  <tr><td><code>police_money</code></td><td>مطلوب إذا police=true</td><td>لا يظهر بذاته</td><td><span class="status-missing">Missing</span></td><td>لا يوجد ملف police attachment من هذا POST</td></tr>
+  <tr><td><code>diarienummer</code></td><td>اختياري حتى عند police_money=true</td><td>يظهر إن كان غير فارغ</td><td><span class="status-wrong">Partial</span></td><td>قد ينتهي PDF بلا رقم قضية</td></tr>
+  <tr><td><code>towing=true</code></td><td><code>towing_location</code> مطلوب</td><td>Behövs bärgning</td><td><span class="status-artifact">400 risk</span></td><td>mobile validator الرئيسي لا يضمن الموقع</td></tr>
+  <tr><td><code>towing_location</code></td><td>يُخزن</td><td>Bärgningsplats</td><td><span class="status-ok">OK</span></td><td>عندما يصل الطلب بنجاح</td></tr>
+</table>
+
+<h2 id="s7">S7 — Lastbil / tracks_transport</h2>
+<table>
+  <tr><th>Body field</th><th>PDF label</th><th>الشرط</th><th>الحالة</th></tr>
+  <tr><td><code>trailer_damage</code> + description</td><td>Uppstod skada på släpet?</td><td>الوصف عند true</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>vehicle_loaded</code></td><td>Var fordonet lastat?</td><td>—</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>cargo_type</code>, weight, secured</td><td>Typ av last / vikt / säkrad</td><td>عند loaded=true</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>vehicle_drivable</code></td><td>Är fordonet körbart?</td><td>—</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>road_type</code>, visibility, weather</td><td>Typ av väg / Sikt / Väder</td><td>—</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2 id="s8">S8 — Attachments + Signature + Animal</h2>
+<table>
+  <tr><th>UI / Body</th><th>Backend / DB</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr><td>multipart <code>images</code></td><td>Report.images[]</td><td>Foto och bilagor</td><td><span class="status-ok">OK</span></td><td>contact sheet</td></tr>
+  <tr><td>multipart <code>markera</code></td><td>Report.markera[]</td><td>صور Markera</td><td><span class="status-ok">OK</span></td><td>لكن damage_points نفسها لا تُرسم</td></tr>
+  <tr><td>multipart <code>driving_license</code></td><td>Report.driving_license[]</td><td>Körkortsbilder</td><td><span class="status-ok">OK</span></td><td>—</td></tr>
+  <tr><td><code>signature</code> data URL</td><td>الملف محفوظ + signatureMeta</td><td>بيانات الموقّع فقط، بلا صورة</td><td><span class="status-missing">Missing</span></td><td>رسم صورة التوقيع معطل في renderer</td></tr>
+  <tr><td>الحيوان داخل السيارة + الوصف</td><td>لا يوجد field في builder</td><td>لا يظهر</td><td><span class="status-missing">Missing</span></td><td>فقد كامل بين UI وbody</td></tr>
+  <tr><td>نقاط/إحداثيات الضرر</td><td><code>damage_points</code> مدعوم لكن غير مرسل هنا</td><td>قسم Skiss معطل</td><td><span class="status-missing">Missing</span></td><td>markera image فقط هي الظاهرة</td></tr>
+</table>
+
+<h2>مصفوفة الحقول المتطابقة (مختصرة)</h2>
+<table>
+  <tr><th>مجموعة الحقول</th><th>Body</th><th>DB</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>المركبات والسائقون</td><td><code>cars[]</code></td><td>ReportKollision + mirror root</td><td>Fordon A–E</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>الحادث</td><td>date/time/address/description/reason/speed</td><td>Base + subtype</td><td>Information + narrative + supplement</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>الإصابات الخارجية</td><td><code>external_person_injuries[]</code></td><td>Subtype</td><td>Cyklist/fotgängare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>ممتلكات الغير</td><td><code>third_party_property_damages[]</code></td><td>Subtype</td><td>Materiella skador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>Lastbil</td><td><code>tracks_transport</code></td><td>Subtype</td><td>Kompletterande</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>المرفقات</td><td>images/markera/driving_license</td><td>Base Report</td><td>Foto och bilagor</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>نواقص Backend PDF / Mobile Mapping</h2>
+<table>
+  <tr><th>المشكلة</th><th>المصدر</th><th>النتيجة</th><th>الأولوية</th></tr>
+  <tr><td>Annat الحر لا يستخدم <code>accident_type_other</code> بثبات</td><td>Mobile sync/builder</td><td>النص قد يختفي من PDF</td><td><span class="status-missing">High</span></td></tr>
+  <tr><td>PDF يستخدم <code>partner[0]</code> فقط</td><td>Backend PDF</td><td>فقد المصابين الإضافيين</td><td><span class="status-missing">High</span></td></tr>
+  <tr><td>الحيوان لا يدخل body</td><td>Mobile builder</td><td>فقد كامل</td><td><span class="status-missing">High</span></td></tr>
+  <tr><td>صورة signature غير مرسومة</td><td>Backend PDF</td><td>التوقيع المطلوب في UI غير ظاهر</td><td><span class="status-missing">High</span></td></tr>
+  <tr><td>towing location غير مضمون في UI validation</td><td>Mobile validation</td><td>HTTP 400</td><td><span class="status-wrong">Medium</span></td></tr>
+  <tr><td>صف شاهد ناقص</td><td>Mobile validation / Joi</td><td>HTTP 400</td><td><span class="status-wrong">Medium</span></td></tr>
+  <tr><td>legacy arrays مكررة</td><td>Mobile builder</td><td>حمل زائد؛ يحذفها Joi</td><td><span class="status-artifact">Low</span></td></tr>
+</table>
+
+<h2>Payload contract مختصر (بدون بيانات شخصية)</h2>
+<pre class="scenario">type = kollision
+report_category = car (default)
+date = DD-MM-YYYY
+time = HH:mm
+accident_description = string
+damage_reason = string
+police = true | false
+with_partner = true | false
+witness = true | false
+cars[0..n] = {
+  name, email, register_number, person_number, phone,
+  swedish_driver_license,
+  birth_date?, license_issuing_country?,
+  accident_type?, accident_type_other?,
+  has_slaps, slaps[]?
+}
+partner[]?                       // injuries inside vehicle
+external_person_injuries[]?      // injuries outside vehicle
+third_party_property_damages[]?  // property damage
+witnesses[]?
+towing?, towing_location?
+tracks_transport[...]?           // car_type = tracks
+files: images[], markera[], driving_license[]
+signature = data:image/png;base64,…</pre>
+
+<h2>بلاغات جاهزة للنسخ</h2>
+<pre class="scenario">Report type: kollision (Fordon)
+Evidence: code-derived audit, 2026-08-19
+
+High priority parity gaps:
+1. "Annat" free text can be stored in accident_type instead of
+   accident_type=other + accident_type_other, so the PDF shows no matching
+   circumstance and does not print the free text.
+2. Personskador PDF reads partner[0] only although partner[] stores all rows.
+3. Mobile collects animal-in-car answer/description but buildKollisionFields()
+   sends neither animal_in_car nor animal_in_car_description.
+4. Signature PNG is stored, but PDF signature image rendering is disabled.
+
+Contract rejection risks:
+- towing=true without towing_location
+- witness=true with a witness missing name/email/person_number
+
+Redundant payload:
+- partner_outside[] duplicates external_person_injuries[]
+- egendom_owner[] duplicates third_party_property_damages[]</pre>
+
+<h2>التحقق</h2>
+<ul>
+  <li><code>post_kollision_test.dart</code> تم تشغيله ونجح بالكامل؛ حالات Fordon Kollision داخله نجحت.</li>
+  <li>اختبارات Backend/PDF لم تُشغّل في هذه الجلسة لأن <code>node_modules</code> غير موجود.</li>
+  <li>توجد fixtures واختبارات PDF في الباك تغطي المسار الغني لمركبتين والإصابات والشهود.</li>
+  <li>لا توجد automated body-to-PDF matrix شاملة لكل الفروع المذكورة.</li>
+</ul>
+
+<p><a href="index.html">← الرجوع إلى فهرس Fordon Kollision</a></p>
+
+<div class="footer">
+  Fordon Kollision full code audit · ih-insuranceapp · 2026-08-19
+</div>
+
+</body>
+</html>

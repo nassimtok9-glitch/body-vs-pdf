@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fordon Kollision — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+  <style>html, body { background: #fff; }</style>
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  Fordon Kollision
+</p>
+
+<h1>Fordon Kollision — Body vs PDF</h1>
+<p>
+  تدقيق جميع فروع تقرير <strong>Kollision annat fordon</strong> في Fordon:
+  Flutter UI → multipart body → Backend validation/storage → PDF.
+</p>
+
+<div class="note">
+  <strong>نوع الدليل:</strong> Code-derived audit بتاريخ 2026-08-19.
+  لا توجد Report IDs أو ملفات PDF من staging لهذا التدقيق، لذلك لم تُخترع أي قيم تشغيلية.
+</div>
+
+<table>
+  <tr>
+    <th>السيناريو</th>
+    <th>النطاق</th>
+    <th>الحكم الرئيسي</th>
+    <th>تقرير الفجوات</th>
+  </tr>
+  <tr>
+    <td><strong>S1</strong> — Core + Fordon A/B/C</td>
+    <td>المركبات، السائقون، التاريخ، المكان، الوصف</td>
+    <td><span class="status-ok">OK</span></td>
+    <td><a href="audit.html#s1">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S2</strong> — Foreign Driver + Släp</td>
+    <td>رخصة أجنبية، تاريخ الميلاد، بلد الإصدار، المقطورات</td>
+    <td><span class="status-ok">OK</span> جزئيًا</td>
+    <td><a href="audit.html#s2">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S3</strong> — Accident Type / Annat</td>
+    <td>Omständigheter لكل مركبة والنص الحر</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td><a href="audit.html#s3">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S4</strong> — Personal Injuries</td>
+    <td>داخل المركبة وخارجها وتعدد المصابين</td>
+    <td><span class="status-wrong">Partial</span></td>
+    <td><a href="audit.html#s4">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S5</strong> — Witnesses + Property</td>
+    <td>الشهود وأضرار ممتلكات الغير</td>
+    <td><span class="status-wrong">Partial</span></td>
+    <td><a href="audit.html#s5">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S6</strong> — Police + Towing</td>
+    <td>الشرطة، رقم القضية، البَرْغنة وموقعها</td>
+    <td><span class="status-wrong">Partial / 400 risk</span></td>
+    <td><a href="audit.html#s6">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S7</strong> — Lastbil / tracks</td>
+    <td>الحمولة، الطريق، الطقس، أضرار المقطورة</td>
+    <td><span class="status-ok">OK</span></td>
+    <td><a href="audit.html#s7">فتح التقرير →</a></td>
+  </tr>
+  <tr>
+    <td><strong>S8</strong> — Attachments + Animal</td>
+    <td>images، markera، driving_license، signature، الحيوان</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td><a href="audit.html#s8">فتح التقرير →</a></td>
+  </tr>
+</table>
+
+<h2>الخلاصة المشتركة</h2>
+<ul>
+  <li>المسار الأساسي للمركبات والسائقين والوصف والصور يعمل.</li>
+  <li>النص الحر في حالة <code>Annat</code> قد يختفي من PDF.</li>
+  <li>PDF يعرض أول مصاب داخل المركبة فقط رغم تخزين جميع الصفوف.</li>
+  <li>الحيوان داخل السيارة يُجمع في UI لكنه لا يدخل body.</li>
+  <li>صورة التوقيع تُحفظ، لكن رسمها داخل PDF معطّل.</li>
+  <li>صف ناقص للشاهد أو <code>towing=true</code> بلا موقع قد يؤدي إلى HTTP 400.</li>
+</ul>
+
+<p><a href="audit.html">فتح مصفوفة Body → DB → PDF الكاملة →</a></p>
+
+<div class="footer">
+  Fordon Kollision code audit · ih-insuranceapp · 2026-08-19
+</div>
+
+</body>
+</html>
