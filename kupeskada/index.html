@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>kupéskada (damage) — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  kupeskada
+</p>
+
+<h1>Kupéskada — Body vs PDF</h1>
+<p>
+  مقارنة ما يرسله الموبايل عبر <code>postSinglSkada(..., iskupe = true)</code>
+  مع ما يظهر في PDF من <code>generatePdf.js</code>
+  لتقرير <strong>Kupéskada</strong> (<code>type = damage</code>, <code>report_category = car</code>).
+</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = damage</code></dd>
+    <dt>الموبايل</dt><dd><code>postSinglSkada</code> (فرع Kupé) في <code>incident_datasource_fordon_posts.dart</code></dd>
+    <dt>موديل الباك</dt><dd><code>ReportDamage.js</code></dd>
+    <dt>اختبار آلي</dt><dd><code>IH-backend/tests/damagePdfParity.test.js</code> (8 سيناريوهات)</dd>
+    <dt>تشغيل الاختبار</dt><dd><code>cd IH-backend &amp;&amp; node --test tests/damagePdfParity.test.js</code></dd>
+    <dt>ملاحظة</dt><dd>لا تعديل على كود الباك من هذا العمل — الفجوات موثّقة لإرسالها للمطور</dd>
+  </dl>
+</div>
+
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    تقرير مبسّط: سائق، موقع، تاريخ/وقت، وصف الأضرار، وصف الحدث، صور اختيارية، توقيع.
+    <strong>لا يرسل:</strong> شرطة، بَرْج، مقطورة، markera، شهود، Personskador.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    النصّان يظهران. فجوة: <code>accident_date</code> يُقبل ويُخزَّن لكن لا يُطبع في PDF.
+    ملاحظة تسمية: تسميات PDF لا تطابق معنى حقول الموبايل (تبديل).
+  </div>
+</div>
+
+<h2>١. تبديل الحقول في الموبايل (مهم)</h2>
+<table>
+  <tr><th>الواجهة (SV)</th><th>حقل الموبايل</th><th>مفتاح API</th><th>أين يظهر في PDF</th></tr>
+  <tr>
+    <td>Beskriv skador</td>
+    <td><code>beskrivSkador</code></td>
+    <td><code>accident_description</code></td>
+    <td>Händelseförloppet</td>
+  </tr>
+  <tr>
+    <td>Beskriv händelsen med egna ord</td>
+    <td><code>beskriv_handelsen_med_egna_ord</code></td>
+    <td><code>damage_description</code></td>
+    <td>«Hur visade sig felet?:» في Kompletterande</td>
+  </tr>
+</table>
+<p class="note">المحتوى يصل للـ PDF، لكن تسمية «Hur visade sig felet?» مضلّلة لوصف الحدث في Kupéskada (تسمية مشتركة مع أنواع أخرى).</p>
+
+<h2>٢. حقول المستخدم الأخرى</h2>
+<table>
+  <tr><th>الواجهة</th><th>API</th><th>PDF</th></tr>
+  <tr><td>سائق / رخصة / هاتف / بريد</td><td>حقول السائق</td><td>Fordon A · <span class="status-ok">OK</span></td></tr>
+  <tr><td>Plats / Datum &amp; tid</td><td><code>address</code> / <code>date</code> / <code>time</code></td><td>رأس الصفحة · <span class="status-ok">OK</span></td></tr>
+  <tr><td>(داخلي) <code>datumDaHandelsenIntraffade</code></td><td><code>accident_date</code></td><td><span class="status-missing">Missing</span> — لا يُرسم في PDF</td></tr>
+  <tr><td>صور / توقيع</td><td><code>images</code> / <code>signature</code></td><td>مرفقات / توقيع</td></tr>
+  <tr><td>Polisen / Bärgning / Släp / Markera</td><td>—</td><td>غير مُرسلة من الموبايل</td></tr>
+</table>
+
+<h2>٣. السيناريوهات (اختبار damagePdfParity)</h2>
+<table>
+  <tr><th>ID</th><th>الحالة</th><th>نتيجة اليوم</th></tr>
+  <tr><td><strong>S1</strong></td><td>حد أدنى + نصّان</td><td>نصوص OK · <span class="status-missing">Missing</span> accident_date</td></tr>
+  <tr><td><strong>S2</strong></td><td>رخصة أجنبية</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S3</strong></td><td>وصف الأضرار في Händelseförloppet</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S4</strong></td><td>وصف الحدث كتسمية «Hur visade sig felet?»</td><td><span class="status-ok">OK</span> (المحتوى)</td></tr>
+  <tr><td><strong>S5</strong></td><td>damage_part إن وُجد (نادر)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S5b</strong></td><td>نصوص فقط تحت <code>damage.*</code></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S6</strong></td><td>لا بَرْج في الـ payload</td><td>لا صفوف Bil bärgad / Behövs bärgning · <span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S7</strong></td><td>نصوص كاملة + رخصة أجنبية</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>٤. نواقص في PDF — لإرسالها لمطور الباك</h2>
+
+<h3>فجوة ١ — <code>accident_date</code> لا يظهر</h3>
+<table>
+  <tr><th>مفتاح</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>accident_date</code></td>
+    <td>يُرسل من الموبايل (<code>datumDaHandelsenIntraffade</code>)</td>
+    <td>لا يوجد رسم في <code>generatePdf.js</code></td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+</table>
+<p>
+  ملاحظة: رأس الصفحة يعرض <code>date</code> / <code>time</code> من صفحة 2، بينما <code>accident_date</code> حقل منفصل
+  وغالباً غير متزامن مع منتقي التاريخ في الواجهة.
+</p>
+<pre>// اقتراح: إما طباعة accident_date في Kompletterande،
+// أو تجاهله في Joi/الموبايل إن كان date كافياً.
+</pre>
+
+<h3>تحسين اختياري (تسمية) — ليس مانعاً</h3>
+<p>
+  لتقرير <code>damage</code>، غيّر تسمية <code>damage_description</code> من «Hur visade sig felet?:»
+  إلى شيء مثل «Beskrivning av händelsen:» ليتوافق مع معنى الحقل في Kupéskada.
+</p>
+
+<h2>٥. ملاحظات (ليست فجوات باك)</h2>
+<ul>
+  <li>لا شرطة / بَرْج / مقطورة / markera في واجهة Kupéskada — متوقع.</li>
+  <li>صف «Känner polisen till händelsen?» في رأس نموذج المركبة يظهر فارغاً دائماً (قالب عام) وليس من getYesNoQuestions.</li>
+  <li>المخطط <code>ReportDamage</code> بسيط: وصفان + damage_part اختياري + توقيع + släp (غير مستخدم من الموبايل).</li>
+</ul>
+
+<h2>٦. نص جاهز لنسخه لمطور الباك</h2>
+<div class="note">
+<strong>العنوان:</strong> Kupéskada (damage) — accident_date لا يظهر في PDF<br /><br />
+<strong>الملف:</strong> <code>src/helpers/generatePdf.js</code> (أو مواءمة الموبايل لوقف إرسال الحقل).<br /><br />
+<strong>١)</strong> اطبع <code>accident_date</code> إن وُجد، أو أكّد أن <code>date</code> هو المصدر الوحيد المعتمد.<br /><br />
+<strong>٢ اختياري)</strong> تسمية خاصة لـ <code>damage_description</code> عندما <code>type === 'damage'</code>.<br /><br />
+<strong>التحقق:</strong> <code>node --test tests/damagePdfParity.test.js</code>
+</div>
+
+<div class="footer">
+  Body vs PDF · Fordon · kupéskada (damage) · 2026-08-26
+</div>
+
+</body>
+</html>
