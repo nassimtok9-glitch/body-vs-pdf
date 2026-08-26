@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>djurkollision (animal) — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  djurkollision
+</p>
+
+<h1>Djurkollision — Body vs PDF</h1>
+<p>
+  مقارنة ما يرسله الموبايل عبر <code>postDjurKollision</code>
+  مع ما يظهر في PDF من <code>generatePdf.js</code>
+  لتقرير <strong>Djurkollision</strong> (<code>type = animal</code>, <code>report_category = car</code>).
+</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = animal</code></dd>
+    <dt>الموبايل</dt><dd><code>postDjurKollision</code> في <code>incident_datasource_fordon_posts.dart</code></dd>
+    <dt>موديل الباك</dt><dd><code>ReportAnimal.js</code></dd>
+    <dt>اختبار آلي</dt><dd><code>IH-backend/tests/animalPdfParity.test.js</code> (8 سيناريوهات)</dd>
+    <dt>تشغيل الاختبار</dt><dd><code>cd IH-backend &amp;&amp; node --test tests/animalPdfParity.test.js</code></dd>
+    <dt>ملاحظة</dt><dd>لا تعديل على كود الباك من هذا العمل — الفجوات موثّقة لإرسالها للمطور</dd>
+  </dl>
+</div>
+
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل: نوع الحيوان، مالك الحيوان (عند الحاجة)، بَرْج، شرطة، شخص مصاب داخل/خارج المركبة، ممتلكات طرف ثالث، مقطورة، رخصة أجنبية…
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    أغلب الحقول تظهر عند وجودها على الـ <strong>root</strong> بعد الدمج.
+    ثلاث فجوات مؤكدة بالكود + الاختبار الآلي (أدناه).
+  </div>
+</div>
+
+<h2>١. أنواع الحيوان في الواجهة</h2>
+<table>
+  <tr><th>الواجهة (SV)</th><th>قيمة API</th><th>حقول مالك الحيوان؟</th></tr>
+  <tr><td>Hund</td><td><code>hund</code></td><td>نعم (اختياري)</td></tr>
+  <tr><td>Häst</td><td><code>hast</code></td><td>نعم (اختياري)</td></tr>
+  <tr><td>Katt</td><td><code>katt</code></td><td>لا</td></tr>
+  <tr><td>Kreatur</td><td><code>kreatur</code></td><td>نعم (اختياري)</td></tr>
+  <tr><td>Ren</td><td><code>ren</code></td><td>لا</td></tr>
+  <tr><td>Rådjur</td><td><code>radjur</code></td><td>لا</td></tr>
+  <tr><td>Vildsvin</td><td><code>vildsvin</code></td><td>لا</td></tr>
+  <tr><td>Annat</td><td><code>annat</code></td><td>لا</td></tr>
+</table>
+<p>Joi يسمح بـ <code>animal_owner</code> فقط عندما يكون الحيوان: <code>hund</code> | <code>hast</code> | <code>kreatur</code>.</p>
+
+<h2>٢. السيناريوهات (اختبار animalPdfParity)</h2>
+<table>
+  <tr><th>ID</th><th>الحالة</th><th>نتيجة اليوم</th></tr>
+  <tr><td><strong>S1</strong></td><td>حد أدنى — rådjur</td><td>OK للحقول الأساسية · <span class="status-missing">Missing</span> Bil bärgad?</td></tr>
+  <tr><td><strong>S2</strong></td><td>Hund + مالك الحيوان</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S3</strong></td><td>Personskador داخل المركبة (partner)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S4</strong></td><td>إصابات خارجية على الـ root</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S4b</strong></td><td>إصابات خارجية فقط تحت <code>animal.*</code></td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><strong>S5</strong></td><td>ممتلكات طرف ثالث على الـ root</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S6</strong></td><td>بَرْج + رخصة أجنبية</td><td>رخصة OK · <span class="status-missing">Missing</span> Bil bärgad?</td></tr>
+  <tr><td><strong>S7</strong></td><td>كامل (مالك + شريك + خارجي + ممتلكات + tow)</td><td>معظمها OK · <span class="status-missing">Missing</span> Bil bärgad?</td></tr>
+</table>
+
+<h2>٣. حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>Body (موبايل)</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>driver_full_name</code> / phone / email</td><td>حقول Djurkollision أو الرئيسية</td><td>رأس الصفحة / Fordon A</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>address</code> / location</td><td>موقع الحادث</td><td>Skadeplats</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>accident_description</code></td><td>vad hände</td><td>Händelseförloppet</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_description</code></td><td>وصف أضرار المركبة</td><td>يُستخدم أيضاً كـ «من تسبب» لـ animal</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>animal</code></td><td>hund / radjur / …</td><td>Kompletterande → «Djur:»</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>animal_owner[name|address|phone]</code></td><td>عند hund/hast/kreatur</td><td>«Djurägare (namn, adress, telefon):»</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>with_partner</code> + <code>partner[]</code></td><td>personskador داخل المركبة</td><td>جدول Personskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>external_person_injuries*</code> على الـ <strong>root</strong></td><td>personskadorUtanfor</td><td>جدول إصابات خارجية</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>third_party_property_damages*</code> على الـ <strong>root</strong></td><td>egendom skadad</td><td>Materiella skador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>license_issuing_country</code></td><td>عند رخصة غير سويدية</td><td>يظهر في المكملات</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>has_slaps</code> / <code>slaps[]</code></td><td>مقطورة</td><td>Fordon A (VTR)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>personal_injuries</code></td><td>يُرسل دائماً <code>false</code> — الإصابات عبر with_partner</td><td>بالتصميم</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>٤. نواقص في PDF — لإرسالها لمطور الباك</h2>
+
+<h3>فجوة ١ — <code>car_towed</code> لا يظهر «Bil bärgad?»</h3>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>car_towed</code></td>
+    <td><code>true</code> / <code>false</code> من الموبايل دائماً</td>
+    <td>لا يظهر سؤال Bil bärgad? لـ animal</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>
+      في <code>getYesNoQuestions()</code> لا يوجد فرع animal لـ car_towed
+      (بعكس brand/kollision/…). القائمة العامة تستخدم مفتاح <code>towing</code>
+      و<code>getBoolValue('towing')</code> لا يقرأ <code>car_towed</code>.
+    </td>
+  </tr>
+</table>
+<p><strong>الملف:</strong> <code>IH-backend/src/helpers/generatePdf.js</code> — الدوال <code>getYesNoQuestions</code> و <code>getBoolValue</code>.</p>
+<pre>// المطلوب في getYesNoQuestions:
+} else if (reportType === 'animal') {
+  questions.push({ key: 'car_towed', label: 'Bil bärgad?' });
+}
+
+// وفي getBoolValue عند key === 'towing' إن كانت القيمة فارغة:
+val = reportData.car_towed
+   ?? reportData.report?.car_towed
+   ?? reportData.animal?.car_towed;
+
+// وعند قراءة المفاتيح العامة أضف أيضاً:
+reportData.animal?.[key]
+</pre>
+<p>التحقق بعد الإصلاح: ظهور <code>Bil bärgad?</code> في S1 / S6 / S7 داخل <code>animalPdfParity.test.js</code> (انقل التوكن من <code>knownMissing</code> إلى <code>mustInclude</code>).</p>
+
+<h3>فجوة ٢ — إصابات خارجية تحت <code>animal.*</code> فقط</h3>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>animal.external_person_injuries_exist</code></td>
+    <td>قد تبقى على مستند التفصيل فقط قبل الدمج الكامل</td>
+    <td>القسم فارغ</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>
+      <code>drawSkadorCyklistFotgangareSection</code> يقرأ root / report / oneAccident فقط —
+      لا يقرأ <code>animal.*</code>
+    </td>
+  </tr>
+  <tr>
+    <td><code>animal.external_person_injuries[]</code></td>
+    <td>الاسم / الإصابة / العنوان</td>
+    <td>لا يظهر</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس الدالة</td>
+  </tr>
+</table>
+<pre>// أضف في drawSkadorCyklistFotgangareSection:
+reportData.animal?.external_person_injuries_exist
+reportData.animal?.external_person_injuries
+</pre>
+<p>التحقق: سيناريو <code>S4b</code> يجب أن يظهر <code>TOK-EXT-SUBDOC-NAME</code>.</p>
+
+<h3>فجوة ٣ — ممتلكات طرف ثالث تحت <code>animal.*</code> فقط</h3>
+<table>
+  <tr><th>مفتاح API</th><th>Body</th><th>PDF</th><th>الحالة</th><th>ملاحظة</th></tr>
+  <tr>
+    <td><code>animal.third_party_property_damage_exist</code></td>
+    <td>true</td>
+    <td>القسم مخفي</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td><code>drawMateriellaSkadorSection</code> لا يقرأ animal</td>
+  </tr>
+  <tr>
+    <td><code>animal.third_party_property_damages[]</code></td>
+    <td>مالك / نوع الضرر</td>
+    <td>لا يظهر</td>
+    <td><span class="status-missing">Missing</span></td>
+    <td>نفس الدالة</td>
+  </tr>
+</table>
+<pre>// أضف في drawMateriellaSkadorSection:
+reportData.animal?.third_party_property_damage_exist
+reportData.animal?.third_party_property_damages
+</pre>
+
+<h2>٥. نص جاهز لنسخه لمطور الباك</h2>
+<div class="note">
+<strong>العنوان:</strong> Djurkollision (animal) — حقول مرسلة من الموبايل لا تظهر في PDF<br /><br />
+<strong>الملف:</strong> <code>src/helpers/generatePdf.js</code> فقط — بدون تغيير Joi أو الموبايل.<br /><br />
+<strong>١)</strong> أضف سؤال <code>car_towed</code> / «Bil bärgad?» لنوع <code>animal</code> في <code>getYesNoQuestions</code>، واربط <code>towing</code> ← <code>car_towed</code> في <code>getBoolValue</code> مع قراءة <code>animal[key]</code>.<br /><br />
+<strong>٢)</strong> في <code>drawSkadorCyklistFotgangareSection</code> أضف مسارات <code>reportData.animal?.external_person_injuries*</code>.<br /><br />
+<strong>٣)</strong> في <code>drawMateriellaSkadorSection</code> أضف مسارات <code>reportData.animal?.third_party_property_*</code>.<br /><br />
+<strong>التحقق:</strong> <code>node --test tests/animalPdfParity.test.js</code> ثم نقل توكنات <code>knownMissing</code> إلى <code>mustInclude</code>.
+</div>
+
+<h2>٦. خارج النطاق</h2>
+<ul>
+  <li>لا تغيير على مخطط Joi / <code>ReportAnimal</code> لهذا البلاغ.</li>
+  <li>لا تغيير على <code>postDjurKollision</code> في الموبايل.</li>
+  <li><code>partner_outside</code> و <code>egendom_owner</code> aliases قديمة؛ الموبايل يرسل المفاتيح الجديدة بالتوازي والـ PDF يعتمد عليها.</li>
+</ul>
+
+<div class="footer">
+  Body vs PDF · Fordon · djurkollision (animal) · 2026-08-26
+</div>
+
+</body>
+</html>
