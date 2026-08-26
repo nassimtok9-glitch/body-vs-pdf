@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>brand (brand) — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  brand
+</p>
+
+<h1>Brand / Brandskada — Body vs PDF</h1>
+<p>
+  مقارنة ما يرسله الموبايل عبر <code>postBrandSkada</code>
+  مع ما يظهر في PDF من <code>generatePdf.js</code>
+  لتقرير <strong>Brand</strong> (<code>type = brand</code>, <code>report_category = car</code>).
+</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = brand</code></dd>
+    <dt>الموبايل</dt><dd><code>postBrandSkada</code> في <code>incident_datasource_fordon_posts.dart</code></dd>
+    <dt>موديل الباك</dt><dd><code>ReportBrand.js</code></dd>
+    <dt>اختبار آلي</dt><dd><code>IH-backend/tests/brandPdfParity.test.js</code> (15 سيناريو)</dd>
+    <dt>تشغيل الاختبار</dt><dd><code>cd IH-backend &amp;&amp; node --test tests/brandPdfParity.test.js</code></dd>
+    <dt>ملاحظة</dt><dd>لا تعديل على كود الباك من هذا العمل — الفجوات موثّقة لإرسالها للمطور</dd>
+  </dl>
+</div>
+
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل: وصف الحادث، ما تضرر، تحت السير (<code>travel_damage</code>)، حريق متعمد (<code>fire_set</code>)،
+    بَرْج، ممتلكات خارج المركبة، شرطة، tracks. <strong>لا واجهة Personskador</strong> عادةً
+    (<code>with_partner</code> يُرسل false). <strong>لا سؤال مقطورة</strong> لـ Brand.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    الحقول الخاصة بالنار تظهر جيداً.
+    فجوات: «Bil bärgad?» عند <code>car_towed: false</code>؛
+    وإصابات/ممتلكات طرف ثالث إذا بقيت فقط تحت <code>brand.*</code>.
+  </div>
+</div>
+
+<h2>١. حقول المستخدم (الواجهة → API)</h2>
+<table>
+  <tr><th>الواجهة (SV)</th><th>حقل الموبايل</th><th>مفتاح API</th></tr>
+  <tr><td>Beskriv händelsen</td><td><code>beskriv_handelsen_med_egna_ord</code></td><td><code>accident_description</code></td></tr>
+  <tr><td>Vad är skadat?</td><td><code>vadArSkadat</code></td><td><code>damage_description</code></td></tr>
+  <tr><td>Inträffade branden under färd?</td><td><code>intraffade_skadan_under_fard</code></td><td><code>travel_damage</code></td></tr>
+  <tr><td>Var branden anlagd? (Ja/Nej/Vet ej)</td><td><code>varBrandenAnlagd</code></td><td><code>fire_set</code> (Yes/No/Unknown)</td></tr>
+  <tr><td>Har fordonet behövt bärgas?</td><td><code>har_fordonet_behovt_bargas</code></td><td><code>car_towed</code></td></tr>
+  <tr><td>Egendom utanför fordonet</td><td><code>vilkenEgendomArSkadad</code> / ägare</td><td><code>external_damage</code> + <code>damage_part*</code></td></tr>
+  <tr><td>Polisen / diarienummer</td><td><code>polisen</code> / <code>diarienummer</code></td><td><code>police</code> / <code>police_money</code> / <code>diarienummer</code></td></tr>
+  <tr><td>Lastbil (tracks)</td><td>حقول النقل</td><td><code>car_type=tracks</code> + <code>tracks_transport</code></td></tr>
+  <tr><td>Personskador / Släp</td><td>—</td><td><em>لا واجهة Brand عادةً</em></td></tr>
+</table>
+
+<h2>٢. السيناريوهات (اختبار brandPdfParity)</h2>
+<table>
+  <tr><th>ID</th><th>الحالة</th><th>نتيجة اليوم</th></tr>
+  <tr><td><strong>S1</strong></td><td>حد أدنى — fire_set Unknown</td><td>سرد + ضرر + أسئلة النار OK · <span class="status-missing">Missing</span> Bil bärgad?</td></tr>
+  <tr><td><strong>S2</strong></td><td>رخصة أجنبية</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S3</strong></td><td>تحت السير (travel_damage)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S4</strong></td><td>fire_set = Yes</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S4b</strong></td><td>fire_set = No</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S5</strong></td><td>بَرْج = Ja</td><td><span class="status-ok">OK</span> Bil bärgad?</td></tr>
+  <tr><td><strong>S6</strong></td><td>ممتلكات خارج المركبة</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S7</strong></td><td>with_partner + partner</td><td><span class="status-ok">OK</span> (المخطط يدعمه)</td></tr>
+  <tr><td><strong>S8</strong></td><td>شرطة + diarienummer</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S9</strong></td><td>شاحنة tracks</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S10</strong></td><td>إصابات خارجية على الـ root</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S10b</strong></td><td>إصابات فقط تحت <code>brand.*</code></td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><strong>S11</strong></td><td>ممتلكات طرف ثالث على الـ root</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S11b</strong></td><td>ممتلكات فقط تحت <code>brand.*</code></td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><strong>S12</strong></td><td>كامل</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>٣. حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>accident_description</code></td><td>Händelseförloppet</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_description</code></td><td>Kompletterande (قيمة النص)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>travel_damage</code></td><td>«Inträffade branden under körning?»</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>fire_set</code> Yes/No/Unknown</td><td>«Har branden orsakats medvetet…?» → Ja/Nej/Okänt</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>car_towed = true</code></td><td>«Bil bärgad?»</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>external_damage</code> + damage_part*</td><td>Extern skada? + Skadad del</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>partner[]</code> عند with_partner</td><td>Personskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>police</code> / diarienummer</td><td>رأس الصفحة</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>tracks_transport</code></td><td>Kompletterande</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>إصابات/ممتلكات على الـ <strong>root</strong></td><td>الجداول</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>٤. نواقص في PDF — لإرسالها لمطور الباك</h2>
+
+<h3>فجوة ١ — <code>car_towed: false</code> لا يظهر «Bil bärgad?»</h3>
+<p>نفس سبب Parkeringsskada / Singelolycka: <code>getBoolValue</code> يستخدم <code>||</code> بدل <code>??</code>.</p>
+<pre>val = reportData[key]
+   ?? reportData.report?.[key]
+   ?? reportData.brand?.[key]
+   ?? …;
+</pre>
+<p>التحقق: S1 — انقل <code>Bil bärgad?</code> من <code>knownMissing</code> إلى <code>mustInclude</code>.</p>
+
+<h3>فجوة ٢ — إصابات خارجية تحت <code>brand.*</code> فقط</h3>
+<pre>// drawSkadorCyklistFotgangareSection — أضف:
+reportData.brand?.external_person_injuries_exist
+reportData.brand?.external_person_injuries
+</pre>
+
+<h3>فجوة ٣ — ممتلكات طرف ثالث تحت <code>brand.*</code> فقط</h3>
+<pre>// drawMateriellaSkadorSection — أضف:
+reportData.brand?.third_party_property_damage_exist
+reportData.brand?.third_party_property_damages
+</pre>
+<p class="note">الموبايل الحالي لـ Brand لا يملأ عادةً هذين البلوكين (يستخدم <code>external_damage</code> / <code>damage_part</code>). الفجوة تظهر قبل الدمج الكامل للـ root.</p>
+
+<h2>٥. ملاحظات</h2>
+<ul>
+  <li><strong>لا Personskador في الواجهة:</strong> <code>with_partner</code> يُرسل غالباً false؛ المخطط والـ PDF يدعمان partner إن وُجد.</li>
+  <li><strong>لا has_slaps:</strong> Brand مستثنى من سؤال المقطورة في الموبايل.</li>
+  <li><strong>«Fordon skadat?»</strong> موجود في أسئلة الـ PDF للـ brand لكن الموبايل لا يرسله فتُفلتر.</li>
+</ul>
+
+<h2>٦. نص جاهز لنسخه لمطور الباك</h2>
+<div class="note">
+<strong>العنوان:</strong> Brand (brand) — فجوات PDF<br /><br />
+<strong>الملف:</strong> <code>src/helpers/generatePdf.js</code> فقط.<br /><br />
+<strong>١)</strong> في <code>getBoolValue</code> استخدم <code>??</code> بدل <code>||</code> حتى يظهر «Bil bärgad?» عند <code>car_towed: false</code>.<br /><br />
+<strong>٢)</strong> أضف مسارات <code>brand.external_person_injuries*</code> و <code>brand.third_party_property_*</code> في دوال الجداول.<br /><br />
+<strong>التحقق:</strong> <code>node --test tests/brandPdfParity.test.js</code>
+</div>
+
+<div class="footer">
+  Body vs PDF · Fordon · brand · 2026-08-26
+</div>
+
+</body>
+</html>
