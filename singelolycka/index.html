@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>singelolycka (oneAccident) — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  singelolycka
+</p>
+
+<h1>Singelolycka — Body vs PDF</h1>
+<p>
+  مقارنة ما يرسله الموبايل عبر <code>postSinglSkada</code> (<code>iskupe = false</code>)
+  مع ما يظهر في PDF من <code>generatePdf.js</code>
+  لتقرير <strong>Singelolycka</strong> (<code>type = oneAccident</code>, <code>report_category = car</code>).
+</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = oneAccident</code></dd>
+    <dt>الموبايل</dt><dd><code>postSinglSkada</code> في <code>incident_datasource_fordon_posts.dart</code></dd>
+    <dt>موديل الباك</dt><dd><code>ReportOneAccedient.js</code></dd>
+    <dt>اختبار آلي</dt><dd><code>IH-backend/tests/oneAccidentPdfParity.test.js</code> (14 سيناريو)</dd>
+    <dt>تشغيل الاختبار</dt><dd><code>cd IH-backend &amp;&amp; node --test tests/oneAccidentPdfParity.test.js</code></dd>
+    <dt>ملاحظة</dt><dd>لا تعديل على كود الباك من هذا العمل — الفجوات موثّقة لإرسالها للمطور</dd>
+  </dl>
+</div>
+
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل: السرعة، وصف الحادث، حيوان في السيارة، شخص مصاب داخل/خارج، ممتلكات (قديمة + جديدة)، شهود، شرطة، مقطورة، tracks (شاحنة)، رخصة أجنبية.
+    <strong>لا يوجد سؤال بَرْج</strong> في واجهة Singelolycka ولا يُرسل <code>car_towed</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    أغلب الحقول تظهر (بما فيها تحت <code>oneAccident.*</code>).
+    فجوتان مؤكدتان: صف «Fanns djur i bilen?» عند <code>false</code>، ووصف الحيوان لا يُطبع أبداً.
+  </div>
+</div>
+
+<h2>١. حقول المستخدم (الواجهة → API)</h2>
+<table>
+  <tr><th>الواجهة (SV)</th><th>حقل الموبايل</th><th>مفتاح API</th></tr>
+  <tr><td>Hastighet vid kollisionsögonblicket</td><td><code>hastighetVidKollision</code></td><td><code>vehicle_speed</code></td></tr>
+  <tr><td>Beskriv händelsen</td><td><code>beskriv_handelsen_med_egna_ord</code></td><td><code>accident_description</code></td></tr>
+  <tr><td>Personskador (i fordonet)</td><td><code>personskador</code> + <code>skadadPerson[]</code></td><td><code>with_partner</code> + <code>partner[]</code></td></tr>
+  <tr><td>Personskador utanför</td><td><code>skadadPersonUtanfor[]</code></td><td><code>external_person_injuries*</code> (+ alias <code>partner_outside</code>)</td></tr>
+  <tr><td>Befann sig något djur…?</td><td><code>befannSigNogotDjurMedIBilen</code> + <code>animal</code></td><td><code>animal_in_car</code> + <code>animal_in_car_description</code></td></tr>
+  <tr><td>Vittnen</td><td><code>witness[]</code></td><td><code>witness</code> + <code>witnesses[]</code></td></tr>
+  <tr><td>Egendom utanför fordonet</td><td><code>vilkenEgendomArSkadad</code> / ägare</td><td><code>external_damage</code> + <code>damage_part*</code></td></tr>
+  <tr><td>Någon annans egendom</td><td><code>egendomSkadadList[]</code></td><td><code>third_party_property_*</code> (+ alias <code>egendom_owner</code>)</td></tr>
+  <tr><td>Polisen / diarienummer</td><td><code>polisen</code> / <code>diarienummer</code></td><td><code>police</code> / <code>police_money</code> / <code>diarienummer</code></td></tr>
+  <tr><td>Släp</td><td><code>slapsRegisterNumbers</code></td><td><code>has_slaps</code> / <code>slaps[]</code></td></tr>
+  <tr><td>Lastbil (tracks)</td><td>حقول النقل</td><td><code>car_type=tracks</code> + <code>tracks_transport</code></td></tr>
+  <tr><td>Bärgning</td><td>—</td><td><em>غير موجود في Singelolycka</em></td></tr>
+</table>
+
+<h2>٢. السيناريوهات (اختبار oneAccidentPdfParity)</h2>
+<table>
+  <tr><th>ID</th><th>الحالة</th><th>نتيجة اليوم</th></tr>
+  <tr><td><strong>S1</strong></td><td>حد أدنى — رخصة سويدية</td><td>سرعة + سرد OK · <span class="status-missing">Missing</span> Fanns djur i bilen? (لأن القيمة false)</td></tr>
+  <tr><td><strong>S2</strong></td><td>رخصة أجنبية + سرعة</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S3</strong></td><td>حيوان في السيارة + وصف</td><td>السؤال OK · <span class="status-missing">Missing</span> وصف الحيوان</td></tr>
+  <tr><td><strong>S4</strong></td><td>Personskador داخل المركبة</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S5</strong></td><td>إصابات خارجية على الـ root</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S5b</strong></td><td>إصابات خارجية فقط تحت <code>oneAccident.*</code></td><td><span class="status-ok">OK</span> (الـ PDF يقرأ المسار)</td></tr>
+  <tr><td><strong>S6</strong></td><td>ممتلكات خارج المركبة (legacy damage_part)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S7</strong></td><td>ممتلكات طرف ثالث على الـ root</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S7b</strong></td><td>ممتلكات فقط تحت <code>oneAccident.*</code></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S8</strong></td><td>شهود</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S9</strong></td><td>شرطة + diarienummer</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S10</strong></td><td>مقطورة (släp)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S11</strong></td><td>شاحنة tracks_transport</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S12</strong></td><td>كامل</td><td>معظمها OK · <span class="status-missing">Missing</span> وصف الحيوان</td></tr>
+</table>
+
+<h2>٣. حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>driver_full_name</code> / phone / email / license</td><td>Fordon A / رأس الصفحة</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>address</code> / location</td><td>Skadeplats</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>accident_description</code></td><td>Händelseförloppet</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>vehicle_speed</code></td><td>«Ert fordons hastighet i kollisionsögonblicket:»</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>animal_in_car = true</code></td><td>«Fanns djur i bilen?»</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>with_partner</code> + <code>partner[]</code></td><td>Personskador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>external_person_injuries*</code> (root أو <code>oneAccident.*</code>)</td><td>جدول إصابات خارجية</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_part</code> / <code>damage_part_owner</code></td><td>Skadad del / Ägare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>third_party_property_*</code> (root أو subdoc)</td><td>Materiella skador</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>witness</code> / <code>witnesses[]</code></td><td>Finns vittnen? + الجدول</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>police</code> / <code>diarienummer</code></td><td>رأس الصفحة + diarienummer</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>has_slaps</code> / <code>slaps[]</code></td><td>Fordon A</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>tracks_transport</code></td><td>حقول الشاحنة في Kompletterande</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>٤. نواقص في PDF — لإرسالها لمطور الباك</h2>
+
+<h3>فجوة ١ — <code>animal_in_car: false</code> لا يظهر السؤال</h3>
+<table>
+  <tr><th>مفتاح</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>animal_in_car</code></td>
+    <td>الموبايل يرسل دائماً <code>true</code> أو <code>false</code></td>
+    <td>عند <code>false</code> يختفي «Fanns djur i bilen?»</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+</table>
+<p>
+  السبب: في <code>getYesNoQuestions → getBoolValue</code> يُستخدم <code>||</code> بدل <code>??</code>،
+  فالقيمة المنطقية <code>false</code> تُعامل كـ «غير مجاب».
+</p>
+<pre>// في getBoolValue — استبدل || بـ ?? عند قراءة المفاتيح:
+val = reportData[key]
+   ?? reportData.report?.[key]
+   ?? reportData.oneAccident?.[key]
+   ?? …;
+</pre>
+<p>التحقق: S1 — انقل <code>Fanns djur i bilen?</code> من <code>knownMissing</code> إلى <code>mustInclude</code>.</p>
+
+<h3>فجوة ٢ — <code>animal_in_car_description</code> لا يُطبع أبداً</h3>
+<table>
+  <tr><th>مفتاح</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>animal_in_car_description</code></td>
+    <td>وصف الحيوان عند Ja</td>
+    <td>لا يظهر في مسار PDFKit</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+</table>
+<p>الموجود في قالب EJS القديم فقط؛ <code>generatePdf.js</code> لا يضيف الحقل إلى Kompletterande.</p>
+<pre>// أضف بعد صف animal_in_car عندما تكون القيمة true:
+{ label: 'Beskrivning av djur i bilen:', value: getFieldValue('animal_in_car_description') }
+</pre>
+<p>التحقق: S3 / S12 — انقل توكن الوصف من <code>knownMissing</code> إلى <code>mustInclude</code>.</p>
+
+<h2>٥. ملاحظات (ليست فجوات باك)</h2>
+<ul>
+  <li><strong>لا بَرْج:</strong> الواجهة لا تسأل «Har fordonet behövt bärgas?» ولا يُرسل <code>car_towed</code> — متوقع.</li>
+  <li><strong>damage_part: N/A:</strong> الموبايل يرسل <code>N/A</code> حتى بدون ضرر خارجي فيظهر «Skadad del: N/A» — سلوك موبايل.</li>
+  <li><strong>partner_outside / egendom_owner:</strong> aliases قديمة؛ الموبايل يرسل المفاتيح الجديدة بالتوازي والـ PDF يعتمد عليها.</li>
+</ul>
+
+<h2>٦. نص جاهز لنسخه لمطور الباك</h2>
+<div class="note">
+<strong>العنوان:</strong> Singelolycka (oneAccident) — فجوات PDF لحيوان في السيارة<br /><br />
+<strong>الملف:</strong> <code>src/helpers/generatePdf.js</code> فقط.<br /><br />
+<strong>١)</strong> في <code>getBoolValue</code> استخدم <code>??</code> بدل <code>||</code> حتى تظهر أسئلة نعم/لا عندما تكون القيمة <code>false</code> (خصوصاً <code>animal_in_car</code>).<br /><br />
+<strong>٢)</strong> اطبع <code>animal_in_car_description</code> في Kompletterande عندما <code>animal_in_car === true</code>.<br /><br />
+<strong>التحقق:</strong> <code>node --test tests/oneAccidentPdfParity.test.js</code> ثم نقل توكنات <code>knownMissing</code> إلى <code>mustInclude</code>.
+</div>
+
+<div class="footer">
+  Body vs PDF · Fordon · singelolycka (oneAccident) · 2026-08-26
+</div>
+
+</body>
+</html>
