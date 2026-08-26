@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>electronic — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  electronic
+</p>
+
+<h1>Elektronikproblem / Maskin-elektronik — Body vs PDF</h1>
+<p>
+  مقارنة ما يرسله الموبايل عبر <code>postelectricskada</code>
+  مع ما يظهر في PDF من <code>generatePdf.js</code>
+  لتقرير <strong>Elektronikproblem</strong> (<code>type = electronic</code>, <code>report_category = car</code>).
+</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = electronic</code></dd>
+    <dt>الموبايل</dt><dd><code>postelectricskada</code> في <code>incident_datasource_fordon_posts.dart</code></dd>
+    <dt>موديل الباك</dt><dd><code>ReportElectronDamage.js</code> (<code>ReportElcetronDamage</code>)</dd>
+    <dt>اختبار آلي</dt><dd><code>IH-backend/tests/electronicPdfParity.test.js</code> (7 سيناريوهات)</dd>
+    <dt>تشغيل الاختبار</dt><dd><code>cd IH-backend &amp;&amp; node --test tests/electronicPdfParity.test.js</code></dd>
+    <dt>ملاحظة</dt><dd>لا تعديل على كود الباك من هذا العمل — الفجوات موثّقة لإرسالها للمطور</dd>
+  </dl>
+</div>
+
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل: المسافة، وصف العطل، مكان الضرر، بَرْج + مكان، سائق، موقع، توقيع/صور.
+    <strong>لا يرسل:</strong> شرطة، مقطورة، with_partner، markera.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    النصوص تظهر (حتى تحت <code>electronic.*</code>).
+    فجوات: «Behövs bärgning?» عند <code>car_towed: false</code>؛ و<code>accident_date</code> لا يُطبع.
+  </div>
+</div>
+
+<h2>١. حقول المستخدم (الواجهة → API)</h2>
+<table>
+  <tr><th>الواجهة (SV)</th><th>حقل الموبايل</th><th>مفتاح API</th><th>تسمية PDF</th></tr>
+  <tr><td>Hur långt har bilen gått?</td><td><code>hurlangtHarBilenGatt</code></td><td><code>total_distance</code></td><td>«Total distans:»</td></tr>
+  <tr><td>Hur visade sig felet?</td><td><code>hurVisadeSigFelet</code></td><td><code>damage_description</code></td><td>«Hur visade sig felet?:»</td></tr>
+  <tr><td>Välj var fordonet blev skadat</td><td><code>varFordonetBlevSkadat</code></td><td><code>damage_location</code></td><td>«Skadeplats:»</td></tr>
+  <tr><td>Har fordonet behövt bärgas?</td><td><code>har_fordonet_behovt_bargas</code></td><td><code>car_towed</code></td><td>«Behövs bärgning?»</td></tr>
+  <tr><td>Vart har fordonet bärgats?</td><td><code>vartHarBilenBargats</code></td><td><code>car_towed_description</code></td><td>Bärgningsbeskrivning</td></tr>
+  <tr><td>(داخلي) datumDaHandelsen…</td><td><code>datumDaHandelsenIntraffade</code></td><td><code>accident_date</code></td><td><span class="status-missing">Missing</span></td></tr>
+</table>
+
+<h2>٢. السيناريوهات (اختبار electronicPdfParity)</h2>
+<table>
+  <tr><th>ID</th><th>الحالة</th><th>نتيجة اليوم</th></tr>
+  <tr><td><strong>S1</strong></td><td>حد أدنى — بدون بَرْج</td><td>مسافة/عطل/مكان OK · <span class="status-missing">Missing</span> Behövs bärgning? + accident_date</td></tr>
+  <tr><td><strong>S2</strong></td><td>رخصة أجنبية</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S3</strong></td><td>بَرْج + مكان</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S4</strong></td><td>damage_location = N/A</td><td><span class="status-ok">OK</span> (يظهر N/A)</td></tr>
+  <tr><td><strong>S5</strong></td><td>حقول فقط تحت <code>electronic.*</code></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S6</strong></td><td>بدون شرطة (بالتصميم)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S7</strong></td><td>كامل</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>٣. حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>total_distance</code></td><td>Total distans:</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_description</code></td><td>Hur visade sig felet?:</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_location</code></td><td>Skadeplats:</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>car_towed = true</code> + description</td><td>Behövs bärgning? + وصف</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>حقول تحت <code>electronic.*</code></td><td>تُقرأ عبر المسار</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>٤. نواقص في PDF — لإرسالها لمطور الباك</h2>
+
+<h3>فجوة ١ — <code>car_towed: false</code> لا يظهر «Behövs bärgning?»</h3>
+<p>نفس سبب Feltankning: <code>getBoolValue</code> يستخدم <code>||</code> بدل <code>??</code>.</p>
+<pre>val = reportData[key]
+   ?? reportData.report?.[key]
+   ?? reportData.electronic?.[key]
+   ?? …;
+</pre>
+
+<h3>فجوة ٢ — <code>accident_date</code> لا يُطبع</h3>
+<p>يُرسل من الموبايل لكن PDF يعتمد على <code>date</code>/<code>time</code> في الرأس فقط (مثل Kupéskada).</p>
+
+<h2>٥. ملاحظات</h2>
+<ul>
+  <li>لا شرطة / مقطورة في واجهة هذا النوع.</li>
+  <li>صف «towing» العام مُستبعد لـ electronic لتجنب تكرار مع <code>car_towed</code>.</li>
+  <li>تسمية PDF للمسافة هي «Total distans:» وليست نص الواجهة حرفياً.</li>
+</ul>
+
+<h2>٦. نص جاهز لنسخه لمطور الباك</h2>
+<div class="note">
+<strong>العنوان:</strong> electronic — Behövs bärgning? يختفي عند false + accident_date غير مطبوع<br /><br />
+<strong>الملف:</strong> <code>src/helpers/generatePdf.js</code><br /><br />
+<strong>١)</strong> في <code>getBoolValue</code> استبدل <code>||</code> بـ <code>??</code>.<br /><br />
+<strong>٢)</strong> اطبع <code>accident_date</code> أو أوقف إرساله من الموبايل إن كان <code>date</code> كافياً.<br /><br />
+<strong>التحقق:</strong> <code>node --test tests/electronicPdfParity.test.js</code>
+</div>
+
+<div class="footer">
+  Body vs PDF · Fordon · electronic · 2026-08-26
+</div>
+
+</body>
+</html>

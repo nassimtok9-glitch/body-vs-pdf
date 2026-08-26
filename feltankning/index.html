@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>feltankning — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  feltankning
+</p>
+
+<h1>Feltankning — Body vs PDF</h1>
+<p>
+  مقارنة ما يرسله الموبايل عبر <code>postFeltanking</code>
+  مع ما يظهر في PDF من <code>generatePdf.js</code>
+  لتقرير <strong>Feltankning</strong> (<code>type = feltankning</code>, <code>report_category = car</code>).
+</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = feltankning</code></dd>
+    <dt>الموبايل</dt><dd><code>postFeltanking</code> في <code>incident_datasource_fordon_posts.dart</code></dd>
+    <dt>موديل الباك</dt><dd><code>ReportFeltankning.js</code> (بسيط جداً)</dd>
+    <dt>اختبار آلي</dt><dd><code>IH-backend/tests/feltankningPdfParity.test.js</code> (8 سيناريوهات)</dd>
+    <dt>تشغيل الاختبار</dt><dd><code>cd IH-backend &amp;&amp; node --test tests/feltankningPdfParity.test.js</code></dd>
+    <dt>ملاحظة</dt><dd>لا تعديل على كود الباك من هذا العمل — الفجوات موثّقة لإرسالها للمطور</dd>
+  </dl>
+</div>
+
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    تقرير مختصر: سائق، موقع، تاريخ/وقت، هل قُيدت بعد التعبئة الخاطئة (<code>kordes</code>)،
+    بَرْج + مكان، توقيع.
+    <strong>لا يرسل:</strong> شرطة، سرد حادث، نوع وقود، مقطورة، صور في الواجهة (قد تُرفض إن أُرسلت).
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    عند <code>true</code> تظهر الأسئلة جيداً.
+    فجوة: عند <code>false</code> يختفي «Behövs bärgning?» و«Kördes fordonet?» بسبب <code>||</code> في <code>getBoolValue</code>.
+  </div>
+</div>
+
+<h2>١. حقول المستخدم (الواجهة → API)</h2>
+<table>
+  <tr><th>الواجهة (SV)</th><th>حقل الموبايل</th><th>مفتاح API</th></tr>
+  <tr><td>Har fordonet behövt bärgas?</td><td><code>har_fordonet_behovt_bargas</code></td><td><code>car_towed</code></td></tr>
+  <tr><td>Vart har fordonet bärgats?</td><td><code>vartHarBilenBargats</code></td><td><code>car_towed_description</code></td></tr>
+  <tr><td>Kördes fordonet efter feltankningen?</td><td><code>kordesFordonetEfterFeltankningen</code></td><td><code>kordes</code></td></tr>
+  <tr><td>Plats / Datum &amp; tid / Signatur</td><td>location / date / signature</td><td>نفس المفاتيح العامة</td></tr>
+  <tr><td>Polisen / Beskriv händelsen / Släp / Bränsletyp</td><td>—</td><td><em>غير موجود في هذا النوع</em></td></tr>
+</table>
+
+<h2>٢. السيناريوهات (اختبار feltankningPdfParity)</h2>
+<table>
+  <tr><th>ID</th><th>الحالة</th><th>نتيجة اليوم</th></tr>
+  <tr><td><strong>S1</strong></td><td>حد أدنى — كلاهما false</td><td>سائق/موقع OK · <span class="status-missing">Missing</span> Behövs bärgning? + Kördes fordonet?</td></tr>
+  <tr><td><strong>S2</strong></td><td>رخصة أجنبية + kordes=true</td><td>kordes OK · <span class="status-missing">Missing</span> Behövs bärgning?</td></tr>
+  <tr><td><strong>S3</strong></td><td>kordes = true فقط</td><td><span class="status-ok">OK</span> Kördes · Missing bärgning</td></tr>
+  <tr><td><strong>S4</strong></td><td>بَرْج + مكان</td><td><span class="status-ok">OK</span> · Missing kordes عند false</td></tr>
+  <tr><td><strong>S5</strong></td><td>كلاهما true</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S5b</strong></td><td>حقول فقط تحت <code>feltankning.*</code></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S6</strong></td><td>لا سرد مخصص</td><td><span class="status-ok">OK</span> (بالتصميم)</td></tr>
+  <tr><td><strong>S7</strong></td><td>كامل</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>٣. حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>سائق / موقع / رخصة</td><td>Fordon A / رأس الصفحة</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>kordes = true</code></td><td>«Kördes fordonet?»</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>car_towed = true</code></td><td>«Behövs bärgning?»</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>car_towed_description</code></td><td>«Var har fordonet bärgats:» (تسمية خاصة لـ feltankning)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>حقول تحت <code>feltankning.*</code></td><td>تُقرأ عبر المسار</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>٤. نواقص في PDF — لإرسالها لمطور الباك</h2>
+
+<h3>فجوة ١ — القيم <code>false</code> لا تظهر لأسئلة نعم/لا</h3>
+<table>
+  <tr><th>مفتاح</th><th>Body</th><th>PDF عند false</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>car_towed</code></td>
+    <td>يُرسل دائماً true/false</td>
+    <td>يختفي «Behövs bärgning?»</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+  <tr>
+    <td><code>kordes</code></td>
+    <td>يُرسل دائماً true/false</td>
+    <td>يختفي «Kördes fordonet?»</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+</table>
+<p>السبب: في <code>getYesNoQuestions → getBoolValue</code> يُستخدم <code>||</code> بدل <code>??</code>.</p>
+<pre>val = reportData[key]
+   ?? reportData.report?.[key]
+   ?? reportData.feltankning?.[key]
+   ?? …;
+</pre>
+<p>التحقق: S1 — انقل التوكنات من <code>knownMissing</code> إلى <code>mustInclude</code>.</p>
+
+<h2>٥. ملاحظات</h2>
+<ul>
+  <li>لا <code>accident_description</code> في واجهة Feltankning — متوقع.</li>
+  <li>لا شرطة / مقطورة / نوع وقود / <code>total_distance</code>.</li>
+  <li>تسمية مكان البَرْج لـ feltankning هي «Var har fordonet bärgats:» (وليست Bärgningsbeskrivning).</li>
+</ul>
+
+<h2>٦. نص جاهز لنسخه لمطور الباك</h2>
+<div class="note">
+<strong>العنوان:</strong> Feltankning — أسئلة نعم/لا تختفي عند false<br /><br />
+<strong>الملف:</strong> <code>src/helpers/generatePdf.js</code> — <code>getBoolValue</code>: استبدل <code>||</code> بـ <code>??</code>.<br /><br />
+<strong>التحقق:</strong> <code>node --test tests/feltankningPdfParity.test.js</code>
+</div>
+
+<div class="footer">
+  Body vs PDF · Fordon · feltankning · 2026-08-26
+</div>
+
+</body>
+</html>
