@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>fordonStealing (stealing) — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  fordonStealing
+</p>
+
+<h1>Inbrott eller stöld — Body vs PDF</h1>
+<p>
+  مقارنة ما يرسله الموبايل عبر <code>postStoldSkada</code>
+  مع ما يظهر في PDF من <code>generatePdf.js</code>
+  لتقرير <strong>Inbrott eller stöld</strong> (<code>type = stealing</code>, <code>report_category = car</code>).
+</p>
+<p class="note">
+  ملاحظة: مجلد <a href="../stealing/index.html">stealing/</a> يخص <strong>Entreprenad / machineStealing</strong> — لا تخلط بينهما.
+</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = stealing</code></dd>
+    <dt>الموبايل</dt><dd><code>postStoldSkada</code> في <code>incident_datasource_fordon_posts.dart</code></dd>
+    <dt>موديل الباك</dt><dd><code>ReportStealing.js</code></dd>
+    <dt>اختبار آلي</dt><dd><code>IH-backend/tests/stealingPdfParity.test.js</code> (10 سيناريوهات)</dd>
+    <dt>تشغيل الاختبار</dt><dd><code>cd IH-backend &amp;&amp; node --test tests/stealingPdfParity.test.js</code></dd>
+    <dt>ملاحظة</dt><dd>لا تعديل على كود الباك من هذا العمل — الفجوات موثّقة لإرسالها للمطور</dd>
+  </dl>
+</div>
+
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل: سرقة المركبة، قفل، أغراض مسروقة، مفاتيح، شرطة (<code>police_aware</code>)،
+    من صفّ / أين / متى، bogsering (<code>vehicle_towed</code>)، مقطورة، وصف الحادث.
+    <strong>لا يرسل:</strong> نص «Beskriv skadan» كـ damage_description، ولا صور الصفحة 3.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    على الـ root عند <code>true</code> تظهر الأسئلة جيداً.
+    فجوات: قيم <code>false</code> تختفي؛ وتحت <code>stealing.*</code> فقط تختفي أسئلة نعم/لا + وصف الأغراض + incident_description.
+  </div>
+</div>
+
+<h2>١. حقول المستخدم (واجهة → API)</h2>
+<table>
+  <tr><th>الواجهة (SV)</th><th>API</th></tr>
+  <tr><td>Har fordonet blivit stulet?</td><td><code>vehicle_stolen</code></td></tr>
+  <tr><td>Har fordonet blivit skadat?</td><td><code>vehicle_damaged</code> (فقط إن لم تُسرق المركبة بالكامل)</td></tr>
+  <tr><td>Behöver bilen bogseras?</td><td><code>vehicle_towed</code> (ليس car_towed)</td></tr>
+  <tr><td>Var fordonet låst?</td><td><code>vehicle_locked</code></td></tr>
+  <tr><td>Har fordonet återfunnits?</td><td><code>vehicle_recovered</code></td></tr>
+  <tr><td>Stals något…?</td><td><code>items_stolen</code> + <code>stolen_items_description</code></td></tr>
+  <tr><td>Nycklar…</td><td><code>keys_received_count</code> / <code>keys_still_have</code> / <code>keys_description</code></td></tr>
+  <tr><td>Polisen / referens</td><td><code>police_aware</code> / <code>police_report_reference</code></td></tr>
+  <tr><td>Vem/När/Var parkering</td><td><code>who_parked_vehicle</code> / <code>when_parked</code> / <code>where_parked</code></td></tr>
+  <tr><td>Vem upptäckte…?</td><td><code>who_discovered_theft</code></td></tr>
+  <tr><td>Beskriv händelsen</td><td><code>incident_description</code></td></tr>
+  <tr><td>Släp</td><td><code>has_slaps</code> / <code>slaps[]</code></td></tr>
+</table>
+
+<h2>٢. السيناريوهات (اختبار stealingPdfParity)</h2>
+<table>
+  <tr><th>ID</th><th>الحالة</th><th>نتيجة اليوم</th></tr>
+  <tr><td><strong>S1</strong></td><td>حد أدنى — inbrott</td><td>نصوص OK · <span class="status-missing">Missing</span> صفوف false</td></tr>
+  <tr><td><strong>S2</strong></td><td>رخصة أجنبية</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S3</strong></td><td>مركبة مسروقة + مُستعادة</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S4</strong></td><td>أغراض مسروقة + وصف</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S5</strong></td><td>مفاتيح متبقية + وصف</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S6</strong></td><td>شرطة + مرجع</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S7</strong></td><td>bogsering</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S8</strong></td><td>مقطورة</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S8b</strong></td><td>بيانات فقط تحت <code>stealing.*</code></td><td>بعض النصوص OK · <span class="status-missing">Missing</span> نعم/لا + وصف أغراض + incident</td></tr>
+  <tr><td><strong>S9</strong></td><td>كامل</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>٣. نواقص في PDF — لإرسالها لمطور الباك</h2>
+<div class="note">
+<strong>١)</strong> في <code>getBoolValue</code> استبدل <code>||</code> بـ <code>??</code> حتى تظهر إجابات Nej.<br /><br />
+<strong>٢)</strong> أضف قراءة <code>reportData.stealing?.[key]</code> في getBoolValue / police_aware / getFieldValue(incident_description).<br /><br />
+<strong>٣)</strong> أظهر <code>stolen_items_description</code> حتى لو جاء العلم من <code>stealing.*</code> فقط.<br /><br />
+<strong>التحقق:</strong> <code>node --test tests/stealingPdfParity.test.js</code>
+</div>
+
+<div class="footer">
+  Body vs PDF · Fordon · stealing · 2026-08-26
+</div>
+
+</body>
+</html>
