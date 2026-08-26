@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>parkeringsskada (parking) — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  parkeringsskada
+</p>
+
+<h1>Parkeringsskada — Body vs PDF</h1>
+<p>
+  مقارنة ما يرسله الموبايل عبر <code>postParkingSkada</code>
+  مع ما يظهر في PDF من <code>generatePdf.js</code>
+  لتقرير <strong>Parkeringsskada</strong> (<code>type = parking</code>, <code>report_category = car</code>).
+</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = parking</code></dd>
+    <dt>الموبايل</dt><dd><code>postParkingSkada</code> في <code>incident_datasource_fordon_posts.dart</code></dd>
+    <dt>موديل الباك</dt><dd><code>ReportParking.js</code></dd>
+    <dt>اختبار آلي</dt><dd><code>IH-backend/tests/parkingPdfParity.test.js</code> (15 سيناريو)</dd>
+    <dt>تشغيل الاختبار</dt><dd><code>cd IH-backend &amp;&amp; node --test tests/parkingPdfParity.test.js</code></dd>
+    <dt>ملاحظة</dt><dd>لا تعديل على كود الباك من هذا العمل — الفجوات موثّقة لإرسالها للمطور</dd>
+  </dl>
+</div>
+
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل: بَرْج (<code>car_towed</code>)، مرافق عند الركن (<code>with_partner</code> + <code>partner[]</code>)،
+    جهة الاتصال بالمتسبب (<code>contact_info</code>)، ممتلكات خارج المركبة، شرطة، مقطورة، tracks.
+    <strong>لا يرسل</strong> وصف حادث طويل ولا <code>when_parked</code>.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    أغلب الحقول تظهر (بما فيها <code>contact_info</code> تحت <code>parking.*</code>).
+    فجوات: «Bil bärgad?» عند <code>car_towed: false</code>؛
+    وإصابات/ممتلكات طرف ثالث إذا بقيت فقط تحت <code>parking.*</code>.
+  </div>
+</div>
+
+<h2>١. حقول المستخدم (الواجهة → API)</h2>
+<table>
+  <tr><th>الواجهة (SV)</th><th>حقل الموبايل</th><th>مفتاح API</th></tr>
+  <tr><td>Var någon med dig när du parkerade…?</td><td><code>varNagonMedDig…</code> + <code>witness[]</code></td><td><code>with_partner</code> + <code>partner[]</code></td></tr>
+  <tr><td>Bärgning / Har fordonet behövt bärgas?</td><td><code>bargning</code></td><td><code>car_towed</code></td></tr>
+  <tr><td>Egendom utanför fordonet</td><td><code>vilkenEgendomArSkadad</code> / ägare</td><td><code>external_damage</code> + <code>damage_part*</code></td></tr>
+  <tr><td>Kontaktuppgifter till den som vållat skadan?</td><td><code>contact*</code></td><td><code>has_contact_info</code> + <code>contact_info</code></td></tr>
+  <tr><td>Polisen / diarienummer</td><td><code>polisen</code> / <code>diarienummer</code></td><td><code>police</code> / <code>police_money</code> / <code>diarienummer</code></td></tr>
+  <tr><td>Släp</td><td><code>slapsRegisterNumbers</code></td><td><code>has_slaps</code> / <code>slaps[]</code></td></tr>
+  <tr><td>Lastbil (tracks)</td><td>حقول النقل</td><td><code>car_type=tracks</code> + <code>tracks_transport</code></td></tr>
+  <tr><td>När parkerades fordonet?</td><td>—</td><td><em>غير مستخدم في Parkeringsskada</em> (<code>when_parked</code> لـ Stöld)</td></tr>
+</table>
+
+<h2>٢. السيناريوهات (اختبار parkingPdfParity)</h2>
+<table>
+  <tr><th>ID</th><th>الحالة</th><th>نتيجة اليوم</th></tr>
+  <tr><td><strong>S1</strong></td><td>حد أدنى</td><td>سائق/موقع OK · <span class="status-missing">Missing</span> Bil bärgad? (لأن car_towed=false)</td></tr>
+  <tr><td><strong>S2</strong></td><td>رخصة أجنبية</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S3</strong></td><td>مرافق/شاهد عند الركن (partner)</td><td><span class="status-ok">OK</span> (يظهر تحت عنوان Personskador)</td></tr>
+  <tr><td><strong>S4</strong></td><td>بَرْج = Ja</td><td><span class="status-ok">OK</span> Bil bärgad?</td></tr>
+  <tr><td><strong>S5</strong></td><td>ممتلكات خارج المركبة</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S6</strong></td><td>contact_info على الـ root</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S6b</strong></td><td>contact_info فقط تحت <code>parking.*</code></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S7</strong></td><td>شرطة + diarienummer</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S8</strong></td><td>مقطورة</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S9</strong></td><td>شاحنة tracks</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S10</strong></td><td>إصابات خارجية على الـ root</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S10b</strong></td><td>إصابات فقط تحت <code>parking.*</code></td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><strong>S11</strong></td><td>ممتلكات طرف ثالث على الـ root</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S11b</strong></td><td>ممتلكات فقط تحت <code>parking.*</code></td><td><span class="status-missing">Missing</span></td></tr>
+  <tr><td><strong>S12</strong></td><td>كامل</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>٣. حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td>سائق / موقع / رخصة</td><td>Fordon A / رأس الصفحة</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>with_partner</code> + <code>partner[]</code></td><td>جدول Personskador (تصميم حالي)</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>car_towed = true</code></td><td>«Bil bärgad?»</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>damage_part</code> / owner</td><td>Skadad del / Ägare</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>contact_info</code> (root أو <code>parking.*</code>)</td><td>Kontaktuppgifter</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>police</code> / <code>diarienummer</code></td><td>رأس الصفحة</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>has_slaps</code> / <code>slaps[]</code></td><td>Fordon A</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>tracks_transport</code></td><td>Kompletterande</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>إصابات/ممتلكات على الـ <strong>root</strong></td><td>الجداول</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>٤. نواقص في PDF — لإرسالها لمطور الباك</h2>
+
+<h3>فجوة ١ — <code>car_towed: false</code> لا يظهر «Bil bärgad?»</h3>
+<table>
+  <tr><th>مفتاح</th><th>Body</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>car_towed</code></td>
+    <td>الموبايل يرسل دائماً true/false من سؤال Bärgning</td>
+    <td>عند false يختفي الصف</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+</table>
+<p>السبب نفسه كـ Singelolycka: <code>getBoolValue</code> يستخدم <code>||</code> بدل <code>??</code>.</p>
+<pre>val = reportData[key]
+   ?? reportData.report?.[key]
+   ?? reportData.parking?.[key]
+   ?? …;
+</pre>
+<p>التحقق: S1 — انقل <code>Bil bärgad?</code> من <code>knownMissing</code> إلى <code>mustInclude</code>.</p>
+
+<h3>فجوة ٢ — إصابات خارجية تحت <code>parking.*</code> فقط</h3>
+<table>
+  <tr><th>مفتاح</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>parking.external_person_injuries*</code></td>
+    <td><code>drawSkadorCyklistFotgangareSection</code> يقرأ root / report / oneAccident فقط</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+</table>
+<pre>reportData.parking?.external_person_injuries_exist
+reportData.parking?.external_person_injuries
+</pre>
+
+<h3>فجوة ٣ — ممتلكات طرف ثالث تحت <code>parking.*</code> فقط</h3>
+<table>
+  <tr><th>مفتاح</th><th>PDF</th><th>الحالة</th></tr>
+  <tr>
+    <td><code>parking.third_party_property_*</code></td>
+    <td><code>drawMateriellaSkadorSection</code> لا يقرأ parking</td>
+    <td><span class="status-missing">Missing</span></td>
+  </tr>
+</table>
+<pre>reportData.parking?.third_party_property_damage_exist
+reportData.parking?.third_party_property_damages
+</pre>
+<p class="note">الموبايل الحالي لا يرسل عادةً هذين البلوكين لـ Parkeringsskada (يستخدم <code>external_damage</code> / <code>damage_part</code>). الفجوة تظهر إذا بقيت البيانات على مستند التفصيل قبل الدمج.</p>
+
+<h2>٥. ملاحظات (ليست فجوات باك)</h2>
+<ul>
+  <li><strong>partner تحت Personskador:</strong> سؤال «Var någon med dig…» يُرسل كـ <code>partner[]</code> ويظهر في جدول Personskador — تصميم حالي وليس خطأ موبايل.</li>
+  <li><strong>لا when_parked:</strong> غير مستخدم في هذا النوع.</li>
+  <li><strong>أسئلة PDF غير مستخدمة:</strong> «Fordon skadat?» / «Fordon låst?» موجودة في <code>getYesNoQuestions</code> للـ parking لكن الموبايل لا يرسلها فتُفلتر.</li>
+</ul>
+
+<h2>٦. نص جاهز لنسخه لمطور الباك</h2>
+<div class="note">
+<strong>العنوان:</strong> Parkeringsskada (parking) — فجوات PDF<br /><br />
+<strong>الملف:</strong> <code>src/helpers/generatePdf.js</code> فقط.<br /><br />
+<strong>١)</strong> في <code>getBoolValue</code> استخدم <code>??</code> بدل <code>||</code> حتى يظهر «Bil bärgad?» عند <code>car_towed: false</code>.<br /><br />
+<strong>٢)</strong> في <code>drawSkadorCyklistFotgangareSection</code> أضف مسارات <code>parking.external_person_injuries*</code>.<br /><br />
+<strong>٣)</strong> في <code>drawMateriellaSkadorSection</code> أضف مسارات <code>parking.third_party_property_*</code>.<br /><br />
+<strong>التحقق:</strong> <code>node --test tests/parkingPdfParity.test.js</code>
+</div>
+
+<div class="footer">
+  Body vs PDF · Fordon · parkeringsskada (parking) · 2026-08-26
+</div>
+
+</body>
+</html>
