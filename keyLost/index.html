@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>keyLost — Body vs PDF</title>
+  <link rel="stylesheet" href="../shared/gap-report.css" />
+</head>
+<body>
+
+<p class="breadcrumb">
+  <a href="../index.html">Body vs PDF</a> /
+  keyLost
+</p>
+
+<h1>Skadad eller förlorad startnyckel — Body vs PDF</h1>
+<p>
+  مقارنة ما يرسله الموبايل عبر <code>postKeyLostSkadad</code>
+  مع ما يظهر في PDF من <code>generatePdf.js</code>
+  لتقرير <strong>Skadad eller förlorad startnyckel</strong>
+  (<code>type = keyLost</code>, <code>report_category = car</code>).
+</p>
+
+<div class="meta">
+  <dl>
+    <dt>نوع التقرير (API)</dt><dd><code>type = keyLost</code></dd>
+    <dt>الموبايل</dt><dd><code>postKeyLostSkadad</code> في <code>incident_datasource_fordon_posts.dart</code></dd>
+    <dt>موديل الباك</dt><dd><code>ReportKeyLost.js</code></dd>
+    <dt>اختبار آلي</dt><dd><code>IH-backend/tests/keyLostPdfParity.test.js</code> (9 سيناريوهات)</dd>
+    <dt>تشغيل الاختبار</dt><dd><code>cd IH-backend &amp;&amp; node --test tests/keyLostPdfParity.test.js</code></dd>
+    <dt>ملاحظة</dt><dd>لا تعديل على كود الباك من هذا العمل — الفجوات موثّقة لإرسالها للمطور</dd>
+  </dl>
+</div>
+
+<div class="summary-grid">
+  <div class="ok-box">
+    <strong>التطبيق / Body</strong><br />
+    يرسل: حالة المفتاح، مفتاح إضافي، وصف الحدث، شرطة، بَرْج + مكان البَرْج.
+    <strong>لا يرسل:</strong> مقطورة، markera، with_partner، accident_date.
+  </div>
+  <div class="warn-box">
+    <strong>الباك إند / PDF</strong><br />
+    حقول المفتاح تظهر جيداً (حتى تحت <code>keyLost.*</code>).
+    فجوة واحدة: «Bil bärgad?» عند <code>car_towed: false</code>.
+  </div>
+</div>
+
+<h2>١. حقول المستخدم (الواجهة → API)</h2>
+<table>
+  <tr><th>الواجهة (SV)</th><th>حقل الموبايل</th><th>مفتاح API</th></tr>
+  <tr><td>Är nyckeln borttappad, stulen eller skadad?</td><td><code>arNyckelnBorttappadStulenEllerSkadad</code></td><td><code>key_status</code>: <code>Borttaped</code> | <code>stulen</code> | <code>skadad</code></td></tr>
+  <tr><td>Finns det någon extranyckel?</td><td><code>finnsDetNagonExtranyckel</code></td><td><code>key_another</code></td></tr>
+  <tr><td>Beskriv händelsen</td><td><code>beskriv_handelsen_med_egna_ord</code></td><td><code>accident_description</code></td></tr>
+  <tr><td>Polisen / diarienummer</td><td><code>polisen</code> / <code>diarienummer</code></td><td><code>police</code> / <code>police_money</code> / <code>diarienummer</code></td></tr>
+  <tr><td>Behöver bilen bärgas? / Vart…?</td><td><code>bargning</code> / <code>vartHarBilenBargats</code></td><td><code>car_towed</code> / <code>car_towed_description</code></td></tr>
+  <tr><td>Släp</td><td>—</td><td><em>غير موجود في هذا النوع</em></td></tr>
+</table>
+
+<h2>٢. السيناريوهات (اختبار keyLostPdfParity)</h2>
+<table>
+  <tr><th>ID</th><th>الحالة</th><th>نتيجة اليوم</th></tr>
+  <tr><td><strong>S1</strong></td><td>حد أدنى — skadad</td><td>حالة المفتاح + سرد OK · <span class="status-missing">Missing</span> Bil bärgad?</td></tr>
+  <tr><td><strong>S2</strong></td><td>رخصة أجنبية</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S3</strong></td><td>key_status = stulen</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S4</strong></td><td>key_status = Borttaped</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S5</strong></td><td>extranyckel = Ja</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S6</strong></td><td>بَرْج + مكان</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S7</strong></td><td>شرطة + diarienummer</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S7b</strong></td><td>حقول فقط تحت <code>keyLost.*</code></td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><strong>S8</strong></td><td>كامل</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>٣. حقول متطابقة (OK)</h2>
+<table>
+  <tr><th>مفتاح API</th><th>PDF</th><th>الحالة</th></tr>
+  <tr><td><code>key_status</code></td><td>«Nyckelstatus:» + القيمة الخام</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>key_another</code> true/false</td><td>«Finns extra nyckel?»</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>accident_description</code></td><td>Händelseförloppet</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>car_towed = true</code> + description</td><td>«Bil bärgad?» + Bärgningsbeskrivning</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td><code>police</code> / diarienummer</td><td>Kompletterande / رأس الصفحة</td><td><span class="status-ok">OK</span></td></tr>
+  <tr><td>حقول تحت <code>keyLost.*</code></td><td>تُقرأ عبر مسارات keyLost</td><td><span class="status-ok">OK</span></td></tr>
+</table>
+
+<h2>٤. نواقص في PDF — لإرسالها لمطور الباك</h2>
+
+<h3>فجوة ١ — <code>car_towed: false</code> لا يظهر «Bil bärgad?»</h3>
+<p>نفس سبب Brand / Parkeringsskada: في <code>getBoolValue</code> يُستخدم <code>||</code> بدل <code>??</code>.</p>
+<pre>val = reportData[key]
+   ?? reportData.report?.[key]
+   ?? reportData.keyLost?.[key]
+   ?? …;
+</pre>
+<p>التحقق: S1 — انقل <code>Bil bärgad?</code> من <code>knownMissing</code> إلى <code>mustInclude</code>.</p>
+
+<h2>٥. ملاحظات</h2>
+<ul>
+  <li>قيمة <code>Borttaped</code> إملاؤها بهذا الشكل في Joi/الموبايل (ليست «Borttappad»).</li>
+  <li>لا مقطورة في واجهة هذا النوع.</li>
+  <li>فرع الـ PDF الخاص بـ keyLost يرتّب: Nyckelstatus → Finns extra nyckel? → Polisen.</li>
+</ul>
+
+<h2>٦. نص جاهز لنسخه لمطور الباك</h2>
+<div class="note">
+<strong>العنوان:</strong> keyLost — «Bil bärgad?» يختفي عند car_towed=false<br /><br />
+<strong>الملف:</strong> <code>src/helpers/generatePdf.js</code> — <code>getBoolValue</code>: استبدل <code>||</code> بـ <code>??</code>.<br /><br />
+<strong>التحقق:</strong> <code>node --test tests/keyLostPdfParity.test.js</code>
+</div>
+
+<div class="footer">
+  Body vs PDF · Fordon · keyLost · 2026-08-26
+</div>
+
+</body>
+</html>
